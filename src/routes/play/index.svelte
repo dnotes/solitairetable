@@ -95,7 +95,7 @@ import Stack from '$lib/Stack.svelte'
             {#each game.stacks[stack.index].stack as card, cardIndex}
             <Card {card} stack={game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
             {:else}
-              {#if stack.conf.showEmpty}
+              {#if game.conf.showEmpty}
               <Card />
               {/if}
             {/each}

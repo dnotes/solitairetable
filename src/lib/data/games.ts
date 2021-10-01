@@ -41,6 +41,7 @@ games["pyramid"] = <GameConfigSetting> {
   offsetRows: true,
   overlayRows: true,
   centerRows: true,
+  showEmpty: false,
   multiSelect: true,
   limitCycles: 1,
   deal: 1,
