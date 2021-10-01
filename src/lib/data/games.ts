@@ -52,7 +52,7 @@ games["pyramid"] = <GameConfigSetting> {
     { discard:true, limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
   ],
   layout: '_0_,_00_,_000_,_0000_,_00000_,_000000_,_0000000_',
-  footer: 'D 1 2'
+  footer: '_D 1 2_'
 }
 
 games["pyramid-draw-three"] = <GameConfigSetting> Object.assign({}, games['pyramid'], {
