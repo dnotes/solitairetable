@@ -34,76 +34,39 @@
 import { page } from '$app/stores'
 import Game from '$lib/Game'
 import Pile from '$lib/Stack.svelte'
-import Card from '$lib/Card.svelte'
-import type CardInterface from '$lib/Card'
-import type { StackInterface } from '$lib/Stack';
-import Stack from '$lib/Stack.svelte'
+import { game, maxCardWidth } from '$lib/data/stores'
 
   let config = $page.query.get('g')
   if (!config) config = 'klondike-vegas'
 
   let deck = $page.query.get('d') || undefined
 
-  let game = new Game(config, deck)
+  game.set(new Game(config, deck))
 
   let w=0,h=0
 
-  $: maxCardWidth = (w / game.longestRow) - 20
-  $: rowHeight = maxCardWidth * 1.5
-
-  function clickCard(stack:StackInterface, card?:CardInterface) {
-    if (!card) game.deal()
-    else game.clickCard(card, stack)
-    game = game
-  }
+  $: maxCardWidth.set((w / $game.longestRow) - 20)
+  $: rowHeight = $maxCardWidth * 1.5
 
 </script>
 
 <div id="game" class="flex flex-col text-white" bind:clientWidth={w} bind:clientHeight={h}>
   <div id="actions" class="flex-shrink">
-    <button on:click={() => {game.doUndo();game=game}}>Undo</button>
-    <button on:click={() => {game.doRedo();game=game}}>Redo</button>
-    <button on:click={() => {game = new Game(config)}}>New</button>
+    <button on:click={() => {$game.doUndo();game.set($game)}}>Undo</button>
+    <button on:click={() => {$game.doRedo();game.set($game)}}>Redo</button>
+    <button on:click={() => {game.set(new Game(config))}}>New</button>
   </div>
+
   <!-- ROWS -->
-  {#each game.layout as row}
-  <div class="flex flex-row w-full relative p-4" style="height:{game.conf.overlayRows ? maxCardWidth * .7 : rowHeight + row.padBottom}px;">
+  {#each $game.layout as row, rowIndex}
+  <div class="flex flex-row w-full relative p-4" style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
     <!-- PILES -->
     {#each row.stacks as stack}
-    <Pile {stack} {maxCardWidth}>
-      <div class="relative h-full" style="max-width:{maxCardWidth}px;">
-        <!-- THE DECK -->
-        {#if stack}
-          {#if stack.isDeck}
-            {#each game.deck.stack as card, cardIndex}
-              <Card {card} stack={game.deck} facedown {cardIndex} on:click={() => clickCard(stack)} />
-            {:else}
-              <Card on:click={() => clickCard(stack)}>
-                <div class:text-gray-600={!game.canRecycle}>Cycle
-                  {#if typeof game.canRecycle === 'number'}
-                    ({game.canRecycle})
-                  {/if}
-                </div>
-                {#if !game.canRecycle}
-                  <div><button on:click={() => {game = new Game(config)}}>New</button></div>
-                {/if}
-              </Card>
-            {/each}
-          <!-- OTHER STACKS -->
-          {:else if typeof stack !== 'string'}
-            <!-- CARDS -->
-            {#each game.stacks[stack.index].stack as card, cardIndex}
-            <Card {card} stack={game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
-            {:else}
-              {#if game.conf.showEmpty}
-              <Card />
-              {/if}
-            {/each}
-          {/if}
-        {/if}
-      </div>
-    </Pile>
+    <Pile {stack} />
     {/each}
   </div>
   {/each}
+
+
+
 </div>

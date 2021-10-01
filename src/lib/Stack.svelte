@@ -1,7 +1,11 @@
 <script lang="ts">
-  import type { StackInterface } from "$lib/Stack";
+  import type { StackInterface } from "$lib/Stack"
+  import { game, maxCardWidth } from '$lib/data/stores'
+  import Card from '$lib/Card.svelte'
+  import Game from '$lib/Game'
+  import type CardInterface from '$lib/Card'
+
   export let stack:string|StackInterface|undefined
-  export let maxCardWidth
 
   let direction, distance, overlay, flex = ''
   if (typeof stack === 'string') {
@@ -13,14 +17,51 @@
     distance = stack.conf['horizontal'] ? stack.maxWidth * 22 : stack.maxHeight * 36
   }
 
+  function clickCard(stack:string|StackInterface, card?:CardInterface) {
+    if (typeof stack === 'string') return
+    if (!card) $game.deal()
+    else $game.clickCard(card, stack)
+    game.set($game)
+  }
+
 </script>
 
-{#if direction && distance}
-  <div class="relative p-1 justify-center box-content" style="padding-{direction}:{distance}px; width:{maxCardWidth}px;">
-    <slot></slot>
-  </div>
+{#if typeof stack !== 'string'}
+  <div class="relative p-1 justify-center box-content" style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;">
+    <div class="relative h-full" style="max-width:{$maxCardWidth}px;">
+      <!-- THE DECK -->
+      {#if stack}
+        {#if stack.isDeck}
+          {#each $game.deck.stack as card, cardIndex}
+            <Card {card} stack={$game.deck} facedown {cardIndex} on:click={() => clickCard(stack)} />
+          {:else}
+            <Card on:click={() => clickCard(stack)}>
+              <div class:text-gray-600={!$game.canRecycle}>Cycle
+                {#if typeof $game.canRecycle === 'number'}
+                  ({$game.canRecycle})
+                {/if}
+              </div>
+              {#if !$game.canRecycle}
+                <div><button on:click={() => {$game = new Game(Object.assign({}, $game.conf, $game.deck.conf))}}>New</button></div>
+              {/if}
+            </Card>
+          {/each}
+        <!-- OTHER STACKS -->
+        {:else if typeof stack !== 'string'}
+          <!-- CARDS -->
+          {#each $game.stacks[stack.index].stack as card, cardIndex}
+          <Card {card} stack={$game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
+          {:else}
+            {#if $game.conf.showEmpty}
+            <Card />
+            {/if}
+          {/each}
+        {/if}
+      {/if}
+    </div>
+</div>
 {:else}
-  <div class="relative p-1 {flex} justify-center box-content" style="width:{maxCardWidth}px;">
+  <div class="relative p-1 {flex} justify-center box-content" style="width:{$maxCardWidth}px;">
     <slot></slot>
   </div>
 {/if}
