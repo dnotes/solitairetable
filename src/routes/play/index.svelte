@@ -37,6 +37,7 @@ import Pile from '$lib/Stack.svelte'
 import Card from '$lib/Card.svelte'
 import type CardInterface from '$lib/Card'
 import type { StackInterface } from '$lib/Stack';
+import Stack from '$lib/Stack.svelte'
 
   let config = $page.query.get('g')
   if (!config) config = 'klondike-vegas'
@@ -94,7 +95,9 @@ import type { StackInterface } from '$lib/Stack';
             {#each game.stacks[stack.index].stack as card, cardIndex}
             <Card {card} stack={game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
             {:else}
-            <Card />
+              {#if stack.conf.showEmpty}
+              <Card />
+              {/if}
             {/each}
           {/if}
         {/if}

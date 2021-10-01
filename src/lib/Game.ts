@@ -54,8 +54,9 @@ export type Row = {
 export interface GameConfigSetting {
   offsetRows?: boolean          // whether the rows are layed out in offset/hexagonal design (false)
   overlayRows?: boolean         // whether rows overlay each other (false)
-  centerRows?: boolean          // whether the stacks are centered in the rows (false)
+  centerRows?: boolean          // whether the stacks should be centered in the rows (false)
   multiSelect?: boolean         // whether multiple cards are selected at once (false)
+  showEmpty?: boolean           // whether an empty stack shows a placeholder (true)
   deal?: number                 // number of cards to deal at a time, if there is a deal pile (1)
   limitCycles?: number          // number of times to cycle through the deck (0 / unlimited)
   limitUndo?: number            // limit to the number of undos (0 / unlimited)
@@ -69,8 +70,9 @@ export class GameConfig {
   name?: string = ''              // the name of the game, if it has one
   offsetRows: boolean = false     // whether the rows are layed out in offset/hexagonal design (false)
   overlayRows: boolean = false    // whether rows overlay each other (false)
-  centerRows?: boolean = false    // whether the stacks are centered in the rows (false)
+  centerRows: boolean = false     // whether the stacks should be centered in the rows (false)
   multiSelect: boolean = false    // whether multiple cards are selected at once (false)
+  showEmpty: boolean = true       // whether an empty stack shows a placeholder (true)
   deal: number = 1                // number of cards to deal at a time, if there is a deal pile (1)
   limitCycles: number = 0         // number of times to cycle through the deck (0 / unlimited)
   limitUndo: number = 0           // limit to the number of undos (0 / unlimited)
@@ -91,7 +93,7 @@ export class GameConfig {
     }
     else if (typeof conf === 'string') {
       let config = conf.split('!');
-      [this.offsetRows, this.overlayRows, this.multiSelect] = confBoolean.decode(config[0]);
+      [this.offsetRows, this.overlayRows, this.centerRows, this.multiSelect, this.showEmpty] = confBoolean.decode(config[0]);
       [this.deal, this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode);
       this.deckConfig = new DeckConfig(config[2])
       this.stackConfig = config[3].split('').map(c => new StackConfig(c))
@@ -107,7 +109,7 @@ export class GameConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.offsetRows, this.overlayRows, this.multiSelect),
+      confBoolean.encode(this.offsetRows, this.overlayRows, this.centerRows, this.multiSelect, this.showEmpty),
       confNumber.encode(this.deal, this.limitCycles, this.limitUndo),
       this.deckConfig,
       this.stackConfig.join('|'),
