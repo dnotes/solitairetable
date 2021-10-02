@@ -1,6 +1,6 @@
 import type Card from "$lib/Card"
 import { MatchConfig, ColorMatch, RankMatch } from "$lib/Matchers"
-import type { MatchTest } from "$lib/Matchers"
+import type { MatchTest, MatchConfigSetting } from "$lib/Matchers"
 import { testCards } from "$lib/Matchers"
 import { confString, confBoolean, confNumber } from "$lib/util"
 
@@ -19,8 +19,8 @@ export type StackConfigSetting = {
   canGet?: boolean        // whether this stack can be pulled from during play (true) (set to false for a standard discard pile)
   horizontal?: boolean    // whether the stack is horizontal (false)
   showEmpty?: boolean     // whether a placeholder for the stack is shown when empty (true)
-  match?: string|boolean|MatchConfig|MatchConfig[] // the match configuration for the top card (undefined)
-  complete?: string|boolean|MatchConfig|MatchConfig[] // the completion conditions for the stack (undefined)
+  match?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[] // the match configuration for the top card (undefined)
+  complete?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[] // the completion conditions for the stack (undefined)
 }
 
 export class StackConfig {

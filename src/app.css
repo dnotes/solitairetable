@@ -2,3 +2,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+h1 {
+  font-size: 2rem;
+  margin: 2rem 0 1rem;
+}
+h2 {
+  font-size: 1.5rem;
+  margin: 1.5rem 0 1rem;
+}
+h3 {
+  font-size: 1.25rem;
+  margin: 1.25rem 0 1rem;
+}
+a {
+  color: cornflowerblue;
+}
+a:hover {
+  text-decoration: underline;
+}
+p,ul,ol,blockquote {
+  margin-top: 1rem;
+}

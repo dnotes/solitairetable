@@ -6,7 +6,7 @@
 
 <div class="min-h-screen {isTable ? '' : 'flex flex-col'}">
 
-  <div id="main" class="{isTable ? 'h-screen bg-green-800' : 'flex-grow'}">
+  <div id="main" class="{isTable ? 'h-screen bg-green-800' : 'flex-grow w-full max-w-screen-lg mx-auto p-4'}">
     <slot></slot>
   </div>
 

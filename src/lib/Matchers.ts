@@ -16,6 +16,15 @@ export enum RankMatch {
   Lower,
 }
 
+export type MatchConfigSetting = {
+  suit?: boolean
+  hasJoker?: boolean
+  color?: ColorMatch
+  rank?: RankMatch
+  count?: number
+  total?: number
+}
+
 export class MatchConfig {
   suit: boolean
   hasJoker: boolean

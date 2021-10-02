@@ -1,9 +1,28 @@
 import type { GameConfigSetting } from "$lib/Game"
 import { RankMatch, ColorMatch } from "$lib/Matchers"
 
-let games = {}
+export type NamedGameConfigSetting = GameConfigSetting & {
+  name: string
+  family: string
+  title: string
+  variants?: NamedGameConfigSetting[]
+}
 
-games['klondike'] = <GameConfigSetting> {
+let games = <NamedGameConfigSetting[]> {}
+
+function register(config:NamedGameConfigSetting):void {
+  if (games[config.name]) throw new Error(`Duplicate name ${config.name}`)
+  games[config.name] = config
+  if (config.name === config.family) games[config.name].variants = []
+  else if (games[config.family]) {
+    games[config.family].variants.push(config)
+  }
+}
+
+register({
+  name: 'klondike',
+  family: 'klondike',
+  title: 'Klondike',
   stackConfig: [
     { empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1 },
@@ -16,28 +35,45 @@ games['klondike'] = <GameConfigSetting> {
     { deal:3, limitAvailable:1, limitVisible:3, horizontal:true }
   ],
   layout: '0000 D8,1234567',
-}
+})
 
-games["klondike-vegas"] = <GameConfigSetting> Object.assign({}, games['klondike'], {
+register(Object.assign({}, games['klondike'], {
+  name: 'klondike-vegas',
+  title: 'Vegas',
   limitCycles: 3,
-})
+}))
 
-games["klondike-single"] = <GameConfigSetting> Object.assign({}, games['klondike'], {
-  cycle: 1,
-  deal: 1,
-})
+register(Object.assign({}, games['klondike-vegas'], {
+  name: 'klondike-vegas-strict',
+  title: 'Vegas Strict (1 undo)',
+  limitUndo: 1,
+}))
 
-games["freecell"] = <GameConfigSetting> {
+register(Object.assign({}, games['klondike'], {
+  name: 'klondike-one',
+  family: 'klondike',
+  title: 'Draw One',
+  stackConfig: [...games['klondike'].stackConfig].map(c => {
+    if (c.deal) c = Object.assign({}, c, { deal:1 })
+  })
+}))
+
+register({
+  name: 'freecell',
+  family: 'freecell',
+  title: 'Freecell',
   stackConfig: [
     { limitCards:1 },
     { empty:"A", match: { suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
-    { init:true, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
+    { init:50, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
   ],
   layout: '0000 1111,22222222',
-  center: true
-}
+})
 
-games["pyramid"] = <GameConfigSetting> {
+register({
+  name: 'pyramid',
+  family: 'pyramid',
+  title: 'Pyramid',
   offsetRows: true,
   overlayRows: true,
   centerRows: true,
@@ -48,20 +84,23 @@ games["pyramid"] = <GameConfigSetting> {
   deckConfig: { jokers:2 },
   stackConfig: [
     { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
-    { empty:'', deal:true, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
+    { empty:'', deal:1, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
     { canGet:false, empty:'', limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
   ],
   layout: '_0_,_00_,_000_,_0000_,_00000_,_000000_,_0000000_',
   footer: '_D 1 2_'
-}
+})
 
-games["pyramid-draw-three"] = <GameConfigSetting> Object.assign({}, games['pyramid'], {
-  stacks: [
-    { empty:'', deal:1, limitCards:1, complete: { count:0 } },
-    { deal:true, limitAvailable:1, limitVisible:4, horizontal:true },
-    { canGet:false, limitVisible:1, match: [{ count:2, total:13 }, { count:2, hasJoker:true }] }
+register(Object.assign({}, games['pyramid'], {
+  name: 'pyramid-exact-draw-three',
+  family: 'pyramid',
+  title: 'Exact, Draw 3',
+  stackConfig: [
+    { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
+    { deal:true, limitAvailable:1, limitVisible:5, horizontal:true },
+    { canGet:false, empty:'', limitVisible:1, match: [{ count:2, total:13 }, { count:2, hasJoker:true }, { count:1, hasJoker:true }] }
   ],
   footer: 'D 1 1 1 2'
-})
+}))
 
 export default games
