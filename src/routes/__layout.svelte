@@ -11,6 +11,7 @@
   </div>
 
   <footer class="h-10 w-full leading-10 px-12 text-xs bg-gray-900 text-white {isTable ? 'fixed bottom-0' : ''}">
+    <a href="/">Home</a> |
     © 2021 David Hunt
   </footer>
 
