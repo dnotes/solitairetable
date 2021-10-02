@@ -13,7 +13,7 @@ games['klondike'] = <GameConfigSetting> {
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:5, facedown:4 },
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:6, facedown:5 },
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:7, facedown:6 },
-    { deal:3, play:false, limitAvailable:1, limitVisible:3, horizontal:true }
+    { deal:3, limitAvailable:1, limitVisible:3, horizontal:true }
   ],
   layout: '0000 D8,1234567',
 }
@@ -47,9 +47,9 @@ games["pyramid"] = <GameConfigSetting> {
   deal: 1,
   deckConfig: { jokers:2 },
   stackConfig: [
-    { empty:'', match: false, init:1, limitCards:1, complete: { count:0 } },
-    { deal:true, limitAvailable:5, limitVisible:5, horizontal:true },
-    { discard:true, limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
+    { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
+    { empty:'', deal:true, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
+    { canGet:false, empty:'', limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
   ],
   layout: '_0_,_00_,_000_,_0000_,_00000_,_000000_,_0000000_',
   footer: '_D 1 2_'
@@ -59,7 +59,7 @@ games["pyramid-draw-three"] = <GameConfigSetting> Object.assign({}, games['pyram
   stacks: [
     { empty:'', deal:1, limitCards:1, complete: { count:0 } },
     { deal:true, limitAvailable:1, limitVisible:4, horizontal:true },
-    { discard:true, limitVisible:1, match: [{ count:2, total:13 }, { count:2, hasJoker:true }] }
+    { canGet:false, limitVisible:1, match: [{ count:2, total:13 }, { count:2, hasJoker:true }] }
   ],
   footer: 'D 1 1 1 2'
 })

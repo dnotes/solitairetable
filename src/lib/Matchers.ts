@@ -17,7 +17,6 @@ export enum RankMatch {
 }
 
 export class MatchConfig {
-  canMatch: boolean = true
   suit: boolean
   hasJoker: boolean
   color: ColorMatch
@@ -26,7 +25,6 @@ export class MatchConfig {
   total: number
   constructor(conf:string|boolean|MatchConfig) {
     if (!conf) {
-      this.canMatch = false
       return this
     }
     else if (typeof conf === 'boolean') {
@@ -34,7 +32,7 @@ export class MatchConfig {
     }
     if (typeof conf === 'string') {
       let config = conf.split('');
-      [this.canMatch, this.suit, this.hasJoker] = confBoolean.decode(config[0]);
+      [this.suit, this.hasJoker] = confBoolean.decode(config[0]);
       this.color = confNumber.decode(config[1])
       this.rank = confNumber.decode(config[2])
       this.count = confNumber.decode(config[3])
@@ -47,14 +45,13 @@ export class MatchConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.canMatch, this.suit, this.hasJoker),
+      confBoolean.encode(this.suit, this.hasJoker),
       confNumber.encode(this.color, this.rank, this.count, this.total),
     ].join('')
   }
 }
 
 export type MatchTest = {
-  canMatch?: boolean,
   total?: number,
   suit?: string,
   rank?: string,
@@ -66,14 +63,14 @@ export function testCards(cards:Card|Card[], conf:MatchTest) {
   if (!Array.isArray(cards)) cards = [cards]
   let matched = 0
 
-  if (conf.hasOwnProperty('total')) {
+  if (conf.total) {
     if (conf.total === cards.reduce((agg,card) => {
       return agg + card.value
     }, 0)) matched++
     else return 0
   }
 
-  if (conf.hasOwnProperty('count')) {
+  if (conf.count) {
     if (conf.count === cards.length) matched++
     else return 0
   }

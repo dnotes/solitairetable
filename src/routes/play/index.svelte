@@ -59,7 +59,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
 
   <!-- ROWS -->
   {#each $game.layout as row, rowIndex}
-  <div class="flex flex-row w-full relative p-4" style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
+  <div class="flex flex-row w-full relative p-4 pointer-events-none" style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
     <!-- PILES -->
     {#each row.stacks as stack}
     <Pile {stack} />
@@ -68,7 +68,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
   {/each}
 
   {#each $game.footer as row, rowIndex}
-  <div class="flex flex-row w-full relative p-4" style="height:{$game.conf.overlayRows && (rowIndex !== $game.footer.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
+  <div class="flex flex-row w-full relative p-4 pointer-events-none" style="height:{$game.conf.overlayRows && (rowIndex !== $game.footer.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
     {#each row.stacks as stack}
     <Pile {stack} />
     {/each}

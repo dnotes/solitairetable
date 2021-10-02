@@ -129,6 +129,7 @@ export default class Game {
   footer: Row[] = []
   longestRow: number = 0
   conf: GameConfig
+  selection: SelectedStack[] = []
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|DeckConfig|DeckConfigSetting) {
     this.conf = new GameConfig(conf)
@@ -278,6 +279,7 @@ export default class Game {
         .filter(Boolean)
       ))
     }
+    this.selection = []
   }
 
   clickCard(crd:number|Card, stk:number|StackInterface) {
@@ -285,9 +287,12 @@ export default class Game {
     let cardDepth = stack.getCardDepth(crd)
     let card = stack.getCard(cardDepth)
 
-
     // If the card is not available, do nothing
     if (stack.conf.limitAvailable && cardDepth > stack.conf.limitAvailable) return
+    if (stack.conf.discard) return
+    if (this.conf.overlayRows) {
+
+    }
 
     // Also if the card is facedown and not the top card
     if (cardDepth > 1 && card.facedown) return
@@ -295,10 +300,25 @@ export default class Game {
     // If the card is facedown, flip it over
     if (card.facedown) this.do(new Activity('flip', new Action(cardDepth, stack.index)))
 
-    // else if (conf.multiSelect) {
-    //   if (selectedCards.includes(card)) selectedCards = selectedCards.filter(c => c !== card)
-    //   else {}
-    // }
+    else if (this.conf.multiSelect) {
+      let cards = stack.look(cardDepth)
+
+      // If the stack is already selected, remove it
+      let alreadySelected = this.selection.find(c => c.stackIndex === stack.index)
+      if (alreadySelected && alreadySelected.cardDepth >= cardDepth) this.removeSelected(stack.index)
+      // Otherwise, add the clicked card and all cards above it
+      else this.setSelected(cards, stack)
+
+      // Try to move the cards
+      if (this.selectedCards.length) {
+        let options = this.stacksWant(this.selectedCards)
+        if (options.length) {
+          let actions = this.selection.map(s => new Action(s.cardDepth, s.stackIndex, options[0].index))
+          this.selection = []
+          this.do(new Activity('move', actions))
+        }
+      }
+    }
 
     // Otherwise, try to move it
     else {
@@ -311,4 +331,25 @@ export default class Game {
 
   }
 
+  get selectedCards() {
+    return this.selection.map(c => c.cards).flat()
+  }
+
+  removeSelected(stackIndex) {
+    this.selection = this.selection.filter(c => c.stackIndex !== stackIndex)
+  }
+
+  setSelected(cards:Card[], stack:StackInterface) {
+    let cardDepth = cards.length
+    let stackIndex = stack.index
+    this.selection = this.selection.filter(c => c.stackIndex !== stackIndex)
+    this.selection.push({ cards, cardDepth, stackIndex })
+  }
+
+}
+
+export type SelectedStack = {
+  cardDepth: number,
+  stackIndex: number,
+  cards: Card[],
 }

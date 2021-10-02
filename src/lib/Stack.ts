@@ -15,10 +15,10 @@ export type StackConfigSetting = {
   limitCards?: number     // whether this stack has a limit to the number of cards (0) (0 = no limit on number of cards)
   limitAvailable?:number  // how many cards are available from the stack (1) (0 = no limit)
   limitVisible?: number   // how many cards are visible (0) (0 = all cards are visible)
-  play?: boolean          // whether this stack is allowed during play (true, unless "deal" is true)
-  discard?: boolean       // whether this is a discard stack (false)
+  canPut?: boolean        // whether this stack can accept cards during play (true, unless "deal" is true)
+  canGet?: boolean        // whether this stack can be pulled from during play (true) (set to false for a standard discard pile)
   horizontal?: boolean    // whether the stack is horizontal (false)
-  sticky?: boolean        // whether cards are stuck once placed on the stack (false)
+  showEmpty?: boolean     // whether a placeholder for the stack is shown when empty (true)
   match?: string|boolean|MatchConfig|MatchConfig[] // the match configuration for the top card (undefined)
   complete?: string|boolean|MatchConfig|MatchConfig[] // the completion conditions for the stack (undefined)
 }
@@ -31,24 +31,25 @@ export class StackConfig {
   limitCards = 0
   limitAvailable = 1
   limitVisible = 0
-  play = true
-  discard = false
+  canPut = true
+  canGet = true
   horizontal = false
-  sticky = false
+  showEmpty = true
   match:MatchConfig[] = []
   complete:MatchConfig[] = []
 
   constructor(conf?:string|boolean|StackConfig|StackConfigSetting) {
-    if (!conf) return this
+    if (!conf || typeof conf === 'boolean') return this
     else if (typeof conf === "string") {
       let config = conf.split("|")
       this.empty = confString.decode(config[0], ranks);
       [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible] = config[1].split("").map(confNumber.decode);
-      [this.play, this.discard, this.horizontal, this.sticky] = confBoolean.decode(config[2]);
+      [this.canPut, this.canGet, this.horizontal, this.showEmpty] = confBoolean.decode(config[2]);
       this.match = config[3].split(",").map(t => new MatchConfig(t));
       this.complete = config[4].split(",").map(t => new MatchConfig(t));
     }
     else {
+      if (conf.deal && !conf.canPut) conf.canPut = false
       Object.assign(this, conf)
       if (this.match) this.match = Array.isArray(this.match) ? this.match.map(c => new MatchConfig(c)) : [new MatchConfig(this.match)]
       if (this.complete) this.complete = Array.isArray(this.complete) ? this.complete.map(c => new MatchConfig(c)) : [new MatchConfig(this.complete)]
@@ -59,7 +60,7 @@ export class StackConfig {
     return [
       confString.encode(this.empty, emptyRanks),
       confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible),
-      confBoolean.encode(this.play, this.discard, this.horizontal, this.sticky),
+      confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.showEmpty),
       this.match.map(m => m.toString()).join(","),
       this.complete.map(m => m.toString()).join(","),
     ].join(";")
@@ -98,7 +99,6 @@ export default class Stack implements StackInterface {
 
   constructor(conf?:string|StackConfig|StackConfigSetting, index=0) {
     let config = new StackConfig(conf)
-    if (config.deal && !config.play) config.play = false
     Object.assign(this.conf, config)
     if (Number.isInteger(index)) this.index = index
     return this
@@ -183,15 +183,13 @@ export default class Stack implements StackInterface {
   wants(cards:Card|Card[]):number {
 
     // if this is not a play stack, exit now
-    if (!this.conf.play) return 0
+    if (!this.conf.canPut) return 0
 
     // ensure array of cards
     if (!Array.isArray(cards)) cards = [cards]
 
     // first try empty
-    if (this.isEmpty) {
-      return this.conf.empty.match(cards[0].rank) ? 1 : 0
-    }
+    if (this.isEmpty && this.conf.empty.match(cards[0].rank)) return 1
 
     // not all stacks take cards
     if (!this.conf.match) return 0
@@ -199,15 +197,18 @@ export default class Stack implements StackInterface {
     // iterate over array
     return Math.max(...this.conf.match.map(conf => {
       let test = this.getMatchTest(conf)
-      return testCards(cards, test)
+      return test ? testCards(cards, test) : 0
     }))
 
   }
 
-  getMatchTest(conf:MatchConfig):MatchTest {
+  getMatchTest(conf:MatchConfig):MatchTest|undefined {
+    if (!this.topCard) {
+      if (conf.suit || conf.color || conf.rank) return
+    }
     let test = {}
     Object.keys(conf).forEach(k => test[k] = conf[k])
-    if (conf.suit) test["suit"] = this.topCard.suitName
+    if (conf.suit) test["suit"] = this.topCard?.suitName
     else if (conf.hasOwnProperty("color")) {
       if (conf.color === ColorMatch.Same) test["suit"] = "hearts|diamonds".match(this.topCard.suitName) ? "hearts|diamonds" : "clubs|spades"
       else test["suit"] = "clubs|spades".match(this.topCard.suitName) ? "hearts|diamonds" : "clubs|spades"

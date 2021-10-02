@@ -27,7 +27,7 @@
 </script>
 
 {#if typeof stack !== 'string'}
-  <div class="relative p-1 justify-center box-content" style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;">
+  <div class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)} class="relative p-1 justify-center box-content" style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;">
     <div class="relative h-full" style="max-width:{$maxCardWidth}px;">
       <!-- THE DECK -->
       {#if stack}
@@ -59,7 +59,7 @@
         {/if}
       {/if}
     </div>
-</div>
+  </div>
 {:else}
   <div class="relative p-1 {flex} justify-center box-content" style="width:{$maxCardWidth}px;">
     <slot></slot>

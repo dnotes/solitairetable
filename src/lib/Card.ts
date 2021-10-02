@@ -1,3 +1,5 @@
+import { ranks } from '$lib/Stack'
+
 export default class Card {
 
   suit: string
@@ -32,9 +34,7 @@ export default class Card {
       this.rank = card.rank
       this.char = card.char
       this.text = this.isJoker ? 'Joker' : card.rank.replace('T', '10')
-      if (this.rank === 'A') this.value = 1
-      else if (this.rank.match(/\d/)) this.value = parseInt(this.rank)
-      else this.value = 10
+      this.value = ranks.indexOf(this.rank) + 1
     }
     this.facedown = facedown ? true : false
   }
