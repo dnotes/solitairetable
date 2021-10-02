@@ -1,7 +1,6 @@
 import type Card from "$lib/Card"
-import { MatchConfig, ColorMatch, RankMatch } from "$lib/Matchers"
-import type { MatchTest, MatchConfigSetting } from "$lib/Matchers"
-import { testCards } from "$lib/Matchers"
+import { MatchConfig, ColorMatch, RankMatch, MatchTest } from "$lib/Matchers"
+import type { MatchConfigSetting } from "$lib/Matchers"
 import { confString, confBoolean, confNumber } from "$lib/util"
 
 export const ranks = "A23456789TJQK"
@@ -19,8 +18,8 @@ export type StackConfigSetting = {
   canGet?: boolean        // whether this stack can be pulled from during play (true) (set to false for a standard discard pile)
   horizontal?: boolean    // whether the stack is horizontal (false)
   showEmpty?: boolean     // whether a placeholder for the stack is shown when empty (true)
-  match?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[] // the match configuration for the top card (undefined)
-  complete?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[] // the completion conditions for the stack (undefined)
+  match?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the match configuration for the top card (undefined)
+  complete?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the completion conditions for the stack (undefined)
 }
 
 export class StackConfig {
@@ -35,8 +34,8 @@ export class StackConfig {
   canGet = true
   horizontal = false
   showEmpty = true
-  match:MatchConfig[] = []
-  complete:MatchConfig[] = []
+  match:MatchTest[] = []
+  complete:MatchTest[] = []
 
   constructor(conf?:string|boolean|StackConfig|StackConfigSetting) {
     if (!conf || typeof conf === 'boolean') return this
@@ -45,14 +44,14 @@ export class StackConfig {
       this.empty = confString.decode(config[0], ranks);
       [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible] = config[1].split("").map(confNumber.decode);
       [this.canPut, this.canGet, this.horizontal, this.showEmpty] = confBoolean.decode(config[2]);
-      this.match = config[3].split(",").map(t => new MatchConfig(t));
-      this.complete = config[4].split(",").map(t => new MatchConfig(t));
+      this.match = config[3].split(",").map(t => new MatchTest(t));
+      this.complete = config[4].split(",").map(t => new MatchTest(t));
     }
     else {
       if (conf.deal && !conf.canPut) conf.canPut = false
+      if (conf.match) conf.match = Array.isArray(conf.match) ? conf.match.map(c => new MatchTest(c)) : [new MatchTest(conf.match)]
+      if (conf.complete) conf.complete = Array.isArray(conf.complete) ? conf.complete.map(c => new MatchTest(c)) : [new MatchTest(conf.complete)]
       Object.assign(this, conf)
-      if (this.match) this.match = Array.isArray(this.match) ? this.match.map(c => new MatchConfig(c)) : [new MatchConfig(this.match)]
-      if (this.complete) this.complete = Array.isArray(this.complete) ? this.complete.map(c => new MatchConfig(c)) : [new MatchConfig(this.complete)]
     }
     return this
   }
@@ -61,8 +60,8 @@ export class StackConfig {
       confString.encode(this.empty, emptyRanks),
       confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible),
       confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.showEmpty),
-      this.match.map(m => m.toString()).join(","),
-      this.complete.map(m => m.toString()).join(","),
+      this.match.map(m => m.conf.toString()).join(","),
+      this.complete.map(m => m.conf.toString()).join(","),
     ].join(";")
   }
 }
@@ -134,6 +133,12 @@ export default class Stack implements StackInterface {
     return false
   }
 
+  get isComplete():boolean {
+    return this.conf.complete.reduce((agg,match) => {
+      return agg && (match.test(this.stack) ? true : false)
+    }, true)
+  }
+
   reset() {
     this.stack = []
     this.initialized = false
@@ -195,32 +200,10 @@ export default class Stack implements StackInterface {
     if (!this.conf.match) return 0
 
     // iterate over array
-    return Math.max(...this.conf.match.map(conf => {
-      let test = this.getMatchTest(conf)
-      return test ? testCards(cards, test) : 0
+    return Math.max(...this.conf.match.map(matcher => {
+      return matcher.test(cards, this.topCard)
     }))
 
-  }
-
-  getMatchTest(conf:MatchConfig):MatchTest|undefined {
-    if (!this.topCard) {
-      if (conf.suit || conf.color || conf.rank) return
-    }
-    let test = {}
-    Object.keys(conf).forEach(k => test[k] = conf[k])
-    if (conf.suit) test["suit"] = this.topCard?.suitName
-    else if (conf.hasOwnProperty("color")) {
-      if (conf.color === ColorMatch.Same) test["suit"] = "hearts|diamonds".match(this.topCard.suitName) ? "hearts|diamonds" : "clubs|spades"
-      else test["suit"] = "clubs|spades".match(this.topCard.suitName) ? "hearts|diamonds" : "clubs|spades"
-    }
-    if (conf.hasOwnProperty("rank")) {
-      if (conf.rank === RankMatch.Equal) test["rank"] = this.topCard.rank
-      else if (conf.rank === RankMatch.Asc) test["rank"] = this.topCard.rank === "K" ? "" : ranks[ranks.indexOf(this.topCard.rank)+1]
-      else if (conf.rank === RankMatch.Desc) test["rank"] = this.topCard.rank === "A" ? "" : ranks[ranks.indexOf(this.topCard.rank)-1]
-      else if (conf.rank === RankMatch.Higher) test["rank"] = this.topCard.rank === "K" ? "" : ranks.slice(ranks.indexOf(this.topCard.rank)+1)
-      else if (conf.rank === RankMatch.Lower) test["rank"] = this.topCard.rank === "A" ? "" : ranks.slice(0,ranks.indexOf(this.topCard.rank)-1)
-    }
-    return test
   }
 
 }

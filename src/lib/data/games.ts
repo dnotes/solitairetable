@@ -64,7 +64,7 @@ register({
   title: 'Freecell',
   stackConfig: [
     { limitCards:1 },
-    { empty:"A", match: { suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
+    { empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
     { init:50, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
   ],
   layout: '0000 1111,22222222',
@@ -98,7 +98,7 @@ register(Object.assign({}, games['pyramid'], {
   stackConfig: [
     { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
     { deal:true, limitAvailable:1, limitVisible:5, horizontal:true },
-    { canGet:false, empty:'', limitVisible:1, match: [{ count:2, total:13 }, { count:2, hasJoker:true }, { count:1, hasJoker:true }] }
+    { canGet:false, empty:'', limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
   ],
   footer: 'D 1 1 1 2'
 }))
