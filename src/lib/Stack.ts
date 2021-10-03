@@ -193,6 +193,9 @@ export default class Stack implements StackInterface {
     // ensure array of cards
     if (!Array.isArray(cards)) cards = [cards]
 
+    // if this is the same stack, exit
+    if (this.stack.join('').match(cards.join(''))) return 0
+
     // first try empty
     if (this.isEmpty && this.conf.empty.match(cards[0].rank)) return 1
 
