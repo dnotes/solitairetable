@@ -32,7 +32,7 @@
       <!-- THE DECK -->
       {#if stack}
         {#if stack.isDeck}
-          {#each $game.deck.stack as card, cardIndex}
+          {#each stack.stack as card, cardIndex (card.char)}
             <Card {card} stack={$game.deck} facedown {cardIndex} on:click={() => clickCard(stack)} />
           {:else}
             <Card on:click={() => clickCard(stack)}>
@@ -47,13 +47,13 @@
             </Card>
           {/each}
         <!-- OTHER STACKS -->
-        {:else if typeof stack !== 'string'}
+        {:else}
           <!-- CARDS -->
-          {#each $game.stacks[stack.index].stack as card, cardIndex}
-          <Card {card} stack={$game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
+          {#each stack.stack as card, cardIndex (card.char)}
+            <Card {card} stack={$game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
           {:else}
             {#if $game.conf.showEmpty}
-            <Card />
+              <Card />
             {/if}
           {/each}
         {/if}
