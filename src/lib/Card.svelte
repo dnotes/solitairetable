@@ -18,6 +18,7 @@
 			css: (t, u) => `
 				transform: rotateY(${1 - (u * 180)}deg);
 				opacity: ${1 - u};
+        ${u ? 'position:absolute;' : 'position:static'}
 			`
 		};
   }
@@ -38,14 +39,14 @@
 <div on:click on:drag on:drop class="cursor-pointer">
   {#if card}
     {#if facedown || card.facedown}
-      <div class="absolute" transition:turn><img class="w-full" src="/cards/_back.svg" alt="?" /></div>
+      <div transition:turn><img class="w-full" src="/cards/_back.svg" alt="?" /></div>
     {:else if (card.isJoker)}
-      <div class="absolute" transition:turn><img class="w-full" src="/cards/_joker.svg" alt="joker" /></div>
+      <div transition:turn><img class="w-full" src="/cards/_joker.svg" alt="joker" /></div>
     {:else}
-      <div class="absolute" transition:turn><img class="w-full" src="/cards/{card.rank}_{card.suitName}.svg" alt="{card.rank}{card.suit}"></div>
+      <div transition:turn><img class="w-full" src="/cards/{card.rank}_{card.suitName}.svg" alt="{card.rank}{card.suit}"></div>
     {/if}
   {:else}
-  <div class="absolute"><img class="w-full" src="/cards/_empty.svg" alt="-"></div>
+  <div><img class="w-full" src="/cards/_empty.svg" alt="-"></div>
   {/if}
   <div class="absolute w-full text-center top-2"><slot></slot></div>
 </div>
