@@ -38,7 +38,7 @@
     </div>
   </div>
 {:else}
-  <div class="relative {flex} justify-center box-content" style="width:{maxCardWidth}px;">
+  <div class="relative {flex} justify-center box-content" style="width:{stack === '-' ? maxCardWidth / 2 :maxCardWidth}px;">
     <slot></slot>
   </div>
 {/if}

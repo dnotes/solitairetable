@@ -15,7 +15,7 @@ export let config
 <div class="w-40 h-40 cursor-pointer overflow-hidden hover:overflow-visible rounded">
 <div class="w-40 h-32 flex flex-col bg-green-800 box-content overflow-hidden rounded" on:click={() => {goto(`/play?g=${config.name}`)}}>
   {#each game.layout as row, rowIndex}
-  <div class="flex flex-row w-full" style="height:{game.conf.overlayRows && (rowIndex !== game.layout.length - 1) ? maxCardWidth * .7 : rowHeight + (row.maxHeight * 2)}px;">
+  <div class="flex flex-row w-full" class:justify-center={game.conf.centerRows} style="height:{game.conf.overlayRows && (rowIndex !== game.layout.length - 1) ? maxCardWidth * .7 : rowHeight + (row.maxHeight * 2)}px;">
     <!-- PILES -->
     {#each row.stacks as stack}
     <Pile {stack} {maxCardWidth} />
