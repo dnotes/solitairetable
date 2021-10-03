@@ -8,6 +8,19 @@
   export let stack:StackInterface|undefined = undefined
   export let cardIndex:number = 0
 
+	function turn(node, {
+		delay = 0,
+		duration = 80
+	}) {
+		return {
+			delay,
+			duration,
+			css: (t, u) => `
+				transform: rotateY(${1 - (u * 180)}deg);
+				opacity: ${1 - u};
+			`
+		};
+  }
   // Set up card overlays
   let visibleCardNumber, direction, distance
   $: if (stack) {
@@ -17,22 +30,22 @@
   }
 
   let textColor
-
   if (card) textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
+
 </script>
 
-<div class:selected={$game.selectedCards.includes(card)} class="card container {textColor} rounded-xl card-{cardIndex} absolute" style="{direction}:{distance}px">
+<div class:selected={$game.selectedCards.includes(card)} class="card container {textColor} rounded-xl card-{cardIndex} absolute" style="{direction}:{distance}px ">
 <div on:click on:drag on:drop class="cursor-pointer">
   {#if card}
     {#if facedown || card.facedown}
-      <img class="w-full" src="/cards/_back.svg" alt="?">
+      <div class="absolute" transition:turn><img class="w-full" src="/cards/_back.svg" alt="?" /></div>
     {:else if (card.isJoker)}
-      <img class="w-full" src="/cards/_joker.svg" alt="joker" />
+      <div class="absolute" transition:turn><img class="w-full" src="/cards/_joker.svg" alt="joker" /></div>
     {:else}
-      <img class="w-full" src="/cards/{card.rank}_{card.suitName}.svg" alt="{card.rank}{card.suit}">
+      <div class="absolute" transition:turn><img class="w-full" src="/cards/{card.rank}_{card.suitName}.svg" alt="{card.rank}{card.suit}"></div>
     {/if}
   {:else}
-    <img class="w-full" src="/cards/_empty.svg" alt="-">
+  <div class="absolute"><img class="w-full" src="/cards/_empty.svg" alt="-"></div>
   {/if}
   <div class="absolute w-full text-center top-2"><slot></slot></div>
 </div>
