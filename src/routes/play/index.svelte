@@ -1,34 +1,3 @@
-<script context="module" lang="ts">
-  // import Deck from '$lib/Deck'
-  // import Game from '$lib/Game'
-
-  // export async function load({ page }) {
-
-  //   let config = page.query.get('g')
-  //   if (!config) {
-  //     page.query.set('g', 'klondike-vegas')
-  //     return { status: 302, redirect: `/play?${page.query}` }
-  //   }
-
-  //   let deck = page.query.get('d') || false
-  //   if (deck) {
-  //     try {
-  //       deck = new Deck(deck)
-  //     }
-  //     catch(e) { console.error(e) }
-  //   }
-
-  //   let game
-  //   try {
-  //     game = new Game(config, deck || undefined)
-  //   }
-  //   catch(e) { return { status: 404, error: e } }
-
-  //   return { props: { game } }
-
-  // }
-</script>
-
 <script lang="ts">
 
 import { page } from '$app/stores'
