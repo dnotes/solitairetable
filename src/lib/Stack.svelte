@@ -1,14 +1,13 @@
 <script lang="ts">
   import type { StackInterface } from "$lib/Stack"
-  import { game, maxCardWidth } from '$lib/data/stores'
+  import { game, maxCardWidth, draggedCards } from '$lib/data/stores'
   import Card from '$lib/Card.svelte'
-  import Game from '$lib/Game'
+  import Game, { Action, Activity } from '$lib/Game'
   import type CardInterface from '$lib/Card'
-  import {dndzone} from "svelte-dnd-action"
 
   export let stack:string|StackInterface|undefined
 
-  let direction, distance, overlay, flex = ''
+  let direction, distance, flex = ''
   if (typeof stack === 'string') {
     if (stack === '-') flex = 'flex-shrink'
     if (stack === '_') flex = 'flex-grow'
@@ -17,8 +16,6 @@
     direction = stack.conf['horizontal'] ? 'right' : 'bottom'
     distance = stack.conf['horizontal'] ? stack.maxWidth * 22 : stack.maxHeight * 36
   }
-
-  $: items = (stack && typeof stack !== "string") ? stack.stack : []
 
   function clickCard(stack:string|StackInterface, card?:CardInterface) {
     if (typeof stack === 'string') return
@@ -30,11 +27,33 @@
 </script>
 
 {#if typeof stack !== 'string'}
-  <div class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)} class="relative p-1 justify-center box-content" style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;">
-    <!-- THE DECK -->
-    {#if stack}
-      {#if stack.isDeck}
-        <div class="relative h-full" style="max-width:{$maxCardWidth}px;">
+  <div
+    class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)}
+    class="relative p-1 justify-center box-content"
+    style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;"
+    on:dragover="{(e) => {
+      console.log('dragover')
+      e.preventDefault()
+    }}"
+    on:drop="{(e) => {
+      console.log('drop (stack)');
+      e.preventDefault();
+      console.log($draggedCards)
+      console.log(stack)
+      // @ts-ignore
+      if (stack.wants($draggedCards.cards)) {
+        console.log('dropped!');
+        // @ts-ignore
+        $game.do(new Activity('move', new Action($draggedCards.cardDepth, $draggedCards.fromStack, stack.index)));
+        $game.clearSelected()
+        game.set($game)
+      }
+    }}"
+  >
+    <div class="relative h-full" style="max-width:{$maxCardWidth}px;">
+      <!-- THE DECK -->
+      {#if stack}
+        {#if stack.isDeck}
           {#each stack.stack as card, cardIndex (card.id)}
             <Card {card} stack={$game.deck} facedown {cardIndex} on:click={() => clickCard(stack)} />
           {:else}
@@ -49,26 +68,23 @@
               {/if}
             </Card>
           {/each}
-        </div>
-      <!-- OTHER STACKS -->
-      {:else}
-        <div use:dndzone="{{
-          items,
-          morphDisabled:true,
-        }}" class="relative h-full" style="max-width:{$maxCardWidth}px;">
+        <!-- OTHER STACKS -->
+        {:else}
           <!-- CARDS -->
           {#each stack.stack as card, cardIndex (card.id)}
-            <Card {card} stack={$game.stacks[stack.index]} {cardIndex} on:click={() => clickCard(stack, card)} />
+            <Card {card} {stack} {cardIndex}
+              on:click={() => clickCard(stack, card)}
+            />
           {:else}
             {#if $game.conf.showEmpty}
               <Card />
             {/if}
           {/each}
-        </div>
+        {/if}
       {/if}
-    {/if}
+    </div>
   </div>
-{:else}
+  {:else}
   <div class="relative p-1 {flex} box-content" style="width:{stack === '-' ? $maxCardWidth / 2 : $maxCardWidth}px;">
     <slot></slot>
   </div>

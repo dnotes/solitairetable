@@ -368,6 +368,10 @@ export default class Game {
 
   }
 
+  clearSelected() {
+    this.selection = []
+  }
+
   removeSelected(stackIndex) {
     this.selection = this.selection.filter(c => c.stackIndex !== stackIndex)
   }

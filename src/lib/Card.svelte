@@ -1,12 +1,16 @@
 <script lang="ts">
   import type Card from '$lib/Card'
   import type { StackInterface } from './Stack';
-  import { game } from '$lib/data/stores'
+  import { game, draggedCards, stacksWant } from '$lib/data/stores'
 
   export let card:Card|undefined = undefined
   export let facedown = false
   export let stack:StackInterface|undefined = undefined
   export let cardIndex:number = 0
+
+  $: cardDepth = stack?.getCardDepth(cardIndex)
+  $: cards = cardDepth ? stack.look(cardDepth) : []
+  $: draggable = !facedown && !$game.conf.multiSelect && cardDepth && !card.facedown && ($game.conf.selectBlockedStacks || !stack.isBlocked) && (!stack.conf.limitAvailable || cardDepth <= stack.conf.limitAvailable)
 
 	function turn(node, {
 		delay = 0,
@@ -22,6 +26,7 @@
 			`
 		};
   }
+
   // Set up card overlays
   let visibleCardNumber, direction, distance
   $: if (stack) {
@@ -30,23 +35,51 @@
     direction = stack.conf['horizontal'] ? 'left' : 'top'
   }
 
-  let textColor
-  if (card) textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
+  let textColor, fileName, alt
+  if (card) {
+    textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
+    fileName = card.isJoker ? '_joker' : `${card.rank}_${card.suitName}`
+    alt = card.isJoker ? 'joker' : `${card.rank}${card.suit}`
+  }
+
+
 
 </script>
 
-<div class:selected={$game.selection.filter(c => c.id === card.id).length} class="card container {textColor} rounded-xl card-{cardIndex} absolute" style="{direction}:{distance}px ">
-<div on:click on:drag on:drop class="cursor-pointer">
+<div class:selected={$game.selection.filter(c => c?.id === card?.id).length} class="card container {textColor} rounded-xl absolute" style="{direction}:{distance}px"
+  on:dragstart={(e) => {
+    console.log(stack)
+    draggedCards.set({
+      cards,
+      cardDepth,
+      fromStack: stack.index,
+    });
+    $game.clearSelected();
+    $game.setSelected(cards,stack);
+    stacksWant.set($game.stacksWant($game.selection));
+  }}
+  on:dragend={(e) => {
+    draggedCards.set({});
+    stacksWant.set([]);
+    $game.clearSelected();
+    game.set($game)
+  }}
+  on:click >
+<div class="cursor-pointer">
   {#if card}
     {#if facedown || card.facedown}
-      <div transition:turn><img class="w-full" src="/cards/_back.svg" alt="?" /></div>
-    {:else if (card.isJoker)}
-      <div transition:turn><img class="w-full" src="/cards/_joker.svg" alt="joker" /></div>
+      <div transition:turn>
+        <img draggable="false" class="w-full" src="/cards/_back.svg" alt="?" />
+      </div>
     {:else}
-      <div transition:turn><img class="w-full" src="/cards/{card.rank}_{card.suitName}.svg" alt="{card.rank}{card.suit}"></div>
+      <div transition:turn>
+        <img {draggable} class="w-full" src="/cards/{fileName}.svg" {alt}>
+      </div>
     {/if}
   {:else}
-  <div><img class="w-full" src="/cards/_empty.svg" alt="-"></div>
+    <div>
+      <img draggable="false" class="w-full" src="/cards/_empty.svg" alt="-">
+    </div>
   {/if}
   <div class="absolute w-full text-center top-2"><slot></slot></div>
 </div>
