@@ -75,7 +75,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
   </div>
   {/each}
 
+  <div class="absolute bottom-0 pl-4"><a href='/play?g={$game.conf.toString()}'>{@html $game.conf.toString().replace(/!/g, '<br>$&').replace(/\|/g, '<br> &nbsp; |')}</a></div>
 </div>
 
 
-{$game.conf.toString()}

@@ -15,7 +15,7 @@ export class DeckConfig {
     if (!conf) return this
     if (typeof conf === 'string') {
       this.ranks = confString.decode(conf.slice(0,3), ranks)
-      this.jokers = confNumber.decode(conf.slice(3,1))
+      this.jokers = confNumber.decode(conf.slice(3,4).toString())
     }
     else {
       Object.assign(this, conf)

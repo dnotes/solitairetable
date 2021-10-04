@@ -45,10 +45,10 @@ export class StackConfig {
   constructor(conf?:string|boolean|StackConfig|StackConfigSetting) {
     if (!conf || typeof conf === 'boolean') return this
     else if (typeof conf === "string") {
-      let config = conf.split("|")
-      this.empty = confString.decode(config[0], ranks);
-      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[2]);
-      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[1].split("").map(confNumber.decode);
+      let config = conf.split(";")
+      this.empty = confString.decode(config[0], emptyRanks);
+      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[1]);
+      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[2].split("").map(confNumber.decode);
       this.match = config[3].split(",").map(t => new MatchTest(t));
       this.complete = config[4].split(",").map(t => new MatchTest(t));
     }

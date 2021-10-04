@@ -97,7 +97,7 @@ export class GameConfig {
       [this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks] = confBoolean.decode(config[0]);
       [this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode);
       this.deckConfig = new DeckConfig(config[2])
-      this.stackConfig = config[3].split('').map(c => new StackConfig(c))
+      this.stackConfig = config[3].split('|').map(c => new StackConfig(c))
       this.layout = config[4]
       this.footer = config[5] || ''
     }

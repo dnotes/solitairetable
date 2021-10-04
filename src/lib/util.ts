@@ -37,14 +37,17 @@ export const confString = {
     return b64.encode(parseInt(bin,2)).padStart(b64.encode(2^possible.length).length, '0')
   },
   decode: function(value, possible) {
-    return b64.decode(value)
+    let log = `string: "${value}" | ${possible} = `
+    let val = b64.decode(value)
       .toString(2)
       .padStart(possible.length,'0')
       .split('')
       .map((v,i) => {
         return v === '1' ? possible[i] : ''
       })
-      .join('')
+      .join('');
+    console.log(`${log}"${val}"`)
+    return val
   }
 }
 
@@ -53,7 +56,10 @@ export const confBoolean = {
     return b64.encode(parseInt(values.reverse().map(v => v ? 1 : 0).join(''), 2))
   },
   decode: function(number) {
-    return b64.decode(number).toString(2).split('').reverse().map(v => (v === '1')  ? true : false)
+    let log = `boolean: "${number}" = `
+    let val = b64.decode(number).toString(2).split('').reverse().map(v => (v === '1')  ? true : false)
+    console.log(`${log}"${val}"`)
+    return val
   }
 }
 
@@ -65,6 +71,9 @@ export const confNumber = {
     }).join('')
   },
   decode: function(number) {
-    return b64.decode(number)
+    let log = `number: "${number}" = `
+    let val = b64.decode(number)
+    console.log(`${log}"${val}"`)
+    return val
   }
 }
