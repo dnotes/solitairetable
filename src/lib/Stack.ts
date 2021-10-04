@@ -1,4 +1,5 @@
 import type Card from "$lib/Card"
+import type { SelectedCard } from "$lib/Card"
 import { MatchConfig, ColorMatch, RankMatch, MatchTest } from "$lib/Matchers"
 import type { MatchConfigSetting } from "$lib/Matchers"
 import { confString, confBoolean, confNumber } from "$lib/util"
@@ -17,7 +18,9 @@ export type StackConfigSetting = {
   canPut?: boolean        // whether this stack can accept cards during play (true, unless "deal" is true)
   canGet?: boolean        // whether this stack can be pulled from during play (true) (set to false for a standard discard pile)
   horizontal?: boolean    // whether the stack is horizontal (false)
+  isFreecell?: boolean    // whether this stack should be part of a freecell group (false)
   showEmpty?: boolean     // whether a placeholder for the stack is shown when empty (true)
+  matchPriority?: number  // the priority of the row for matches (1)
   match?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the match configuration for the top card (undefined)
   complete?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the completion conditions for the stack (undefined)
 }
@@ -33,7 +36,9 @@ export class StackConfig {
   canPut = true
   canGet = true
   horizontal = false
+  isFreecell = false
   showEmpty = true
+  matchPriority = 1
   match:MatchTest[] = []
   complete:MatchTest[] = []
 
@@ -42,8 +47,8 @@ export class StackConfig {
     else if (typeof conf === "string") {
       let config = conf.split("|")
       this.empty = confString.decode(config[0], ranks);
-      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible] = config[1].split("").map(confNumber.decode);
-      [this.canPut, this.canGet, this.horizontal, this.showEmpty] = confBoolean.decode(config[2]);
+      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[2]);
+      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[1].split("").map(confNumber.decode);
       this.match = config[3].split(",").map(t => new MatchTest(t));
       this.complete = config[4].split(",").map(t => new MatchTest(t));
     }
@@ -58,10 +63,10 @@ export class StackConfig {
   toString():string {
     return [
       confString.encode(this.empty, emptyRanks),
-      confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible),
-      confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.showEmpty),
-      this.match.map(m => m.conf.toString()).join(","),
-      this.complete.map(m => m.conf.toString()).join(","),
+      confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty),
+      confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority),
+      this.match.join(","),
+      this.complete.join(","),
     ].join(";")
   }
 }
@@ -76,8 +81,17 @@ export interface StackInterface {
   maxHeight:number
   maxWidth:number
   initialized:boolean
-  blocked:boolean
-  wants(cards:Card|Card[]):number
+  rowPosition?:number
+  topCard?:Card
+  freecellStacks:StackInterface[]
+  stacksOverlaying:StackInterface[]
+  stacksOverlayed:StackInterface[]
+  isEmpty:boolean
+  isBlocked:boolean
+  isTouching(stackIndex:number):boolean
+  isOverlaying(stackIndex:number):boolean
+  isOverlayedBy(stackIndex:number):boolean
+  wants(cards:SelectedCard[]):number
   push(cards:Card|Card[]):void
   look(qty?:string|number|any[]):Card[]
   pull(qty?:string|number|any[]):Card[]
@@ -94,6 +108,9 @@ export default class Stack implements StackInterface {
   index = 0
   isDeck = false
   initialized = false
+  stacksOverlayed = []
+  stacksOverlaying = []
+  freecellStacks = []
   conf:StackConfig = new StackConfig()
 
   constructor(conf?:string|StackConfig|StackConfigSetting, index=0) {
@@ -129,14 +146,28 @@ export default class Stack implements StackInterface {
     return this.stack[this.length-1] || undefined
   }
 
-  get blocked():boolean {
-    return false
-  }
-
   get isComplete():boolean {
     return this.conf.complete.reduce((agg,match) => {
       return agg && (match.test(this.stack) ? true : false)
     }, true)
+  }
+
+  get isBlocked():boolean {
+    return this.stacksOverlaying.reduce((v,stack) => {
+      return v || !stack.isEmpty
+    }, false)
+  }
+
+  isTouching(stackIndex:number):boolean {
+    return this.isOverlaying(stackIndex) || this.isOverlayedBy(stackIndex)
+  }
+
+  isOverlaying(stackIndex:number):boolean {
+    return this.stacksOverlayed.map(s => s.index).includes(stackIndex)
+  }
+
+  isOverlayedBy(stackIndex:number):boolean {
+    return this.stacksOverlaying.map(s => s.index).includes(stackIndex)
   }
 
   reset() {
@@ -185,7 +216,7 @@ export default class Stack implements StackInterface {
     return this.stack.join(",")
   }
 
-  wants(cards:Card|Card[]):number {
+  wants(cards) {
 
     // if this is not a play stack, exit now
     if (!this.conf.canPut) return 0
@@ -197,14 +228,17 @@ export default class Stack implements StackInterface {
     if (this.stack.join('').match(cards.join(''))) return 0
 
     // first try empty
-    if (this.isEmpty && this.conf.empty.match(cards[0].rank)) return 1
+    if (this.isEmpty && this.conf.empty.match(cards[0].rank) && (!this.conf.limitCards || cards.length <= this.conf.limitCards)) return this.conf.matchPriority
+
+    // ensure max number of cards
+    if (this.conf.limitCards && this.length + cards.length > this.conf.limitCards) return 0
 
     // not all stacks take cards
     if (!this.conf.match) return 0
 
     // iterate over array
     return Math.max(...this.conf.match.map(matcher => {
-      return matcher.test(cards, this.topCard)
+      return matcher.test(cards, this)
     }))
 
   }

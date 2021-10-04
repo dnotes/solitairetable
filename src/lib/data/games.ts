@@ -23,6 +23,7 @@ register({
   name: 'klondike',
   family: 'klondike',
   title: 'Klondike',
+  centerRows: false,
   stackConfig: [
     { empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1 },
@@ -34,7 +35,7 @@ register({
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:7, facedown:6 },
     { deal:3, limitAvailable:1, limitVisible:3, horizontal:true }
   ],
-  layout: '0000 D8,1234567',
+  layout: '0000-D8,1234567',
 })
 
 register(Object.assign({}, games['klondike'], {
@@ -63,9 +64,9 @@ register({
   family: 'freecell',
   title: 'Freecell',
   stackConfig: [
-    { limitCards:1 },
-    { empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
-    { init:50, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
+    { limitCards:1, isFreecell:true },
+    { empty:"A", limitVisible:1, matchPriority:3, match: { count:1, suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
+    { init:50, matchPriority:2, limitAvailable:0, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc, useFreecells:true } },
   ],
   layout: '0000 1111,22222222',
 })
@@ -74,22 +75,27 @@ register({
   name: 'pyramid',
   family: 'pyramid',
   title: 'Pyramid',
-  offsetRows: true,
   overlayRows: true,
-  centerRows: true,
   showEmpty: false,
   multiSelect: true,
   limitCycles: 1,
-  deal: 1,
   deckConfig: { jokers:2 },
   stackConfig: [
     { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
     { empty:'', deal:1, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
     { canGet:false, empty:'', limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
   ],
-  layout: '_0_,_00_,_000_,_0000_,_00000_,_000000_,_0000000_',
+  layout: '0,00,000,0000,00000,000000,0000000',
   footer: '_D 1 2_'
 })
+
+register(Object.assign({}, games['pyramid'], {
+  name: 'pyramid-extra',
+  family: 'pyramid',
+  title: 'Extra',
+  deckConfig: { jokers:3 },
+  layout: '0,00,000,0000,00000,000000,0000000,00000000'
+}))
 
 register(Object.assign({}, games['pyramid'], {
   name: 'pyramid-exact-draw-three',

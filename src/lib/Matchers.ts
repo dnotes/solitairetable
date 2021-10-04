@@ -1,6 +1,7 @@
 import type Card from "$lib/Card"
 import { confBoolean, confNumber } from "$lib/util"
 import { ranks } from "$lib/Stack"
+import type { StackInterface } from "$lib/Stack"
 
 export enum ColorMatch {
   None,
@@ -15,9 +16,18 @@ export enum RankMatch {
   Desc,
 }
 
+export enum StackMatch {
+  Any,
+  Touching,
+  Overlaying,
+  Underlaying,
+}
+
 export type MatchConfigSetting = {
   suit?: boolean
   hasJoker?: boolean
+  hasFreecells?: boolean
+  fromStack?: StackMatch
   color?: ColorMatch
   rank?: RankMatch
   count?: number
@@ -31,6 +41,8 @@ export type MatchConfigSetting = {
 export class MatchConfig {
   suit: boolean = false
   hasJoker: boolean = false
+  useFreecells: boolean = false
+  fromStack: StackMatch = StackMatch.Any
   color: ColorMatch = ColorMatch.None
   rank: RankMatch = RankMatch.None
   count: number = 0
@@ -45,12 +57,13 @@ export class MatchConfig {
     }
     if (typeof conf === 'string') {
       let config = conf.split('');
-      [this.suit, this.hasJoker] = confBoolean.decode(config[0]);
+      [this.suit, this.hasJoker, this.useFreecells] = confBoolean.decode(config[0]);
       [this.countLT, this.countGT, this.totalLT, this.totalGT] = confBoolean.decode(config[1])
       this.color = confNumber.decode(config[2])
       this.rank = confNumber.decode(config[3])
       this.count = confNumber.decode(config[4])
       this.total = confNumber.decode(config[5])
+      this.fromStack = confNumber.decode(config[6])
     }
     else {
       Object.assign(this, conf)
@@ -59,9 +72,9 @@ export class MatchConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.suit, this.hasJoker),
+      confBoolean.encode(this.suit, this.hasJoker, this.useFreecells),
       confBoolean.encode(this.countLT, this.countGT, this.totalLT, this.totalGT),
-      confNumber.encode(this.color, this.rank, this.count, this.total),
+      confNumber.encode(this.color, this.rank, this.count, this.total, this.fromStack),
     ].join('')
   }
 }
@@ -70,17 +83,27 @@ export class MatchTest {
   conf: MatchConfig = new MatchConfig()
   constructor(conf:string|boolean|MatchTest|MatchConfig|MatchConfigSetting) {
     if (!conf || typeof conf === 'boolean') return this
-    else if (typeof conf === 'string') this.conf = new MatchConfig(conf)
     else if (conf instanceof MatchTest) Object.assign(this, conf)
-    else this.conf = Object.assign(conf, new MatchConfig(conf))
+    else this.conf = new MatchConfig(conf)
     return this
   }
-  test(cards:Card|Card[], topCard?:Card|boolean):number {
+  /**
+   * Test whether an array of cards matches a set of conditions.
+   * @param cards An array Card[]|SelectedCard[] to run the test against.
+   * @param stack (optional) The stack that the cards should match.
+   * This must be provided if the cards are attempting to move to the stack,
+   * and must be omitted if the stack is being tested for completeness.
+   * @returns An integer for how many conditions matched, or 0 if a condition failed.
+   */
+  test(cards:Card|Card[], stack?:StackInterface):number {
 
-    // If the stack's topCard is undefined, it means that one is needed but there is none.
-    if (typeof topCard === 'undefined' && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
-    if (topCard === true) throw new Error(`You can't use "true" as the top card.`)
+    let isMoveTest = stack ? true : false
+    let topCard = isMoveTest ? stack.topCard : false
 
+    // These tests must have a topcard to compare against when being moved
+    if (isMoveTest && !topCard && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
+
+    // Setup further variables
     if (!Array.isArray(cards)) cards = [cards]
     let matched = 0
 
@@ -98,6 +121,11 @@ export class MatchTest {
       if (this.conf.countLT && this.conf.count >= cards.length) matched++
       else if (this.conf.countGT && this.conf.count <= cards.length) matched++
       else if (this.conf.count === cards.length) matched++
+      else return 0
+    }
+
+    if (this.conf.useFreecells) {
+      if (cards.length -1 <= stack.freecellStacks.filter(s => s.isEmpty).length) matched++
       else return 0
     }
 
@@ -122,7 +150,7 @@ export class MatchTest {
     if (this.conf.rank) {
       let rankTest = topCard ? topCard.rank : ''
       if (this.conf.rank === RankMatch.Equal) {
-        if (cards[0].rank && rankTest.match(cards[0].rank)) matched++
+        if (cards.filter(c => c.rank === rankTest).length === cards.length) matched++
         else return 0
       }
       else if (this.conf.rank === RankMatch.Asc) {
@@ -137,7 +165,10 @@ export class MatchTest {
       }
     }
 
-    return matched
+    return isMoveTest ? stack.conf.matchPriority : 1
 
+  }
+  toString() {
+    return this.conf.toString()
   }
 }

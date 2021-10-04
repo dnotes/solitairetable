@@ -9,8 +9,8 @@ export default class Card {
   char: string = ''
   text: string = '<blank>'
   value: number = 0
-  isJoker:boolean = false
-  facedown:boolean = false
+  isJoker: boolean = false
+  facedown: boolean = false
 
   constructor(char:string = '', facedown:boolean = false) {
     let card
@@ -45,6 +45,32 @@ export default class Card {
     return `${this.rank}${this.suit}`
   }
 
+}
+
+export class SelectedCard {
+
+  suit: string = ''
+  color: string = ''
+  suitName: string = ''
+  rank: string = ''
+  char: string = ''
+  text: string = '<blank>'
+  value: number = 0
+  isJoker:boolean = false
+  facedown:boolean = false
+
+  cardDepth:number
+  stackIndex:number
+
+  constructor(card:Card, cardDepth:number, stackIndex:number) {
+    Object.assign(this, card)
+    this.cardDepth = cardDepth
+    this.stackIndex = stackIndex
+  }
+  toString(): string {
+    if (this.isJoker) return `🃏`
+    return `${this.rank}${this.suit}`
+  }
 }
 
 export const cards = [

@@ -1,6 +1,7 @@
 import { DeckConfig } from "$lib/Deck"
 import type { DeckConfigSetting } from "$lib/Deck"
 import type Card from "$lib/Card"
+import { SelectedCard } from '$lib/Card'
 import Deck from "$lib/Deck";
 import Stack, { StackConfig } from "$lib/Stack";
 import type { StackConfigSetting, StackInterface } from "$lib/Stack"
@@ -48,16 +49,15 @@ export class Activity {
 export type Row = {
   maxHeight:number
   padBottom:number
-  stacks:Array<StackInterface|undefined>
+  stacks:Array<string|StackInterface|undefined>
 }
 
 export interface GameConfigSetting {
-  offsetRows?: boolean          // whether the rows are layed out in offset/hexagonal design (false)
+  centerRows?: boolean          // whether the stacks should be centered in the rows (true)
   overlayRows?: boolean         // whether rows overlay each other (false)
-  centerRows?: boolean          // whether the stacks should be centered in the rows (false)
   multiSelect?: boolean         // whether multiple cards are selected at once (false)
   showEmpty?: boolean           // whether an empty stack shows a placeholder (true)
-  deal?: number                 // number of cards to deal at a time, if there is a deal pile (1)
+  selectBlockedStacks?: boolean // whether stacks can be selected even when blocked (!conf.overlayRows)
   limitCycles?: number          // number of times to cycle through the deck (0 / unlimited)
   limitUndo?: number            // limit to the number of undos (0 / unlimited)
   layout: string,               // layout
@@ -68,12 +68,11 @@ export interface GameConfigSetting {
 
 export class GameConfig {
   name?: string = ''              // the name of the game, if it has one
-  offsetRows: boolean = false     // whether the rows are layed out in offset/hexagonal design (false)
+  centerRows: boolean = true      // whether the stacks should be centered in the rows (true)
   overlayRows: boolean = false    // whether rows overlay each other (false)
-  centerRows: boolean = false     // whether the stacks should be centered in the rows (false)
   multiSelect: boolean = false    // whether multiple cards are selected at once (false)
+  selectBlockedStacks: boolean = true // whether stacks can be selected even when blocked (!conf.overlayRows)
   showEmpty: boolean = true       // whether an empty stack shows a placeholder (true)
-  deal: number = 1                // number of cards to deal at a time, if there is a deal pile (1)
   limitCycles: number = 0         // number of times to cycle through the deck (0 / unlimited)
   limitUndo: number = 0           // limit to the number of undos (0 / unlimited)
   deckConfig: DeckConfig          // configuration for the deck to be used
@@ -87,20 +86,23 @@ export class GameConfig {
       this.stackConfig = [ new StackConfig() ]
     }
     else if (typeof conf === 'string' && games[conf]) {
-      Object.assign(this, games[conf], { name:conf })
+      let config = games[conf]
+      if (config.overlayRows && !config.hasOwnProperty('selectBlockedStacks')) config['selectBlockedStacks'] = false
+      Object.assign(this, config)
       this.deckConfig = new DeckConfig(this.deckConfig)
       this.stackConfig = Array.isArray(this.stackConfig) ? this.stackConfig.map(c => new StackConfig(c)) : [ new StackConfig ]
     }
     else if (typeof conf === 'string') {
       let config = conf.split('!');
-      [this.offsetRows, this.overlayRows, this.centerRows, this.multiSelect, this.showEmpty] = confBoolean.decode(config[0]);
-      [this.deal, this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode);
+      [this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks] = confBoolean.decode(config[0]);
+      [this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode);
       this.deckConfig = new DeckConfig(config[2])
       this.stackConfig = config[3].split('').map(c => new StackConfig(c))
       this.layout = config[4]
       this.footer = config[5] || ''
     }
     else {
+      if (conf.overlayRows && !conf.hasOwnProperty('selectBlockedStacks')) conf['selectBlockedStacks'] = false
       Object.assign(this, conf)
       this.deckConfig = new DeckConfig(this.deckConfig)
       this.stackConfig.forEach(c => new StackConfig(c))
@@ -109,12 +111,12 @@ export class GameConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.offsetRows, this.overlayRows, this.centerRows, this.multiSelect, this.showEmpty),
-      confNumber.encode(this.deal, this.limitCycles, this.limitUndo),
+      confBoolean.encode(this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks),
+      confNumber.encode(this.limitCycles, this.limitUndo),
       this.deckConfig,
       this.stackConfig.join('|'),
       this.layout,
-    ].join('')
+    ].join('!').replace(' ', '+')
   }
 }
 
@@ -129,7 +131,7 @@ export default class Game {
   footer: Row[] = []
   longestRow: number = 0
   conf: GameConfig
-  selection: SelectedStack[] = []
+  selection: SelectedCard[]
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|DeckConfig|DeckConfigSetting) {
     this.conf = new GameConfig(conf)
@@ -163,9 +165,39 @@ export default class Game {
           stacks: rowStacks
         }
       })
-
       this[k] = rows
     })
+
+    let freecellStacks = this.stacks.filter(s => s.conf.isFreecell)
+    this.stacks.forEach(s => {
+      if (!s.conf.isFreecell) s.freecellStacks = freecellStacks
+    })
+
+    // Set layout indexes
+    this.layout.forEach(row => {
+      row.stacks.forEach((stack,i) => {
+        if (stack && typeof stack !== 'string') {
+          stack.rowPosition = (i * 2) + 1
+          if (this.conf.centerRows) stack.rowPosition += this.longestRow - row.stacks.length
+        }
+      })
+    })
+
+    // Set touching stacks
+    for (let rowIndex=0; rowIndex < this.layout.length - 1; rowIndex++) {
+      let row = this.layout[rowIndex]
+      let nextRow = this.layout[rowIndex + 1]
+      row.stacks.forEach((stack,i) => {
+        if (stack && typeof stack !== 'string' && !stack.isDeck) {
+          nextRow.stacks.filter(s => s && typeof s !== 'string' && s.rowPosition && s.rowPosition > stack.rowPosition - 2 && s.rowPosition < stack.rowPosition + 2).forEach(touchingStack => {
+            if (touchingStack && typeof touchingStack !== 'string') {
+              stack.stacksOverlaying.push(touchingStack)
+              touchingStack.stacksOverlayed.push(stack)
+            }
+          })
+        }
+      })
+    }
 
     // Initialize the first deal
     let length = this.deck.length
@@ -239,10 +271,10 @@ export default class Game {
     }
   }
 
-  stacksWant(cards:Card[]) {
+  stacksWant(cards:SelectedCard[]):Stack[] {
     return this.stacks
       .filter(stack => stack.wants(cards))
-      .sort((a,b) => a.index - b.index)
+      .sort((a,b) => b.conf.matchPriority - a.conf.matchPriority)
   }
 
   deal(setUndo:boolean = true) {
@@ -290,9 +322,7 @@ export default class Game {
     // If the card is not available, do nothing
     if (stack.conf.limitAvailable && cardDepth > stack.conf.limitAvailable) return
     if (stack.conf.discard) return
-    if (this.conf.overlayRows) {
-
-    }
+    if (!this.conf.selectBlockedStacks && stack.isBlocked) return
 
     // Also if the card is facedown and not the top card
     if (cardDepth > 1 && card.facedown) return
@@ -304,16 +334,21 @@ export default class Game {
       let cards = stack.look(cardDepth)
 
       // If the stack is already selected, remove it
-      let alreadySelected = this.selection.find(c => c.stackIndex === stack.index)
-      if (alreadySelected && alreadySelected.cardDepth >= cardDepth) this.removeSelected(stack.index)
+      let alreadySelected = this.selection.find(c => c.stackIndex === stack.index && c.cardDepth >= cardDepth)
+      if (alreadySelected) this.removeSelected(stack.index)
       // Otherwise, add the clicked card and all cards above it
       else this.setSelected(cards, stack)
 
       // Try to move the cards
-      if (this.selectedCards.length) {
-        let options = this.stacksWant(this.selectedCards)
+      if (this.selection.length) {
+        let options = this.stacksWant(this.selection)
         if (options.length) {
-          let actions = this.selection.map(s => new Action(s.cardDepth, s.stackIndex, options[0].index))
+          let actions = this.selection.reduce((agg,card,i,arr) => {
+            if (!agg.find(a => a.fromStack === card.stackIndex)) {
+              agg.push(new Action(arr.filter(c => c.stackIndex === card.stackIndex).length, card.stackIndex, options[0].index))
+            }
+            return agg
+          }, [])
           this.selection = []
           this.do(new Activity('move', actions))
         }
@@ -323,16 +358,14 @@ export default class Game {
     // Otherwise, try to move it
     else {
       let cards = stack.look(cardDepth)
-      let options = this.stacksWant(cards)
+      this.setSelected(cards, stack)
+      let options = this.stacksWant(this.selection)
       if (options.length) {
         this.do(new Activity('move', new Action(cardDepth, stack.index, options[0].index)))
       }
+      this.removeSelected(stack.index)
     }
 
-  }
-
-  get selectedCards() {
-    return this.selection.map(c => c.cards).flat()
   }
 
   removeSelected(stackIndex) {
@@ -340,16 +373,11 @@ export default class Game {
   }
 
   setSelected(cards:Card[], stack:StackInterface) {
-    let cardDepth = cards.length
-    let stackIndex = stack.index
-    this.selection = this.selection.filter(c => c.stackIndex !== stackIndex)
-    this.selection.push({ cards, cardDepth, stackIndex })
+    let selectedCards = cards.map((c,i) => {
+      return new SelectedCard(c,cards.length-i,stack.index)
+    })
+    this.removeSelected(stack.index)
+    this.selection = [...this.selection, ...selectedCards]
   }
 
-}
-
-export type SelectedStack = {
-  cardDepth: number,
-  stackIndex: number,
-  cards: Card[],
 }

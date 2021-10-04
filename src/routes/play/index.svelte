@@ -75,6 +75,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
   </div>
   {/each}
 
-
-
 </div>
+
+
+{$game.conf.toString()}

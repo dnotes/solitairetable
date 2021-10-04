@@ -43,9 +43,11 @@ export default class Deck implements StackInterface,DeckInterface {
   cycles = 1
   maxHeight = 1
   maxWidth = 1
-  blocked = false
   initialized = false
   isShuffled = false
+  freecellStacks = []
+  stacksOverlayed = []
+  stacksOverlaying = []
   conf: DeckConfig
 
   constructor(conf?:string|string[]|Card[]|DeckConfigSetting) {
@@ -110,6 +112,28 @@ export default class Deck implements StackInterface,DeckInterface {
   get stack():Card[] { return this._remaining }
 
   get isEmpty() { return this.stack.length === 0}
+
+  get topCard() {
+    return this.stack[0]
+  }
+
+  get isBlocked():boolean {
+    return this.stacksOverlaying.reduce((v,stack) => {
+      return v || !stack.isEmpty
+    }, false)
+  }
+
+  isTouching(stackIndex:number):boolean {
+    return this.isOverlaying(stackIndex) || this.isOverlayedBy(stackIndex)
+  }
+
+  isOverlaying(stackIndex:number):boolean {
+    return this.stacksOverlayed.map(s => s.index).includes(stackIndex)
+  }
+
+  isOverlayedBy(stackIndex:number):boolean {
+    return this.stacksOverlaying.map(s => s.index).includes(stackIndex)
+  }
 
   shuffle(): Deck {
     let count = this._deck.length;
