@@ -48,7 +48,6 @@
 
 <div class:selected={$game.selection.filter(c => c?.id === card?.id).length} class="card container {textColor} rounded-xl absolute" style="{direction}:{distance}px"
   on:dragstart={(e) => {
-    console.log(stack)
     draggedCards.set({
       cards,
       cardDepth,

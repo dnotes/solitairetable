@@ -35,21 +35,15 @@
     class="relative p-1 justify-center box-content"
     style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;"
     on:dragover="{(e) => {
-      console.log('dragover')
       e.preventDefault()
     }}"
     on:drop="{(e) => {
-      console.log('drop (stack)');
       e.preventDefault();
-      console.log($draggedCards)
-      console.log(stack)
       // @ts-ignore
       if (stack.wants($draggedCards.cards)) {
         console.log('dropped!');
         // @ts-ignore
         $game.do(new Activity('move', new Action($draggedCards.cardDepth, $draggedCards.fromStack, stack.index)));
-        $game.clearSelected()
-        game.set($game)
       }
     }}"
   >
