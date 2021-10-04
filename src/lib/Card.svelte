@@ -35,7 +35,7 @@
 
 </script>
 
-<div class:selected={$game.selection.filter(c => c.char === card.char).length} class="card container {textColor} rounded-xl card-{cardIndex} absolute" style="{direction}:{distance}px ">
+<div class:selected={$game.selection.filter(c => c.id === card.id).length} class="card container {textColor} rounded-xl card-{cardIndex} absolute" style="{direction}:{distance}px ">
 <div on:click on:drag on:drop class="cursor-pointer">
   {#if card}
     {#if facedown || card.facedown}

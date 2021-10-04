@@ -59,7 +59,7 @@ export default class Deck implements StackInterface,DeckInterface {
     // for passing options object
     else {
       this.conf = new DeckConfig(conf)
-      this.deck = [...cards.filter(c => this.ranks.match(c.rank)).map(c => c.char), ...Array.from({length:this.conf.jokers}, (_,i) => i+1).map(v => v.toString())]
+      this.deck = [...cards.filter(c => this.ranks.match(c.rank)).map(c => c.id), ...Array.from({length:this.conf.jokers}, (_,i) => i+1).map(v => v.toString())]
       if (!this.isShuffled) this.shuffle()
     }
 
@@ -77,7 +77,7 @@ export default class Deck implements StackInterface,DeckInterface {
     if (!Array.isArray(stack)) throw new Error('Invalid deck given')
 
     // Get a map of single characters (incase Card[] was passed)
-    let charMap = stack.map(c => typeof c === 'string' ? c : c.char)
+    let charMap = stack.map(c => typeof c === 'string' ? c : c.id)
 
     // Ensure a sensible number of cards
     let cardCount = charMap.filter(c => c.match(/[a-zA-z]/)).length
@@ -97,7 +97,7 @@ export default class Deck implements StackInterface,DeckInterface {
 
     // Set config (for exports)
     if (!this.conf) {
-      let hasRanks = this.deck.filter(c => c.char.match(/[a-zA-Z]/)).map(c => c.rank).join('')
+      let hasRanks = this.deck.filter(c => c.id.match(/[a-zA-Z]/)).map(c => c.rank).join('')
       let rankList = ranks.split('').filter(r => hasRanks.match(r)).join('')
       this.conf = new DeckConfig({
         ranks: rankList,
@@ -183,7 +183,7 @@ export default class Deck implements StackInterface,DeckInterface {
   }
 
   toString():string {
-    return this.deck.map(c => c.char).join('')
+    return this.deck.map(c => c.id).join('')
   }
 
   wants() { return 0 }

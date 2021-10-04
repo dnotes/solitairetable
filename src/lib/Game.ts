@@ -144,18 +144,18 @@ export default class Game {
     ['layout','footer'].forEach(k => {
       let rows = this.conf[k].split(',').map(row => {
         let maxHeight = 0
-        let rowStacks = row.split('').map(char => {
+        let rowStacks = row.split('').map(id => {
           let stack
-          if (char.match(/\d/)) {
-            stack = new Stack(this.conf.stackConfig[char])
+          if (id.match(/\d/)) {
+            stack = new Stack(this.conf.stackConfig[id])
             stack.index = this.stacks.length
             this.stacks.push(stack)
             if (stack.maxHeight > maxHeight) maxHeight = stack.maxHeight
           }
-          else if (char.match(/[Dd]/)) {
+          else if (id.match(/[Dd]/)) {
             stack = this.deck
           }
-          else if (char.match(/[-_]/)) stack = char
+          else if (id.match(/[-_]/)) stack = id
           return stack
         })
         if (k === 'layout' && rowStacks.length > this.longestRow) this.longestRow = rowStacks.length
