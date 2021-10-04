@@ -24,6 +24,9 @@
     game.set($game)
   }
 
+  // @ts-ignore
+  $: wanted = (stack && typeof stack !== 'string' && $draggedCards?.cards && stack.wants($draggedCards.cards))
+
 </script>
 
 {#if typeof stack !== 'string'}
@@ -74,10 +77,18 @@
           {#each stack.stack as card, cardIndex (card.id)}
             <Card {card} {stack} {cardIndex}
               on:click={() => clickCard(stack, card)}
-            />
+            >
+            {#if wanted && cardIndex === stack.length - 1}
+              <div class="absolute w-full top-0 bg-blue-500 opacity-40 rounded-xl -my-2" style="height:{$maxCardWidth * 1.5}px">&nbsp;</div>
+            {/if}
+            </Card>
           {:else}
             {#if $game.conf.showEmpty}
-              <Card />
+              <Card>
+                {#if wanted}
+                  <div class="absolute w-full top-0 bg-blue-300 opacity-40 rounded-xl -my-2" style="height:{$maxCardWidth * 1.5}px">&nbsp;</div>
+                {/if}
+              </Card>
             {/if}
           {/each}
         {/if}

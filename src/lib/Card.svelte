@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Card from '$lib/Card'
   import type { StackInterface } from './Stack';
-  import { game, draggedCards, stacksWant } from '$lib/data/stores'
+  import { game, draggedCards } from '$lib/data/stores'
 
   export let card:Card|undefined = undefined
   export let facedown = false
@@ -56,11 +56,9 @@
     });
     $game.clearSelected();
     $game.setSelected(cards,stack);
-    stacksWant.set($game.stacksWant($game.selection));
   }}
   on:dragend={(e) => {
     draggedCards.set({});
-    stacksWant.set([]);
     $game.clearSelected();
     game.set($game)
   }}
