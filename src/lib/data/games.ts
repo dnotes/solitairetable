@@ -109,4 +109,20 @@ register(Object.assign({}, games['pyramid'], {
   footer: 'D 1 1 1 2'
 }))
 
+register({
+  name: 'golf',
+  family: 'golf',
+  title: 'Golf',
+  stackConfig: [
+    { init:5, limitCards:5, limitAvailable:5, canPut:false },
+    { limitVisible:1, limitAvailable:1, deal:1, canGet:true, canPut:true, match: [
+      { count:1, rank:RankMatch.Asc },
+      { count:1, rank:RankMatch.Desc }
+    ] },
+  ],
+  layout: '0000000',
+  footer: '_D 1_',
+  limitCycles: 1,
+})
+
 export default games
