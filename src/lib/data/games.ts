@@ -124,4 +124,20 @@ register({
   limitCycles: 1,
 })
 
+register({
+  name: 'spider',
+  family: 'spider',
+  title: 'Spider',
+  deckConfig: {
+    decks:8,
+    suits:'S',
+  },
+  stackConfig: [
+    { empty:'', match: [ { suit:true, count:13, rank:RankMatch.Desc } ], limitVisible:1, complete: { count:13 }, matchPriority:2 },
+    { deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 },
+    { deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 }
+  ],
+  layout: 'D 00000000,1111222222'
+})
+
 export default games
