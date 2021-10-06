@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Card from '$lib/Card'
   import type { StackInterface } from './Stack';
-  import { game, draggedCards } from '$lib/data/stores'
+  import { game, draggedCards, edgeWidth, edgeHeight } from '$lib/data/stores'
 
   export let card:Card|undefined = undefined
   export let facedown = false
@@ -31,7 +31,7 @@
   let visibleCardNumber, direction, distance
   $: if (stack) {
     visibleCardNumber = Math.max(cardIndex - stack.firstVisible, 0)
-    distance = visibleCardNumber * (stack.conf['horizontal'] ? 22 : 36)
+    distance = visibleCardNumber * (stack.conf['horizontal'] ? $edgeWidth : $edgeHeight)
     direction = stack.conf['horizontal'] ? 'left' : 'top'
   }
 

@@ -3,7 +3,7 @@
 import { page } from '$app/stores'
 import Game from '$lib/Game'
 import Pile from '$lib/Stack.svelte'
-import { game, maxCardWidth } from '$lib/data/stores'
+import { game, maxCardWidth, edgeHeight } from '$lib/data/stores'
 
   let config = $page.query.get('g')
   if (!config) config = 'klondike-vegas'
@@ -15,7 +15,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
   let w=0,h=0
 
   $: maxCardWidth.set((w / $game.longestRow) - 20)
-  $: rowHeight = $maxCardWidth * 1.5
+  $: cardHeight = $maxCardWidth * 1.5
 
 </script>
 
@@ -28,7 +28,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
 
   <!-- ROWS -->
   {#each $game.layout as row, rowIndex}
-  <div class="flex flex-row w-full relative p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
+  <div class="flex flex-row flex-grow w-full relative p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight)}px;">
     <!-- PILES -->
     {#each row.stacks as stack}
     <Pile {stack} />
@@ -37,7 +37,7 @@ import { game, maxCardWidth } from '$lib/data/stores'
   {/each}
 
   {#each $game.footer as row, rowIndex}
-  <div class="flex flex-row w-full relative p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{$game.conf.overlayRows && (rowIndex !== $game.footer.length - 1) ? $maxCardWidth * .7 : rowHeight + row.padBottom}px;">
+  <div class="flex flex-row w-full relative p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{cardHeight}px;">
     {#each row.stacks as stack}
     <Pile {stack} />
     {/each}

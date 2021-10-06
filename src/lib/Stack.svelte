@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { StackInterface } from "$lib/Stack"
-  import { game, maxCardWidth, draggedCards } from '$lib/data/stores'
+  import { game, maxCardWidth, edgeHeight, edgeWidth, draggedCards } from '$lib/data/stores'
   import Card from '$lib/Card.svelte'
   import Game, { Action, Activity } from '$lib/Game'
   import type CardInterface from '$lib/Card'
@@ -14,7 +14,7 @@
   }
   else if (stack && !stack.isDeck) {
     direction = stack.conf['horizontal'] ? 'right' : 'bottom'
-    distance = stack.conf['horizontal'] ? stack.maxWidth * 22 : stack.maxHeight * 36
+    distance = stack.conf['horizontal'] ? stack.maxWidth * $edgeWidth : stack.maxHeight * $edgeHeight
   }
 
   function clickCard(stack:string|StackInterface, card?:CardInterface) {

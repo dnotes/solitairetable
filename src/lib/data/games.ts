@@ -114,7 +114,7 @@ register({
   family: 'golf',
   title: 'Golf',
   stackConfig: [
-    { init:5, limitCards:5, limitAvailable:5, canPut:false },
+    { init:5, canPut:false },
     { limitVisible:1, limitAvailable:1, deal:1, canGet:true, canPut:true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc }

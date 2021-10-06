@@ -161,7 +161,6 @@ export default class Game {
         if (k === 'layout' && rowStacks.length > this.longestRow) this.longestRow = rowStacks.length
         return {
           maxHeight,
-          padBottom: maxHeight * 36,
           stacks: rowStacks
         }
       })

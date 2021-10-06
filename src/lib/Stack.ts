@@ -134,12 +134,16 @@ export default class Stack implements StackInterface {
 
   get maxHeight() {
     if (this.conf.horizontal || this.conf.limitCards === 1 || this.conf.limitVisible === 1) return 1
-    return this.conf.limitVisible || 14
+    if (this.conf.limitCards || this.conf.limitVisible) return this.conf.limitCards || this.conf.limitVisible
+    if (!this.conf.canPut && !this.conf.deal) return this.conf.init || 1
+    return 14
   }
 
   get maxWidth() {
     if (!this.conf.horizontal || this.conf.limitCards === 1 || this.conf.limitVisible === 1) return 1
-    return this.conf.limitVisible || 52
+    if (this.conf.limitCards || this.conf.limitVisible) return this.conf.limitCards || this.conf.limitVisible
+    if (!this.conf.canPut && !this.conf.deal) return this.conf.init || 1
+    return 52
   }
 
   get topCard():Card|undefined {
