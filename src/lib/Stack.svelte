@@ -7,15 +7,18 @@
 
   export let stack:string|StackInterface|undefined
 
-  let direction, distance, flex = ''
+  let flex = '', extraHeight = 0, extraWidth = 0
   if (typeof stack === 'string') {
     if (stack === '-') flex = 'flex-shrink'
     if (stack === '_') flex = 'flex-grow'
   }
   else if (stack && !stack.isDeck) {
-    direction = stack.conf['horizontal'] ? 'right' : 'bottom'
-    distance = stack.conf['horizontal'] ? stack.maxWidth * $edgeWidth : stack.maxHeight * $edgeHeight
+    if (stack.conf['horizontal']) extraWidth = stack.maxWidth * $edgeWidth
+    else extraHeight = stack.maxHeight * $edgeHeight
   }
+
+  $: stackWidth = $maxCardWidth + extraWidth
+  $: stackHeight = ($maxCardWidth * 1.5) + extraHeight
 
   function clickCard(stack:string|StackInterface, card?:CardInterface) {
     if (typeof stack === 'string') return
@@ -33,7 +36,7 @@
   <div
     class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)}
     class="relative p-1 justify-center box-content"
-    style="padding-{direction}:{distance}px; width:{$maxCardWidth}px;"
+    style="height:{stackHeight}px; width:{stackWidth}px;"
     on:dragover="{(e) => {
       e.preventDefault()
     }}"
