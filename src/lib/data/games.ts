@@ -23,7 +23,6 @@ register({
   name: 'klondike',
   family: 'klondike',
   title: 'Klondike',
-  centerRows: false,
   stackConfig: [
     { empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
     { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1 },
