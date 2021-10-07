@@ -72,7 +72,6 @@ export default class Deck implements StackInterface,DeckInterface {
     // for passing options object
     else {
       this.conf = new DeckConfig(conf)
-      console.log(this.conf)
       let base = [...cards.filter(c => this.ranks.match(c.rank) && this.suits.match(c.suitName[0])).map(c => c.char), ...Array.from({length:this.conf.jokers}, (_,i) => i+1).map(v => v.toString())]
       this.deck = new Array(this.conf.decks).fill(base).flat()
       if (!this.isShuffled) this.shuffle()
