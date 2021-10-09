@@ -129,7 +129,7 @@ export default class Stack implements StackInterface {
 
   get firstVisible() {
     if (!this.conf.limitVisible) return 0
-    return this.stack.length - this.conf.limitVisible
+    return Math.max(this.stack.length - this.conf.limitVisible, 0)
   }
 
   get maxHeight() {

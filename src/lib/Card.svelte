@@ -31,7 +31,7 @@
   let visibleCardNumber, direction, distance
   $: if (stack) {
     visibleCardNumber = Math.max(cardIndex - stack.firstVisible, 0)
-    distance = visibleCardNumber * (stack.conf['horizontal'] ? $edgeWidth : $edgeHeight)
+    distance = stack?.isDeck ? 0 : visibleCardNumber * (stack.conf['horizontal'] ? $edgeWidth : $edgeHeight)
     direction = stack.conf['horizontal'] ? 'left' : 'top'
   }
 
