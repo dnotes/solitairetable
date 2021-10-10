@@ -13,6 +13,7 @@ import { goto } from '$app/navigation';
 
   import GameControls from '$lib/GameControls.svelte'
   import GameLinks from '$lib/GameLinks.svelte'
+  import SiteLinks from '$lib/SiteLinks.svelte'
 
   export let isTable
   export let family
@@ -42,9 +43,8 @@ import { goto } from '$app/navigation';
       <GameLinks labelSide="bottom" class="bg-gray-900 text-white hover:no-underline" childClass="text-white hover:no-underline hover:bg-gray-500" />
     {/if}
 
+    <SiteLinks class="text-white hover:no-underline" />
 
-    <a href="/" on:click|preventDefault={() => {goto('/')}}>Home</a> |
-    © 2021 David Hunt
   </footer>
 
 </div>
