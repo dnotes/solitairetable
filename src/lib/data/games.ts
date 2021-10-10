@@ -128,6 +128,7 @@ register({
   name: 'spider',
   family: 'spider',
   title: 'Spider',
+  limitCycles: 1,
   deckConfig: {
     decks:8,
     suits:'S',
