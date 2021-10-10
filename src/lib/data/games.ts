@@ -140,4 +140,14 @@ register({
   layout: 'D 00000000,1111222222'
 })
 
+register(Object.assign({}, games['spider'], {
+  name: 'spider-two-suit',
+  family: 'spider',
+  title: 'Two suits',
+  deckConfig: {
+    decks: 4,
+    suits:'SD',
+  }
+}))
+
 export default games
