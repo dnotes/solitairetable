@@ -68,6 +68,8 @@ export interface GameConfigSetting {
 
 export class GameConfig {
   name?: string = ''              // the name of the game, if it has one
+  family?: string = ''            // the family to which the game belongs, if it has one
+  variants?: GameConfig[]         // the variants of the current game
   centerRows: boolean = true      // whether the stacks should be centered in the rows (true)
   overlayRows: boolean = false    // whether rows overlay each other (false)
   multiSelect: boolean = false    // whether multiple cards are selected at once (false)

@@ -1,16 +1,21 @@
+<script lang="ts" context="module">
+  import Game from '$lib/Game'
+  import { game } from '$lib/data/stores'
+  export async function load({ page }) {
+    let config = page.query.get('g')
+    if (!config) config = 'klondike-vegas'
+    let deck = page.query.get('d')
+    game.set(new Game(config, deck))
+    return { props: { game }}
+  }
+</script>
+
+
 <script lang="ts">
 
-import { page } from '$app/stores'
-import Game from '$lib/Game'
 import Pile from '$lib/Stack.svelte'
-import { game, maxCardWidth, edgeHeight } from '$lib/data/stores'
-
-  let config = $page.query.get('g')
-  if (!config) config = 'klondike-vegas'
-
-  let deck = $page.query.get('d') || undefined
-
-  game.set(new Game(config, deck))
+import { maxCardWidth, edgeHeight } from '$lib/data/stores'
+import GameControls from '$lib/GameControls.svelte'
 
   let w=0,h=0
 
@@ -27,9 +32,7 @@ import { game, maxCardWidth, edgeHeight } from '$lib/data/stores'
 
 <div id="game" class="flex flex-col text-white h-full" bind:clientWidth={w} bind:clientHeight={h}>
   <div id="actions" class="flex-shrink">
-    <button on:click={() => {$game.doUndo();game.set($game)}}>Undo</button>
-    <button on:click={() => {$game.doRedo();game.set($game)}}>Redo</button>
-    <button on:click={() => {game.set(new Game(config))}}>New</button>
+    <GameControls/>
   </div>
 
   <!-- ROWS -->

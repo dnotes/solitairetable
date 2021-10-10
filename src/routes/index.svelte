@@ -1,18 +1,11 @@
 <script>
-import GameIcon from '$lib/GameIcon.svelte';
-  import games from '$lib/data/games'
+  import GameIcons from '$lib/GameIcons.svelte';
 </script>
 
 <h1>Solitaire Construction Kit</h1>
 
-
-
 <h2 id="play-solitaire">Play solitaire here!</h2>
 
 <div class="flex flex-row justify-center space-x-4">
-  {#each Object.keys(games).map(k => games[k]) as config}
-    {#if config.name === config.family}
-      <GameIcon {config}/>
-    {/if}
-  {/each}
+  <GameIcons></GameIcons>
 </div>
