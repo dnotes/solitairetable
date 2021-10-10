@@ -88,6 +88,7 @@ export interface StackInterface {
   stacksOverlayed:StackInterface[]
   isEmpty:boolean
   isBlocked:boolean
+  reset():void
   isTouching(stackIndex:number):boolean
   isOverlaying(stackIndex:number):boolean
   isOverlayedBy(stackIndex:number):boolean

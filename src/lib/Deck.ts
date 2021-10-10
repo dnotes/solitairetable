@@ -50,7 +50,7 @@ export interface DeckInterface {
 export default class Deck implements StackInterface,DeckInterface {
 
   _deck = <Card[]>[]
-  _remaining = <Card[]>[]
+  stack = <Card[]>[]
   index = -1
   isDeck = true
   cycles = 1
@@ -107,7 +107,7 @@ export default class Deck implements StackInterface,DeckInterface {
     // }
 
     this._deck = stack.map((c,i) => new Card(c,i))
-    this._remaining = [...this._deck]
+    this.stack = [...this._deck]
 
     // Set config (for exports)
     if (!this.conf) {
@@ -134,8 +134,6 @@ export default class Deck implements StackInterface,DeckInterface {
 
   get ranks() { return this.conf.ranks }
 
-  get stack():Card[] { return this._remaining }
-
   get isEmpty() { return this.stack.length === 0 }
 
   get topCard() {
@@ -146,6 +144,11 @@ export default class Deck implements StackInterface,DeckInterface {
     return this.stacksOverlaying.reduce((v,stack) => {
       return v || !stack.isEmpty
     }, false)
+  }
+
+  reset() {
+    this.initialized = false
+    this.stack = [...this.deck]
   }
 
   isTouching(stackIndex:number):boolean {
@@ -166,13 +169,13 @@ export default class Deck implements StackInterface,DeckInterface {
       this._deck.push(this._deck.splice(Math.floor(Math.random() * count), 1)[0]);
       count -= 1;
     }
-    this._remaining = this._deck
+    this.reset()
     return this
   }
 
   push(cards:Card|Card[]) {
     if (!Array.isArray(cards)) cards = [cards]
-    this._remaining = [...cards, ...this._remaining]
+    this.stack = [...cards, ...this.stack]
   }
 
   pull(qty:string|number|any[]=1):Card[] {
@@ -180,7 +183,7 @@ export default class Deck implements StackInterface,DeckInterface {
     else if (typeof qty === 'string') qty = parseInt(qty)
     else if (Array.isArray(qty)) qty = qty.length
     else qty = 1
-    return this._remaining.splice(0, qty)
+    return this.stack.splice(0, qty)
   }
 
   look(qty:string|number|any[]=1):Card[] {
@@ -188,7 +191,7 @@ export default class Deck implements StackInterface,DeckInterface {
     else if (typeof qty === 'string') qty = parseInt(qty)
     else if (Array.isArray(qty)) qty = qty.length
     else qty = 1
-    return this._remaining.slice(0, qty)
+    return this.stack.slice(0, qty)
   }
 
   truncate(index:string|number):Card[] {
@@ -213,8 +216,8 @@ export default class Deck implements StackInterface,DeckInterface {
 
   wants() { return 0 }
 
-  get firstVisible() { return this._remaining.length - 1 }
+  get firstVisible() { return this.stack.length - 1 }
 
-  get length() { return this._remaining.length }
+  get length() { return this.stack.length }
 
 }

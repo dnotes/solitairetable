@@ -201,6 +201,24 @@ export default class Game {
     }
 
     // Initialize the first deal
+    this.initialize()
+
+    return this
+  }
+
+  get canRecycle():boolean|number {
+    return !this.conf.limitCycles || (this.conf.limitCycles - this.deck.cycles)
+  }
+
+  initialize() {
+
+    // first make sure everything is set empty
+    this.deck.reset()
+    this.stacks.forEach(s => s.reset())
+    this.undo = []
+    this.redo = []
+    this.selection = []
+
     let length = this.deck.length
     // continue as long as the deck changes size
     do {
@@ -216,15 +234,16 @@ export default class Game {
         }
       }
     })
-
-    this.stacks = this.stacks
-    this.deck = this.deck
-
-    return this
   }
 
-  get canRecycle():boolean|number {
-    return !this.conf.limitCycles || (this.conf.limitCycles - this.deck.cycles)
+  reset() {
+    this.deck.reset()
+    this.initialize()
+  }
+
+  new() {
+    this.deck.shuffle()
+    this.initialize()
   }
 
   getStack(index:number) {
