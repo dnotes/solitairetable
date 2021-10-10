@@ -1,6 +1,6 @@
 import type Card from "$lib/Card"
 import type { SelectedCard } from "$lib/Card"
-import { MatchConfig, ColorMatch, RankMatch, MatchTest } from "$lib/Matchers"
+import { MatchConfig, MatchTest } from "$lib/Matchers"
 import type { MatchConfigSetting } from "$lib/Matchers"
 import { confString, confBoolean, confNumber } from "$lib/util"
 
@@ -229,7 +229,7 @@ export default class Stack implements StackInterface {
     if (!Array.isArray(cards)) cards = [cards]
 
     // if this is the same stack, exit
-    if (this.stack.join('').match(cards.join(''))) return 0
+    if (this.stack.join('').match(RegExp(cards.join('') + '$'))) return 0
 
     // first try empty
     if (this.isEmpty && this.conf.empty.match(cards[0].rank) && (!this.conf.limitCards || cards.length <= this.conf.limitCards)) return this.conf.matchPriority
