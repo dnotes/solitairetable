@@ -1,23 +1,19 @@
 <script context="module" lang="ts">
-  import games from '$lib/data/games'
   export async function load({ page }) {
     let isTable = page.path.match(/^\/play/) ? true : false
-    let game = page.query.get('g') || ''
-    let family = games?.[game]?.family || ''
-    return { props: { isTable, family }}
+    return { props: { isTable }}
   }
 </script>
 
 <script lang="ts">
-import { goto } from '$app/navigation';
 
-  import GameControls from '$lib/GameControls.svelte'
-  import GameLinks from '$lib/GameLinks.svelte'
-  import SiteLinks from '$lib/SiteLinks.svelte'
+import GameControls from '$lib/GameControls.svelte'
+import GameLinks from '$lib/GameLinks.svelte'
+import SiteLinks from '$lib/SiteLinks.svelte'
+import { game } from '$lib/data/stores'
+import "../app.css"
 
-  export let isTable
-  export let family
-  import "../app.css"
+export let isTable
 
 </script>
 
@@ -38,7 +34,7 @@ import { goto } from '$app/navigation';
 
     {#if isTable}
       <GameControls/>
-      <GameLinks {family} labelSide="bottom" class="bg-gray-900 text-white hover:no-underline" childClass="text-white hover:no-underline hover:bg-gray-500" />
+      <GameLinks family={$game?.conf?.family || ''} labelSide="bottom" class="bg-gray-900 text-white hover:no-underline" childClass="text-white hover:no-underline hover:bg-gray-500" />
     {:else}
       <GameLinks labelSide="bottom" class="bg-gray-900 text-white hover:no-underline" childClass="text-white hover:no-underline hover:bg-gray-500" />
     {/if}

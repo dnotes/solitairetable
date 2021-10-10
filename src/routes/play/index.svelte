@@ -1,21 +1,19 @@
-<script lang="ts" context="module">
-  import Game from '$lib/Game'
-  import { game } from '$lib/data/stores'
-  export async function load({ page }) {
-    let config = page.query.get('g')
-    if (!config) config = 'klondike-vegas'
-    let deck = page.query.get('d')
-    game.set(new Game(config, deck))
-    return { props: { game }}
-  }
-</script>
-
-
 <script lang="ts">
 
+import { browser } from '$app/env'
+import { page } from '$app/stores'
 import Pile from '$lib/Stack.svelte'
 import { maxCardWidth, edgeHeight } from '$lib/data/stores'
 import GameControls from '$lib/GameControls.svelte'
+import Game from '$lib/Game'
+import { game } from '$lib/data/stores'
+
+  if (browser) {
+    let config = $page.query.get('g')
+    if (!config) config = 'klondike-vegas'
+    let deck = $page.query.get('d')
+    game.set(new Game(config, deck))
+  }
 
   let w=0,h=0
 
