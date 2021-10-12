@@ -1,6 +1,7 @@
 import preprocess from "svelte-preprocess";
 import adapter from "@sveltejs/adapter-static"
 import { plugin as mdPlugin } from "vite-plugin-markdown"
+import sw from './kit-sw-workbox/index.js'
 import mdAttrs from "markdown-it-attrs"
 import mdit from "markdown-it"
 
@@ -18,6 +19,14 @@ const config = {
         vite: {
             plugins: [
                 md,
+                sw({
+                    routes: [
+                        '/',
+                        '/about',
+                        '/play',
+                        '/build',
+                    ]
+                })
             ]
         },
         adapter: adapter()

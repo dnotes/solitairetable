@@ -15,6 +15,8 @@ Here are some resources consulted and/or used in making this project:
 
 * [Rewriting a website in SvelteKit, with Markdown and Tailwind](https://mattjennings.io/blog/rewriting-my-website-in-sveltekit)
 * [Building a dropdown menu with Svelte and Tailwind](https://codechips.me/tailwind-ui-react-vs-svelte/)
+* [Create a PWA with SvelteKit](https://dev.to/100lvlmaster/create-a-pwa-with-sveltekit-svelte-a36)
+* The [kit-sw-workbox](https://github.com/Anyass3/kit-sw-workbox) project
 
 
 [Solitaire Builder]: https://solitairebuilder.github.io "This site/app/project is the Solitaire Builder"

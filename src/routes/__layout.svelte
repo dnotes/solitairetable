@@ -7,6 +7,7 @@
 
 <script lang="ts">
 
+import ReloadPrompt from '$lib/ReloadPrompt.svelte'
 import GameControls from '$lib/GameControls.svelte'
 import GameLinks from '$lib/GameLinks.svelte'
 import SiteLinks from '$lib/SiteLinks.svelte'
@@ -40,6 +41,8 @@ export let isTable
     {/if}
 
     <SiteLinks class="text-white hover:no-underline" />
+
+    <ReloadPrompt/>
 
   </footer>
 
