@@ -2,7 +2,7 @@
   import GameIcons from '$lib/GameIcons.svelte';
 </script>
 
-<h1>Solitaire Construction Kit</h1>
+<h1>Solitaire Table</h1>
 
 <h2 id="play-solitaire">Play solitaire here!</h2>
 

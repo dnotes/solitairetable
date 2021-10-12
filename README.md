@@ -2,9 +2,9 @@
 title: About
 ---
 
-# About Solitaire Builder
+# About Solitaire Table
 
-[Solitaire Builder] is an installable [PWA] made with [SvelteKit](https://kit.svelte.dev) and [Tailwind CSS](https://tailwindcss.com),
+[Solitaire Table] is an installable [PWA] made with [SvelteKit](https://kit.svelte.dev) and [Tailwind CSS](https://tailwindcss.com),
 hosted on Github, open source, and free for use with no advertising.
 It was created by [David Hunt] (me) over a few evenings and weekends in September/October 2021, mainly because none of
 my solitaire apps would play [pyramid solitaire] the way I like and my phone app had a wonky UI for Klondike.
@@ -19,7 +19,7 @@ Here are some resources consulted and/or used in making this project:
 * The [kit-sw-workbox](https://github.com/Anyass3/kit-sw-workbox) project
 
 
-[Solitaire Builder]: https://solitairebuilder.github.io "This site/app/project is the Solitaire Builder"
+[Solitaire Table]: https://solitaire.dnotes.net "This site/app/project is the Solitaire Table"
 [David Hunt]: https://github.com/dnotes "David Hunt"
 [PWA]: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps "Progressive Web App"
-[pyramid solitaire]: https://solitiarebuilder.github.io/play?g=pyramid
+[pyramid solitaire]: https://solitaire.dnotes.net/play?g=pyramid

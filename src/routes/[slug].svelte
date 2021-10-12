@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-  <title>{`${attributes?.title} : Solitaire Builder`}</title>
+  <title>{`${attributes?.title} : Solitaire Table`}</title>
 </svelte:head>
 
 {@html html}
