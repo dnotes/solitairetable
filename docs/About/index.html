@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="alternate icon" href="/favicon.ico" type="image/png" sizes="16x16">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+		<link rel="mask-icon" href="/favicon.svg" color="#FFFFFF">
+		<meta name="theme-color" content="#0c4e36">
+		<link rel="manifest" crossorigin="use-credentials" href="manifest.json">
+		<title>About : Solitaire Table</title>
+
+		
+
+		<link rel="modulepreload" href="/_app/start-0a06c350.js">
+		<link rel="modulepreload" href="/_app/chunks/vendor-bbe47adb.js">
+		<link rel="modulepreload" href="/_app/chunks/preload-helper-ec9aa979.js">
+		<link rel="modulepreload" href="/_app/chunks/singletons-12a22614.js">
+		<link rel="modulepreload" href="/_app/pages/__layout.svelte-9d500774.js">
+		<link rel="modulepreload" href="/_app/chunks/GameControls-d7a44d87.js">
+		<link rel="modulepreload" href="/_app/chunks/stores-95512afe.js">
+		<link rel="modulepreload" href="/_app/chunks/Game-c6420ef6.js">
+		<link rel="modulepreload" href="/_app/chunks/README-855a7e4f.js">
+		<link rel="modulepreload" href="/_app/pages/[slug].svelte-c3f983e7.js">
+		<link rel="stylesheet" href="/_app/assets/start-464e9d0a.css">
+		<link rel="stylesheet" href="/_app/assets/pages/__layout.svelte-504e7581.css">
+
+		<script type="module">
+			import { start } from "/_app/start-0a06c350.js";
+			start({
+				target: document.querySelector("#svelte"),
+				paths: {"base":"","assets":""},
+				session: {},
+				host: location.host,
+				route: true,
+				spa: false,
+				trailing_slash: "never",
+				hydrate: {
+					status: 200,
+					error: null,
+					nodes: [
+						import("/_app/pages/__layout.svelte-9d500774.js"),
+						import("/_app/pages/[slug].svelte-c3f983e7.js")
+					],
+					page: {
+						host: location.host, // TODO this is redundant
+						path: "/About",
+						query: new URLSearchParams(""),
+						params: {"slug":"About"}
+					}
+				}
+			});
+		</script><script>
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('/service-worker.js');
+			}
+		</script>
+	</head>
+	<body>
+		<div id="svelte">
+
+
+<div class="min-h-screen flex flex-col"><div id="main" class="flex-grow w-full max-w-screen-lg mx-auto p-4">
+
+<!-- HTML_TAG_START --><h1>About Solitaire Table</h1>
+<p><a href="https://solitaire.dnotes.net" title="This site/app/project is the Solitaire Table">Solitaire Table</a> is an installable <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps" title="Progressive Web App">PWA</a> made with <a href="https://kit.svelte.dev">SvelteKit</a> and <a href="https://tailwindcss.com">Tailwind CSS</a>,
+hosted on Github, open source, and free for use with no advertising.
+It was created by <a href="https://github.com/dnotes" title="David Hunt">David Hunt</a> (me) over a few evenings and weekends in September/October 2021, mainly because none of
+my solitaire apps would play <a href="https://solitaire.dnotes.net/play?g=pyramid">pyramid solitaire</a> the way I like and my phone app had a wonky UI for Klondike.</p>
+<h2>Acknowledgements</h2>
+<p>Here are some resources consulted and/or used in making this project:</p>
+<ul>
+<li><a href="https://mattjennings.io/blog/rewriting-my-website-in-sveltekit">Rewriting a website in SvelteKit, with Markdown and Tailwind</a></li>
+<li><a href="https://codechips.me/tailwind-ui-react-vs-svelte/">Building a dropdown menu with Svelte and Tailwind</a></li>
+<li><a href="https://dev.to/100lvlmaster/create-a-pwa-with-sveltekit-svelte-a36">Create a PWA with SvelteKit</a></li>
+<li>The <a href="https://github.com/Anyass3/kit-sw-workbox">kit-sw-workbox</a> project</li>
+</ul>
+<!-- HTML_TAG_END --></div>
+
+
+  <footer class="h-10 w-full leading-10 px-12 text-xs bg-gray-900 text-white "><div class="relative inline-block px-4 cursor-pointer bg-gray-900 text-white hover:no-underline"><a class="px-3 block bg-gray-900 text-white hover:no-underline" href="/">All Games</a>
+  </div>
+
+    <a rel="prefetch" class="text-white hover:no-underline px-2" href="/">Home</a><a rel="prefetch" class="text-white hover:no-underline px-2" href="About" title="">About</a>
+
+    </footer></div>
+
+
+
+			
+		</div>
+	</body>
+</html>
