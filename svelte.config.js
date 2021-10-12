@@ -29,7 +29,10 @@ const config = {
                 })
             ]
         },
-        adapter: adapter()
+        adapter: adapter({
+            pages: 'docs',
+            assets: 'docs',
+        }),
 	},
 
     preprocess: [preprocess({
