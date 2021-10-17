@@ -148,7 +148,8 @@ export default class Deck implements StackInterface,DeckInterface {
 
   reset() {
     this.initialized = false
-    this.stack = [...this.deck]
+    this.cycles = 1
+    this.stack = [...this.deck.map(c => { c.facedown = false; return c; })]
   }
 
   isTouching(stackIndex:number):boolean {

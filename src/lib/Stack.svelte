@@ -2,7 +2,8 @@
   import type { StackInterface } from "$lib/Stack"
   import { game, maxCardWidth, edgeHeight, edgeWidth, draggedCards } from '$lib/data/stores'
   import Card from '$lib/Card.svelte'
-  import Game, { Action, Activity } from '$lib/Game'
+  import { Action, Activity } from '$lib/Game'
+  import GameControls from "./GameControls.svelte"
   import type CardInterface from '$lib/Card'
 
   export let stack:string|StackInterface|undefined
@@ -64,7 +65,7 @@
                 {/if}
               </div>
               {#if !$game.canRecycle}
-                <div><button on:click={() => {$game = new Game(Object.assign({}, $game.conf, $game.deck.conf))}}>New</button></div>
+                <div><GameControls buttons='new,restart'></GameControls></div>
               {/if}
             </Card>
           {/each}
