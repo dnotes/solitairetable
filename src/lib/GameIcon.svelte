@@ -24,8 +24,8 @@ export let config
 
 </script>
 
-<div class="w-40 h-40 cursor-pointer overflow-hidden hover:overflow-visible rounded">
-<div class="w-40 h-32 flex flex-col bg-green-800 box-content overflow-hidden rounded justify-center" on:click={() => {goto(`/play?g=${config.name}`)}}>
+<div class="w-40 h-40 cursor-pointer overflow-hidden hover:overflow-visible hover:z-10 rounded mb-4 mx-1 drop-shadow relative">
+<div class="w-40 h-32 flex flex-col bg-green-800 box-content overflow-hidden rounded justify-center relative z-10" on:click={() => {goto(`/play?g=${config.name}`)}}>
 
   {#if game}
   {#each game.layout as row, rowIndex}
@@ -58,7 +58,7 @@ export let config
 
 </div>
 
-<div class="leading-loose text-center bg-white overflow-hidden">
+<div class="leading-loose text-center bg-white rounded-b overflow-hidden pt-1 -mt-1">
   <div class="w-40"><a href="/play?g={config.name}">{config.title}</a></div>
   {#each config.variants as conf}
     <div><a href="/play?g={conf.name}">{conf.title}</a></div>
