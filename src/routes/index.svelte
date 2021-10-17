@@ -6,6 +6,6 @@
 
 <h2 id="play-solitaire">Play solitaire here!</h2>
 
-<div class="flex flex-row justify-center space-x-4">
+<div class="flex flex-row flex-wrap justify-center space-x-2">
   <GameIcons></GameIcons>
 </div>

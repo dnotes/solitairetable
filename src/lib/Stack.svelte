@@ -36,7 +36,8 @@
 {#if typeof stack !== 'string'}
   <div
     class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)}
-    class="relative md:p-1 justify-center box-content"
+    class:p-1={$maxCardWidth > 100}
+    class="relative justify-center box-content"
     style="height:{stackHeight}px; width:{stackWidth}px;"
     on:dragover="{(e) => {
       e.preventDefault()
@@ -94,7 +95,7 @@
     </div>
   </div>
   {:else}
-  <div class="relative md:p-1 {flex} box-content" style="width:{stack === '-' ? $maxCardWidth / 2 : $maxCardWidth}px;">
+  <div class="relative {flex} box-content" style="width:{stack === '-' ? $maxCardWidth / 2 : $maxCardWidth}px;">
     <slot></slot>
   </div>
 {/if}

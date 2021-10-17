@@ -4,9 +4,9 @@
 
   export let stack:string|StackInterface|undefined
   export let maxCardWidth:number
-  let rowHeight = maxCardWidth * 1.5
 
-  let direction, distance, overlay, flex = ''
+  let direction, distance, flex = ''
+
   if (typeof stack === 'string') {
     if (stack === '-') flex = 'flex-shrink'
     if (stack === '_') flex = 'flex-grow'
@@ -19,7 +19,10 @@
 </script>
 
 {#if typeof stack !== 'string'}
-  <div class="relative justify-center box-content" style="padding:2px; padding-{direction}:{distance}px; width:{maxCardWidth}px;">
+  <div
+    class="relative justify-center box-content"
+    style="padding:1px; padding-{direction}:{distance}px; width:{maxCardWidth}px;"
+  >
     <div class="relative h-full" style="max-width:{maxCardWidth}px;">
       <!-- THE DECK -->
       {#if stack}
