@@ -21,7 +21,7 @@ import { game } from '$lib/data/stores'
   let topEdgeCount = $game.layout.reduce((agg,row) => agg += row.maxHeight - 1, 0)
 
   $: maxCardWidth.set(Math.min(
-    (w / $game.longestRow) - 20,
+    (w / $game.longestRow) - 5,
     ((-.018 * h * topEdgeCount) + (h * .66)) / (rowCount * ($game.conf.overlayRows ? $game.layout.length * .1 : 1))
   ))
   $: cardHeight = $maxCardWidth * 1.5
@@ -35,7 +35,7 @@ import { game } from '$lib/data/stores'
 
   <!-- ROWS -->
   {#each $game.layout as row, rowIndex}
-  <div class="flex flex-row w-full relative p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight) + $edgeHeight}px;">
+  <div class="flex flex-row w-full relative md:p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight) + $edgeHeight}px;">
     <!-- PILES -->
     {#each row.stacks as stack}
     <Pile {stack} />
@@ -44,7 +44,7 @@ import { game } from '$lib/data/stores'
   {/each}
 
   {#each $game.footer as row, rowIndex}
-  <div class="flex flex-row w-full relative p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{cardHeight}px;">
+  <div class="flex flex-row w-full relative md:p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{cardHeight}px;">
     {#each row.stacks as stack}
     <Pile {stack} />
     {/each}
