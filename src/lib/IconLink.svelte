@@ -107,5 +107,5 @@ import Fa from 'svelte-fa'
 </div>
 
 <style lang="postcss">
-  a { @apply inline-block px-2 py-1 text-center leading-none caps-small }
+  a { @apply inline-block px-2 py-1 leading-none }
 </style>

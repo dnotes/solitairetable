@@ -30,6 +30,9 @@ export let isTable
       <div class="flex-grow"/>
       {#if isTable}
         <GameControls size="lg" class="align-middle text-sm" />
+        {#if $game.conf.family}
+          <GameLinks dropdownFrom="top" size="lg" class="text-sm bg-gray-700 rounded-b right-0 border-gray-800 text-right text-white" childClass="min-w-full" family="{$game.conf.family}" />
+        {/if}
       {/if}
     </header>
   {/if}
