@@ -1,9 +1,14 @@
 <script lang="ts" context="module">
 
-  import {readable, derived } from 'svelte/store'
+import { browser } from '$app/env';
+import { readable, derived } from 'svelte/store'
 
   export const breakpoint = readable("l",(set)=>{
-      const breakpoints = [
+    if (!browser) {
+        set('')
+        return
+    }
+    const breakpoints = [
           { value: "xs", mediaquery: window.matchMedia("(max-width:  479px)") },
           { value: "s", mediaquery: window.matchMedia("(min-width:  480px) and (max-width:  719px)") },
           { value: "m", mediaquery: window.matchMedia("(min-width:  720px) and (max-width:  959px)") },
@@ -30,7 +35,7 @@
   });
 
   export const platform = derived(breakpoint, $breakpoint => {
-      if ($breakpoint == "xs" || $breakpoint == "s") {
+      if ($breakpoint == "xs" || $breakpoint == "s" || !$breakpoint) {
           return 'mobile';
       } else {
           return 'desktop';
@@ -38,6 +43,10 @@
   });
 
   export const orientation = readable("landscape",(set)=>{
+      if (!browser) {
+          set('')
+          return
+      }
       const orientations = [
           { value: "portrait", mediaquery: window.matchMedia("(orientation: portrait)") },
           { value: "landscape", mediaquery: window.matchMedia("(orientation: landscape)") },
