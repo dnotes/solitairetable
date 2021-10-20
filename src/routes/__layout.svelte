@@ -38,11 +38,11 @@ export let isTable
   {/if}
 
   {#if isTable}
-    <div id="main" class="h-screen max-w-full overflow-x-hidden bg-green-800 {$platform==='desktop' ? 'pt-8' : ''}">
+    <div id="main" class="h-screen max-w-full overflow-x-hidden bg-green-800 pt-4 md:pt-8">
       <slot></slot>
     </div>
   {:else}
-    <div id="main" class="flex-grow w-full max-w-screen-lg mx-auto p-4">
+    <div id="main" class="flex-grow w-full max-w-screen-lg mx-auto p-4 md:py-8">
       <slot></slot>
     </div>
   {/if}
