@@ -27,7 +27,10 @@ const config = {
                         '/build',
                     ]
                 })
-            ]
+            ],
+            ssr: {
+                noExternal: [ '@fortawesome/free-solid-svg-icons' ]
+            },
         },
         adapter: adapter({
             pages: 'docs',
