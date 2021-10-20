@@ -1,54 +1,49 @@
-<script>
-  import { onMount } from 'svelte'
+<script lang="ts">
+import games from '$lib/data/games'
+import GameLink from './GameLink.svelte'
+import IconButton from './IconButton.svelte'
+import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
+
   export let family = ''
+  export let linear = false
+  export let size:
+    | 'xs'
+    | 'sm'
+    | 'lg'
+    | '1x'
+    | '2x'
+    | '3x'
+    | '4x'
+    | '5x'
+    | '6x'
+    | '7x'
+    | '8x'
+    | '9x'
+    | '10x'
+  ="2x"
 
-  import games from '$lib/data/games'
-  import GameLink from './GameLink.svelte'
-
-  let open = false
-  let menu
   let links = family ? [games[family], ...games[family].variants] : Object.keys(games).map(k => games[k]).filter(g => g.family === g.name)
-  let title = family ? `${links[0].title} Variants` : 'All Games'
+  let title = family ? `Variants` : 'Games'
 
-  export let labelSide = 'top'
+  export let dropdownFrom:
+    | 'top'
+    | 'bottom'
+    | 'left'
+    | 'right'
+  =undefined
 
   let cls = ''
   let childClass = ''
-  export { cls as class, childClass }
-
-  onMount(() => {
-    const handleOutsideClick = (event) => {
-      if (open && !menu.contains(event.target)) {
-        open = false;
-      }
-    };
-
-    const handleEscape = (event) => {
-      if (open && event.key === 'Escape') {
-        open = false;
-      }
-    };
-
-    // add events when element is added to the DOM
-    document.addEventListener('click', handleOutsideClick, false);
-    document.addEventListener('keyup', handleEscape, false);
-
-    // remove events when element is removed from the DOM
-    return () => {
-      document.removeEventListener('click', handleOutsideClick, false);
-      document.removeEventListener('keyup', handleEscape, false);
-    };
-  });
+  let menuClass = ''
+  export { cls as class, childClass, menuClass }
 
 </script>
 
-<div class="relative inline-block px-4 cursor-pointer {cls}" bind:this={menu} >
-  <a class="px-3 block {cls}" href="/" on:click|preventDefault={() => {open=!open}}>{title}</a>
-  {#if open}
-    <div class="absolute {labelSide}-full min-w-full {cls}" on:click={() => {open=false}}>
-      {#each links as config}
-        <GameLink class="px-3 block {childClass}" {config}/>
-      {/each}
-    </div>
-  {/if}
-</div>
+<IconButton icon={faFolderPlus} class={cls} {dropdownFrom} {size} {linear}>
+  {title}
+  <div slot="menu" class="min-w-full {cls} {menuClass}">
+    {#each links as config}
+      <GameLink class="px-3 block {cls} {childClass}" {config}/>
+    {/each}
+  </div>
+</IconButton>

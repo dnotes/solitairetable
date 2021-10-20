@@ -15,6 +15,14 @@ const config = {
 		},
 		extend: {}
 	},
+	plugins: [
+		require('tailwindcss-typography')({
+			ellipsis: false,
+			hyphens: false,
+			kerning: false,
+			textUnset: false,
+		})
+	]
 };
 
 module.exports = config;

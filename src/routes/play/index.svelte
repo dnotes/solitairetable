@@ -4,7 +4,6 @@ import { browser } from '$app/env'
 import { page } from '$app/stores'
 import Pile from '$lib/Stack.svelte'
 import { maxCardWidth, edgeHeight } from '$lib/data/stores'
-import GameControls from '$lib/GameControls.svelte'
 import Game from '$lib/Game'
 import { game } from '$lib/data/stores'
 
@@ -29,10 +28,6 @@ import { game } from '$lib/data/stores'
 </script>
 
 <div id="game" class="flex flex-col text-white h-full" bind:clientWidth={w} bind:clientHeight={h}>
-  <div id="actions" class="flex-shrink">
-    <GameControls/>
-  </div>
-
   <!-- ROWS -->
   {#each $game.layout as row, rowIndex}
   <div class="flex flex-row w-full relative md:p-4 pointer-events-none" class:justify-center={$game.conf.centerRows} style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight) + $edgeHeight}px;">

@@ -1,5 +1,6 @@
 ---
 title: About
+icon: faInfoCircle
 ---
 
 # About Solitaire Table
