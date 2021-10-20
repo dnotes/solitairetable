@@ -37,7 +37,7 @@
   <div
     class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)}
     class:p-1={$maxCardWidth > 100}
-    class="relative justify-center box-content"
+    class="relative justify-center"
     style="height:{stackHeight}px; width:{stackWidth}px;"
     on:dragover="{(e) => {
       e.preventDefault()
