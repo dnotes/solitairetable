@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Card from '$lib/Card'
   import type { StackInterface } from './Stack';
-  import { game, draggedCards, edgeWidth, edgeHeight } from '$lib/data/stores'
+  import { game, draggedCards, edgeWidth, edgeHeight, maxCardWidth } from '$lib/data/stores'
 
   export let card:Card|undefined = undefined
   export let facedown = false
@@ -78,7 +78,7 @@
       <img draggable="false" class="w-full" src="/cards/_empty.svg" alt="-">
     </div>
   {/if}
-  <div class="absolute w-full text-center top-2"><slot></slot></div>
+  <div class="absolute w-full h-full text-center top-2 text-{$maxCardWidth < 100 ? 'xs' : 'sm'}"><slot></slot></div>
 </div>
 </div>
 

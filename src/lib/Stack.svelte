@@ -60,13 +60,14 @@
             <Card {card} stack={$game.deck} facedown {cardIndex} on:click={() => clickCard(stack)} />
           {:else}
             <Card on:click={() => clickCard(stack)}>
-              <div class:text-gray-600={!$game.canRecycle}>Cycle
-                {#if typeof $game.canRecycle === 'number'}
-                  ({$game.canRecycle})
-                {/if}
-              </div>
-              {#if !$game.canRecycle}
-                <div><GameControls buttons='new,restart'></GameControls></div>
+              {#if $game.canRecycle}
+                <div class:text-gray-600={!$game.canRecycle}>Cycle
+                  {#if typeof $game.canRecycle === 'number'}
+                    ({$game.canRecycle})
+                  {/if}
+                </div>
+              {:else}
+                <div><GameControls buttons="{$maxCardWidth > 56 ? 'new,restart' : 'new'}" text={$maxCardWidth > 72} class="w-full"></GameControls></div>
               {/if}
             </Card>
           {/each}
