@@ -28,6 +28,7 @@ const config = {
                     ]
                 })
             ],
+            // necessary until at least svelte 1.0, per https://github.com/sveltejs/kit/issues/928
             ssr: {
                 noExternal: [ '@fortawesome/free-solid-svg-icons' ]
             },
