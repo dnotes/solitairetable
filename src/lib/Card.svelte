@@ -38,11 +38,11 @@
   let textColor, fileName, alt
   if (card) {
     textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
-    fileName = card.isJoker ? '_joker' : `${card.rank}_${card.suitName}`
+    fileName = !card.isJoker ? `${card.rank}_${card.suitName}` : ( card.char === '1' ? '_joker_black' : '_joker_red' )
     alt = card.isJoker ? 'joker' : `${card.rank}${card.suit}`
   }
 
-
+  $: dir = $maxCardWidth > 100 ? '/cards/' : '/cards/small/'
 
 </script>
 
@@ -66,16 +66,16 @@
   {#if card}
     {#if facedown || card.facedown}
       <div transition:turn>
-        <img draggable="false" class="w-full" src="/cards/_back.svg" alt="?" />
+        <img draggable="false" class="w-full" src="{dir}_back.svg" alt="?" />
       </div>
     {:else}
       <div transition:turn>
-        <img {draggable} class="w-full" src="/cards/{fileName}.svg" {alt}>
+        <img {draggable} class="w-full" src="{dir}{fileName}.svg" {alt}>
       </div>
     {/if}
   {:else}
     <div>
-      <img draggable="false" class="w-full" src="/cards/_empty.svg" alt="-">
+      <img draggable="false" class="w-full" src="{dir}_empty.svg" alt="-">
     </div>
   {/if}
   <div class="absolute w-full h-full text-center top-2 text-{$maxCardWidth < 100 ? 'xs' : 'sm'}"><slot></slot></div>
