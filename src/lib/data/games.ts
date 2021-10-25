@@ -24,15 +24,15 @@ register({
   family: 'klondike',
   title: 'Klondike',
   stackConfig: [
-    { empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1 },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:2, facedown:1 },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:3, facedown:2 },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:4, facedown:3 },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:5, facedown:4 },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:6, facedown:5 },
-    { empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:7, facedown:6 },
-    { deal:3, limitAvailable:1, limitVisible:3, horizontal:true }
+    { name:"foundation", empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
+    { name:"play1", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1 },
+    { name:"play2", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:2, facedown:1 },
+    { name:"play3", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:3, facedown:2 },
+    { name:"play4", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:4, facedown:3 },
+    { name:"play5", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:5, facedown:4 },
+    { name:"play6", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:6, facedown:5 },
+    { name:"play7", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:7, facedown:6 },
+    { name:"discard", deal:3, limitAvailable:1, limitVisible:3, horizontal:true }
   ],
   layout: '0000-D8,1234567',
 })
@@ -63,9 +63,9 @@ register({
   family: 'freecell',
   title: 'Freecell',
   stackConfig: [
-    { limitCards:1, isFreecell:true },
-    { empty:"A", limitVisible:1, matchPriority:3, match: { count:1, suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
-    { init:50, matchPriority:2, limitAvailable:0, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc, useFreecells:true } },
+    { name:"free", limitCards:1, isFreecell:true },
+    { name:"foundation", empty:"A", limitVisible:1, matchPriority:3, match: { count:1, suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
+    { name:"play", init:50, matchPriority:2, limitAvailable:0, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc, useFreecells:true } },
   ],
   layout: '0000 1111,22222222',
 })
@@ -80,9 +80,9 @@ register({
   limitCycles: 1,
   deckConfig: { jokers:2 },
   stackConfig: [
-    { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
-    { empty:'', deal:1, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
-    { canGet:false, empty:'', limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
+    { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
+    { name:"play", empty:'', deal:1, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
+    { name:"discard", canGet:false, empty:'', limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
   ],
   layout: '0,00,000,0000,00000,000000,0000000',
   footer: '_D 1 2_'
@@ -101,9 +101,9 @@ register(Object.assign({}, games['pyramid'], {
   family: 'pyramid',
   title: 'Exact, Draw 3',
   stackConfig: [
-    { empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
-    { deal:true, limitAvailable:1, limitVisible:5, horizontal:true },
-    { canGet:false, empty:'', limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
+    { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
+    { name:"play", deal:true, limitAvailable:1, limitVisible:5, horizontal:true },
+    { name:"discard", canGet:false, empty:'', limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
   ],
   footer: 'D 1 1 1 2'
 }))
@@ -113,8 +113,8 @@ register({
   family: 'golf',
   title: 'Golf',
   stackConfig: [
-    { init:5, canPut:false },
-    { limitVisible:1, limitAvailable:1, deal:1, canGet:true, canPut:true, match: [
+    { name:"play", init:5, canPut:false },
+    { name:"discard",limitVisible:1, limitAvailable:1, deal:1, canGet:true, canPut:true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc }
     ] },
@@ -134,9 +134,9 @@ register({
     suits:'S',
   },
   stackConfig: [
-    { empty:'', match: [ { suit:true, count:13, rank:RankMatch.Desc } ], limitVisible:1, complete: { count:13 }, matchPriority:2 },
-    { deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 },
-    { deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 }
+    { name:"foundation", empty:'', match: [ { suit:true, count:13, rank:RankMatch.Desc } ], limitVisible:1, complete: { count:13 }, matchPriority:2 },
+    { name:"play6", deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 },
+    { name:"play5", deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 }
   ],
   layout: 'D 00000000,1111222222'
 })

@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
   export async function load({ page }) {
-    let isTable = page.path.match(/^\/play/) ? true : false
+    let isTable = page.path.match(/^\/(?:play|build)/) ? true : false
     return { props: { isTable }}
   }
 </script>

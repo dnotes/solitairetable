@@ -26,7 +26,7 @@ export enum StackMatch {
 export type MatchConfigSetting = {
   suit?: boolean
   hasJoker?: boolean
-  hasFreecells?: boolean
+  useFreecells?: boolean
   fromStack?: StackMatch
   color?: ColorMatch
   rank?: RankMatch
@@ -76,6 +76,10 @@ export class MatchConfig {
       confBoolean.encode(this.countLT, this.countGT, this.totalLT, this.totalGT),
       confNumber.encode(this.color, this.rank, this.count, this.total, this.fromStack),
     ].join('')
+  }
+  get description() {
+    let out = []
+    return out.join(',')
   }
 }
 
@@ -170,5 +174,11 @@ export class MatchTest {
   }
   toString() {
     return this.conf.toString()
+  }
+  toJSON() {
+    return this.conf
+  }
+  get description() {
+    return this.conf.description
   }
 }

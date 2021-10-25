@@ -3,11 +3,13 @@ import type { SelectedCard } from "$lib/Card"
 import { MatchConfig, MatchTest } from "$lib/Matchers"
 import type { MatchConfigSetting } from "$lib/Matchers"
 import { confString, confBoolean, confNumber } from "$lib/util"
+import { slugify } from 'transliteration'
 
 export const ranks = "A23456789TJQK"
 const emptyRanks = "23456789TJQKA"
 
 export type StackConfigSetting = {
+  name: string            // a name for this type of stack
   empty?: string          // which ranks can be placed onto empty stacks ("23456789TJQKA")
   init?: number           // number of cards dealt initially (0)
   facedown?: number       // number of cards face down initially (0)
@@ -26,6 +28,7 @@ export type StackConfigSetting = {
 }
 
 export class StackConfig {
+  name = ''
   empty = emptyRanks
   init = 0
   facedown = 0
@@ -46,11 +49,12 @@ export class StackConfig {
     if (!conf || typeof conf === 'boolean') return this
     else if (typeof conf === "string") {
       let config = conf.split(";")
-      this.empty = confString.decode(config[0], emptyRanks);
-      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[1]);
-      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[2].split("").map(confNumber.decode);
-      this.match = config[3].split(",").map(t => new MatchTest(t));
-      this.complete = config[4].split(",").map(t => new MatchTest(t));
+      this.name = config[0]
+      this.empty = confString.decode(config[1], emptyRanks);
+      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[2]);
+      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[3].split("").map(confNumber.decode);
+      this.match = config[4].split(",").map(t => new MatchTest(t));
+      this.complete = config[5].split(",").map(t => new MatchTest(t));
     }
     else {
       if (conf.deal && !conf.canPut) conf.canPut = false
@@ -62,12 +66,16 @@ export class StackConfig {
   }
   toString():string {
     return [
+      slugify(this.name, { allowedChars:'-_a-zA-Z0-9', fixChineseSpacing:false, trim:true }),
       confString.encode(this.empty, emptyRanks),
       confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty),
       confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority),
       this.match.join(","),
       this.complete.join(","),
     ].join(";")
+  }
+  get description() {
+    return this.name
   }
 }
 

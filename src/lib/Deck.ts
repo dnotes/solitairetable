@@ -38,6 +38,20 @@ export class DeckConfig {
       confNumber.encode(this.decks)
     ].join('')
   }
+  get description() {
+    let out = []
+    if (this.ranks.length !== ranks.length) {
+      if (this.ranks.length <= ranks.length / 2) out.push(`${this.ranks}`)
+      else out.push(`-${ranks.replace(new RegExp('[' + this.ranks + ']', 'g'), '')}`)
+    }
+    if (this.suits.length !== 4) {
+      out.push(this.suits.replace('C', '♣').replace('H', '♥').replace('D', '♦').replace('S', '♠'))
+    }
+    if (!out.length) out.push('Standard')
+    if (this.jokers) out.push(`${this.jokers} jk`)
+    if (this.decks > 1) out.push(`x${this.decks}`)
+    return out.filter(Boolean).join(', ')
+  }
 }
 
 export interface DeckInterface {

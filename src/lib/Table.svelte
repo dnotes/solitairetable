@@ -29,6 +29,8 @@ import { game } from '$lib/data/stores'
     <Pile {stack} />
     {/each}
   </div>
+  {:else}
+  <div class="w-full relative md:p-4 pointer-events-none"></div>
   {/each}
 
   {#each $game.footer as row}
@@ -37,6 +39,8 @@ import { game } from '$lib/data/stores'
     <Pile {stack} />
     {/each}
   </div>
+  {:else}
+  <div class="w-full relative md:p-4 pointer-events-none"></div>
   {/each}
 
 </div>
