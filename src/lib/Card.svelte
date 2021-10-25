@@ -10,7 +10,7 @@
 
   $: cardDepth = stack?.getCardDepth(cardIndex)
   $: cards = cardDepth ? stack.look(cardDepth) : []
-  $: draggable = !facedown && !$game.conf.multiSelect && cardDepth && !card.facedown && ($game.conf.selectBlockedStacks || !stack.isBlocked) && (!stack.conf.limitAvailable || cardDepth <= stack.conf.limitAvailable)
+  $: draggable = card && !facedown && !$game.conf.multiSelect && cardDepth && !card.facedown && ($game.conf.selectBlockedStacks || !stack.isBlocked) && (!stack.conf.limitAvailable || cardDepth <= stack.conf.limitAvailable)
 
 	function turn(node, {
 		delay = 0,
@@ -62,20 +62,20 @@
     game.set($game)
   }}
   on:click >
-<div class="cursor-pointer">
+<div class="cursor-pointer" {draggable}>
   {#if card}
     {#if facedown || card.facedown}
       <div transition:turn>
-        <img draggable="false" class="w-full" src="{dir}_back.svg" alt="?" />
+        <img class="w-full" src="{dir}_back.svg" alt="?" />
       </div>
     {:else}
       <div transition:turn>
-        <img {draggable} class="w-full" src="{dir}{fileName}.svg" {alt}>
+        <img class="w-full" src="{dir}{fileName}.svg" {alt}>
       </div>
     {/if}
   {:else}
     <div>
-      <img draggable="false" class="w-full" src="{dir}_empty.svg" alt="-">
+      <img class="w-full" src="{dir}_empty.svg" alt="-">
     </div>
   {/if}
   <div class="absolute w-full h-full text-center top-2 text-{$maxCardWidth < 100 ? 'xs' : 'sm'}"><slot></slot></div>
