@@ -144,7 +144,7 @@ export default class Game {
 
     // Setup the stacks and the layout, at the same time
     ['layout','footer'].forEach(k => {
-      let rows = this.conf[k].split(',').map(row => {
+      let rows = this.conf[k].split(',').filter(Boolean).map(row => {
         let maxHeight = 0
         let rowStacks = row.split('').map(id => {
           let stack
