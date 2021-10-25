@@ -15,6 +15,10 @@ import Table from '$lib/Table.svelte'
 
 </script>
 
+<svelte:head>
+  <title>{$game?.title} | Solitaire Table</title>
+</svelte:head>
+
 {#if $game}
   <Table />
 {/if}

@@ -68,6 +68,7 @@ export interface GameConfigSetting {
 
 export class GameConfig {
   name?: string = ''              // the name of the game, if it has one
+  title?: string                  // the title of the game, if it has one
   family?: string = ''            // the family to which the game belongs, if it has one
   variants?: GameConfig[]         // the variants of the current game
   centerRows: boolean = true      // whether the stacks should be centered in the rows (true)
@@ -208,6 +209,10 @@ export default class Game {
 
   get canRecycle():boolean|number {
     return !this.conf.limitCycles || (this.conf.limitCycles - this.deck.cycles)
+  }
+
+  get title():string {
+    return `${unslug(this.conf.family)} ${this.conf.title || unslug(this.conf.name)}`.trim()
   }
 
   initialize() {
@@ -404,4 +409,8 @@ export default class Game {
     this.selection = [...this.selection, ...selectedCards]
   }
 
+}
+
+function unslug(text) {
+  return text.replace(/(?:^|-|_)[a-z]/g, m => { return (m.length === 2 ? ' ' : '') + m.slice(m.length-1,1).toUpperCase() })
 }

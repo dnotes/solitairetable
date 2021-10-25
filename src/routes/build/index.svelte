@@ -17,6 +17,10 @@ import Table from '$lib/Table.svelte'
 
 </script>
 
+<svelte:head>
+  <title>Editing {$game?.title} | Solitaire Table</title>
+</svelte:head>
+
 <div class="flex flex-row h-screen">
   <div class="py-12 w-full flex-grow h-full overflow-y-scroll md:pr-80">
     <Table editing />
