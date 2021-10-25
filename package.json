@@ -14,6 +14,7 @@
 		"autoprefixer": "^10.3.4",
 		"cssnano": "^5.0.8",
 		"kit-sw-workbox": "^1.0.1",
+		"lodash": "^4.17.21",
 		"markdown-it-attrs": "^4.1.0",
 		"postcss": "^8.3.6",
 		"postcss-load-config": "^3.1.0",
