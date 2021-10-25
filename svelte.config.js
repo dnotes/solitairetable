@@ -1,7 +1,7 @@
 import preprocess from "svelte-preprocess";
 import adapter from "@sveltejs/adapter-static"
 import { plugin as mdPlugin } from "vite-plugin-markdown"
-import sw from './kit-sw-workbox/index.js'
+import sw from 'kit-sw-workbox'
 import mdAttrs from "markdown-it-attrs"
 import mdit from "markdown-it"
 
