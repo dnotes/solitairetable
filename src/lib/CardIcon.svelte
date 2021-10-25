@@ -15,25 +15,27 @@
     direction = stack.conf['horizontal'] ? 'left' : 'top'
   }
 
-  let textColor
+  let textColor, fileName, alt
 
-  if (card) textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
+  if (card) {
+    textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
+    fileName = !card.isJoker ? `${card.rank}_${card.suitName}` : ( card.char === '1' ? '_joker_black' : '_joker_red' )
+    alt = card.isJoker ? 'joker' : `${card.rank}${card.suit}`
+  }
 </script>
 
 <div class="{textColor} absolute" style="{direction}:{distance}px">
 <div>
   {#if facedown}
-    <img class="w-full" src="/cards/_back.svg" alt="?">
+    <img class="w-full" src="/cards/small/_back.svg" alt="?">
   {:else if card}
     {#if card.facedown}
-      <img class="w-full" src="/cards/_back.svg" alt="?">
-    {:else if card.isJoker}
-      <img class="w-full" src="/cards/_joker.svg" alt="joker" />
+      <img class="w-full" src="/cards/small/_back.svg" alt="?">
     {:else}
-      <img class="w-full" src="/cards/{card.rank}_{card.suitName}.svg" alt="{card.rank}{card.suit}">
+      <img class="w-full" src="/cards/small/{fileName}.svg" {alt}>
     {/if}
   {:else}
-    <img class="w-full" src="/cards/_empty.svg" alt="-">
+    <img class="w-full" src="/cards/small/_empty.svg" alt="-">
   {/if}
 </div>
 </div>
