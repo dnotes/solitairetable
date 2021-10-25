@@ -15,8 +15,8 @@ import SiteLinks from '$lib/SiteLinks.svelte'
 import { game } from '$lib/data/stores'
 import "../app.css"
 import IconButton from '$lib/IconButton.svelte';
-import { faEllipsis, faEdit } from '@fortawesome/free-solid-svg-icons';
-import IconLink from '$lib/IconLink.svelte';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import EditLink from '$lib/EditLink.svelte';
 
 export let isTable
 
@@ -58,7 +58,7 @@ export let isTable
           Menu
           <div slot="menu" class="bg-gray-900 text-white rounded-t border-gray-600">
             <GameLinks linear family={$game?.conf?.family || ''} class="bg-gray-900 text-white hover:no-underline"/>
-            <IconLink icon={faEdit} linear class="text-white" href="/build?g={$game?.conf?.toString()}">Edit</IconLink>
+            <EditLink linear class="text-white" />
             <SiteLinks linear class="text-white hover:no-underline" />
           </div>
         </IconButton>
