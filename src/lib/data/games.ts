@@ -1,27 +1,32 @@
 import type { GameConfigSetting } from "$lib/Game"
 import { RankMatch, ColorMatch } from "$lib/Matchers"
+import { slugify } from 'transliteration'
 
 export type NamedGameConfigSetting = GameConfigSetting & {
-  name: string
-  family: string
+  family?: string
   title: string
   variants?: NamedGameConfigSetting[]
 }
 
-let games = <NamedGameConfigSetting[]> {}
+export type NamedGameConfig = NamedGameConfigSetting & {
+  name: string
+}
+
+let games = <NamedGameConfig[]> {}
 
 function register(config:NamedGameConfigSetting):void {
-  if (games[config.name]) throw new Error(`Duplicate name ${config.name}`)
-  games[config.name] = config
-  if (config.name === config.family) games[config.name].variants = []
+  let name = slugify(`${config.family || ''} ${config.title}`.trim())
+  if (games[name]) throw new Error(`Duplicate name ${name}`)
+  config['name'] = name
+  config['family']=slugify(config.family || config.title)
+  games[name] = config
+  if (!config.family || config?.family?.toLowerCase() === config.title.toLowerCase()) games[name].variants = []
   else if (games[config.family]) {
     games[config.family].variants.push(config)
   }
 }
 
 register({
-  name: 'klondike',
-  family: 'klondike',
   title: 'Klondike',
   stackConfig: [
     { name:"foundation", empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
@@ -38,19 +43,18 @@ register({
 })
 
 register(Object.assign({}, games['klondike'], {
-  name: 'klondike-vegas',
+  family: 'Klondike',
   title: 'Vegas',
   limitCycles: 3,
 }))
 
 register(Object.assign({}, games['klondike-vegas'], {
-  name: 'klondike-vegas-strict',
+  family: 'klondike',
   title: 'Vegas Strict (1 undo)',
   limitUndo: 1,
 }))
 
 register(Object.assign({}, games['klondike'], {
-  name: 'klondike-one',
   family: 'klondike',
   title: 'Draw One',
   stackConfig: [...games['klondike'].stackConfig].map(c => {
@@ -59,8 +63,6 @@ register(Object.assign({}, games['klondike'], {
 }))
 
 register({
-  name: 'freecell',
-  family: 'freecell',
   title: 'Freecell',
   stackConfig: [
     { name:"free", limitCards:1, isFreecell:true },
@@ -71,8 +73,6 @@ register({
 })
 
 register({
-  name: 'pyramid',
-  family: 'pyramid',
   title: 'Pyramid',
   overlayRows: true,
   showEmpty: false,
@@ -89,7 +89,6 @@ register({
 })
 
 register(Object.assign({}, games['pyramid'], {
-  name: 'pyramid-extra',
   family: 'pyramid',
   title: 'Extra',
   deckConfig: { jokers:3 },
@@ -109,8 +108,6 @@ register(Object.assign({}, games['pyramid'], {
 }))
 
 register({
-  name: 'golf',
-  family: 'golf',
   title: 'Golf',
   stackConfig: [
     { name:"play", init:5, canPut:false },
@@ -125,8 +122,6 @@ register({
 })
 
 register({
-  name: 'spider',
-  family: 'spider',
   title: 'Spider',
   limitCycles: 1,
   deckConfig: {
@@ -142,7 +137,6 @@ register({
 })
 
 register(Object.assign({}, games['spider'], {
-  name: 'spider-two-suit',
   family: 'spider',
   title: 'Two suits',
   deckConfig: {
