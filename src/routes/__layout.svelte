@@ -15,7 +15,8 @@ import SiteLinks from '$lib/SiteLinks.svelte'
 import { game } from '$lib/data/stores'
 import "../app.css"
 import IconButton from '$lib/IconButton.svelte';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faEdit } from '@fortawesome/free-solid-svg-icons';
+import IconLink from '$lib/IconLink.svelte';
 
 export let isTable
 
@@ -29,7 +30,7 @@ export let isTable
       <SiteLinks linear size="lg" class="text-lg h-full py-1" />
       <div class="flex-grow"/>
       {#if isTable}
-        <GameControls size="lg" class="align-middle text-sm" />
+        <GameControls size="lg" class="align-middle text-sm text-white" />
         {#if $game.conf.family}
           <GameLinks dropdownFrom="top" size="lg" class="text-sm bg-gray-700 rounded-b right-0 border-gray-800 text-right text-white" childClass="min-w-full" family="{$game.conf.family}" />
         {/if}
@@ -57,10 +58,11 @@ export let isTable
           Menu
           <div slot="menu" class="bg-gray-900 text-white rounded-t border-gray-600">
             <GameLinks linear family={$game?.conf?.family || ''} class="bg-gray-900 text-white hover:no-underline"/>
+            <IconLink icon={faEdit} linear class="text-white" href="/build?g={$game?.conf?.toString()}">Edit</IconLink>
             <SiteLinks linear class="text-white hover:no-underline" />
           </div>
         </IconButton>
-        <GameControls/>
+        <GameControls class="text-white" buttons="undo,redo,new,restart" />
       {:else}
         <GameLinks dropdownFrom="bottom" class="bg-gray-900 text-white hover:no-underline" />
         <SiteLinks class="text-white hover:no-underline" />

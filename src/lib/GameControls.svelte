@@ -1,9 +1,10 @@
 <script lang="ts">
   import IconButton from '$lib/IconButton.svelte'
-  import { faArrowLeft, faArrowRight, faArrowRotateLeft, faAsterisk } from '@fortawesome/free-solid-svg-icons'
+  import { faArrowLeft, faArrowRight, faArrowRotateLeft, faAsterisk, faEdit } from '@fortawesome/free-solid-svg-icons'
   import { game } from '$lib/data/stores'
+  import IconLink from './IconLink.svelte'
 
-  export let buttons='undo,redo,new,restart'
+  export let buttons='undo,redo,new,restart,edit'
   export let text = true
   export let linear = false
   export let size:
@@ -54,4 +55,11 @@
       Restart
     {/if}
   </IconButton>
+{/if}
+{#if buttons.includes('edit')}
+  <IconLink href="/build?g={$game?.name || $game?.conf?.toString()}" icon={faEdit} class={cls} {size} {linear}>
+    {#if text}
+      Edit
+    {/if}
+  </IconLink>
 {/if}
