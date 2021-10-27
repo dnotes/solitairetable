@@ -11,12 +11,13 @@ import StackConfig from '$lib/StackConfig.svelte';
   export let value:GameConfig = new GameConfig()
 
   onMount(() => {
-    if ( $game?.conf ) value => $game.conf
+    if ( $game?.conf ) value = $game.conf
     else {
       value = new GameConfig()
       game.set(new Game(value))
     }
     hideStacks = $game.conf.stackConfig.map(item => true)
+    hideAllSections(0)
   })
 
   let hideStacks = []
@@ -32,22 +33,30 @@ import StackConfig from '$lib/StackConfig.svelte';
     hideStacks = hideStacks.filter((v,i) => i !== index)
   }
 
+  let hideSections = []
+  function hideAllSections(except?:number) {
+    hideSections = hideSections.map((s,i) => i === except ? s : true)
+  }
+
 </script>
 
-<Field id={'name'} bind:value={value.name} />
-<Field id={'family'} bind:value={value.family} />
 
-<Fieldset name="Deck" title="{value.deckConfig.description}" hidden={true}>
+<Fieldset name="Game" title="{$game.title}" bind:hidden="{hideSections[0]}">
+  <Field id={'title'} bind:value={value.title} />
+  <Field id={'family'} bind:value={value.family} />
+  <Field id={'name'} bind:value={value.name} />
+  {#each Object.entries(value) as [id,v]}
+    {#if !['name','family','variants','deckConfig','stackConfig'].includes(id)}
+      <Field {id} bind:value={value[id]} />
+    {/if}
+  {/each}
+</Fieldset>
+
+<Fieldset name="Deck" title="{value.deckConfig.description}" bind:hidden={hideSections[1]}>
   <DeckConfig bind:value={value.deckConfig} />
 </Fieldset>
 
-{#each Object.entries(value) as [id,v]}
-  {#if !['name','family','variants','deckConfig','stackConfig'].includes(id)}
-    <Field {id} bind:value={value[id]} />
-  {/if}
-{/each}
-
-<Fieldset name="Stack Types" title="" hideable="{false}">
+<Fieldset name="Stack Types" title="({value.stackConfig.length})" bind:hidden={hideSections[2]}>
   {#each value.stackConfig as conf,index}
     <Fieldset
       name="S{index}"
