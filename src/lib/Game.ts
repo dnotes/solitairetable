@@ -314,7 +314,7 @@ export default class Game {
         this.stacks.map(stack => {
           if (!this.deck.isEmpty && stack.conf.deal) {
             return new Action(
-              parseInt(stack.conf.deal.toString()) || 1,
+              Math.min((parseInt(stack.conf.deal.toString()) || 1), this.deck.length),
               this.deck.index,
               stack.index
             )
