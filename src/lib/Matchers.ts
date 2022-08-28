@@ -105,7 +105,7 @@ export class MatchTest {
     let topCard = isMoveTest ? stack.topCard : false
 
     // These tests must have a topcard to compare against when being moved
-    if (isMoveTest && !topCard && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
+    if (isMoveTest && (!topCard || topCard?.facedown) && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
 
     // Setup further variables
     if (!Array.isArray(cards)) cards = [cards]
