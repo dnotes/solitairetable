@@ -26,7 +26,7 @@ import { game } from '$lib/data/stores'
   <!-- ROWS -->
   {#each $game.layout as row, rowIndex}
     <div
-      class="flex flex-row w-full relative md:p-4 pointer-events-none"
+      class="flex flex-row w-full relative md:p-4 pointer-events-none select-none"
       class:justify-center={$game.conf.centerRows}
       style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight) + $edgeHeight}px;"
     >
