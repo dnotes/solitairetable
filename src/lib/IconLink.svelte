@@ -77,7 +77,7 @@ import Fa from 'svelte-fa'
 
 </script>
 
-<div class="relative inline-block {cls}" bind:this={menu}>
+<div class="relative inline-block max-h-full {cls}" bind:this={menu}>
 
   <a
     bind:this={link}

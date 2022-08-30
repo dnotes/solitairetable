@@ -65,7 +65,7 @@ import Fa from 'svelte-fa'
 
 </script>
 
-<div class="relative inline-block {cls}" bind:this={menu}>
+<div class="relative inline-block max-h-full {cls}" bind:this={menu}>
 
   <button
     bind:this={btn}
@@ -74,7 +74,7 @@ import Fa from 'svelte-fa'
     class="px-2 py-1 text-center leading-none {cls} {linear ? 'whitespace-nowrap' : ''}"
   >
     {#if icon}
-      <span class="relative {linear ? 'inline-block px-1 align-middle' : 'block'}">
+      <span class="relative {cls} {linear ? 'inline-block px-1 align-middle' : 'block'}">
         <Fa class="{linear ? '' : 'mx-auto'}" {icon} {size} />
         {#if overlay && sizes.includes(overlaySize)}
           <Fa class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" icon={overlay} size="{overlaySize}" />
