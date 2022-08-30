@@ -1,28 +1,36 @@
 {
-  "short_name": "Solitaire",
   "name": "Solitaire Table",
+  "short_name": "Solitaire",
+  "theme_color": "#0c4e36",
+  "background_color": "#0c4e36",
+  "display": "standalone",
   "description": "Play over 100 kinds of solitaire--or build your own!",
+  "scope": "/",
   "start_url": "/",
   "icons": [
     {
-        "src": "/pwa-192x192.png",
-        "sizes": "192x192",
-        "type": "image/png"
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/pwa-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/pwa-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ],
-  "theme_color": "#0c4e36",
-  "background_color": "#0c4e36",
-  "display": "fullscreen",
-  "scope": "/"
+  ]
 }

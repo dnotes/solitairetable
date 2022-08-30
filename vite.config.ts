@@ -23,7 +23,13 @@ const config: UserConfig = {
 			]
 		}),
 		sveltekit(),
-	]
+	],
+	ssr: {
+		noExternal: [
+			'@fortawesome/free-solid-svg-icons',
+			'@fortawesome/free-regular-svg-icons',
+		]
+	}
 };
 
 export default config;

@@ -1,1 +1,1171 @@
-try{self["workbox:core:6.2.4"]&&_()}catch(K){}const e=(e,...s)=>{let r=e;return s.length>0&&(r+=` :: ${JSON.stringify(s)}`),r};class s extends Error{constructor(s,r){super(e(s,r)),this.name=s,this.details=r}}const r={googleAnalytics:"googleAnalytics",precache:"precache-v2",prefix:"workbox",runtime:"runtime",suffix:"undefined"!=typeof registration?registration.scope:""},t=e=>[r.prefix,e,r.suffix].filter((e=>e&&e.length>0)).join("-"),a=e=>e||t(r.precache),i=e=>e||t(r.runtime);function n(e,s){const r=s();return e.waitUntil(r),r}try{self["workbox:precaching:6.2.4"]&&_()}catch(K){}function o(e){if(!e)throw new s("add-to-cache-list-unexpected-type",{entry:e});if("string"==typeof e){const s=new URL(e,location.href);return{cacheKey:s.href,url:s.href}}const{revision:r,url:t}=e;if(!t)throw new s("add-to-cache-list-unexpected-type",{entry:e});if(!r){const e=new URL(t,location.href);return{cacheKey:e.href,url:e.href}}const a=new URL(t,location.href),i=new URL(t,location.href);return a.searchParams.set("__WB_REVISION__",r),{cacheKey:a.href,url:i.href}}class l{constructor(){this.updatedURLs=[],this.notUpdatedURLs=[],this.handlerWillStart=async({request:e,state:s})=>{s&&(s.originalRequest=e)},this.cachedResponseWillBeUsed=async({event:e,state:s,cachedResponse:r})=>{if("install"===e.type&&s&&s.originalRequest&&s.originalRequest instanceof Request){const e=s.originalRequest.url;r?this.notUpdatedURLs.push(e):this.updatedURLs.push(e)}return r}}}class c{constructor({precacheController:e}){this.cacheKeyWillBeUsed=async({request:e,params:s})=>{const r=(null==s?void 0:s.cacheKey)||this._precacheController.getCacheKeyForURL(e.url);return r?new Request(r,{headers:e.headers}):e},this._precacheController=e}}let u;async function h(e,r){let t=null;if(e.url){t=new URL(e.url).origin}if(t!==self.location.origin)throw new s("cross-origin-copy-response",{origin:t});const a=e.clone(),i={headers:new Headers(a.headers),status:a.status,statusText:a.statusText},n=r?r(i):i,o=function(){if(void 0===u){const s=new Response("");if("body"in s)try{new Response(s.body),u=!0}catch(e){u=!1}u=!1}return u}()?a.body:await a.blob();return new Response(o,n)}function d(e,s){const r=new URL(e);for(const t of s)r.searchParams.delete(t);return r.href}class v{constructor(){this.promise=new Promise(((e,s)=>{this.resolve=e,this.reject=s}))}}const g=new Set;try{self["workbox:strategies:6.2.4"]&&_()}catch(K){}function p(e){return"string"==typeof e?new Request(e):e}class f{constructor(e,s){this._cacheKeys={},Object.assign(this,s),this.event=s.event,this._strategy=e,this._handlerDeferred=new v,this._extendLifetimePromises=[],this._plugins=[...e.plugins],this._pluginStateMap=new Map;for(const r of this._plugins)this._pluginStateMap.set(r,{});this.event.waitUntil(this._handlerDeferred.promise)}async fetch(e){const{event:r}=this;let t=p(e);if("navigate"===t.mode&&r instanceof FetchEvent&&r.preloadResponse){const e=await r.preloadResponse;if(e)return e}const a=this.hasCallback("fetchDidFail")?t.clone():null;try{for(const e of this.iterateCallbacks("requestWillFetch"))t=await e({request:t.clone(),event:r})}catch(n){if(n instanceof Error)throw new s("plugin-error-request-will-fetch",{thrownErrorMessage:n.message})}const i=t.clone();try{let e;e=await fetch(t,"navigate"===t.mode?void 0:this._strategy.fetchOptions);for(const s of this.iterateCallbacks("fetchDidSucceed"))e=await s({event:r,request:i,response:e});return e}catch(o){throw a&&await this.runCallbacks("fetchDidFail",{error:o,event:r,originalRequest:a.clone(),request:i.clone()}),o}}async fetchAndCachePut(e){const s=await this.fetch(e),r=s.clone();return this.waitUntil(this.cachePut(e,r)),s}async cacheMatch(e){const s=p(e);let r;const{cacheName:t,matchOptions:a}=this._strategy,i=await this.getCacheKey(s,"read"),n=Object.assign(Object.assign({},a),{cacheName:t});r=await caches.match(i,n);for(const o of this.iterateCallbacks("cachedResponseWillBeUsed"))r=await o({cacheName:t,matchOptions:a,cachedResponse:r,request:i,event:this.event})||void 0;return r}async cachePut(e,r){const t=p(e);var a;await(a=0,new Promise((e=>setTimeout(e,a))));const i=await this.getCacheKey(t,"write");if(!r)throw new s("cache-put-with-no-response",{url:(n=i.url,new URL(String(n),location.href).href.replace(new RegExp(`^${location.origin}`),""))});var n;const o=await this._ensureResponseSafeToCache(r);if(!o)return!1;const{cacheName:l,matchOptions:c}=this._strategy,u=await self.caches.open(l),h=this.hasCallback("cacheDidUpdate"),v=h?await async function(e,s,r,t){const a=d(s.url,r);if(s.url===a)return e.match(s,t);const i=Object.assign(Object.assign({},t),{ignoreSearch:!0}),n=await e.keys(s,i);for(const o of n)if(a===d(o.url,r))return e.match(o,t)}(u,i.clone(),["__WB_REVISION__"],c):null;try{await u.put(i,h?o.clone():o)}catch(f){if(f instanceof Error)throw"QuotaExceededError"===f.name&&await async function(){for(const e of g)await e()}(),f}for(const s of this.iterateCallbacks("cacheDidUpdate"))await s({cacheName:l,oldResponse:v,newResponse:o.clone(),request:i,event:this.event});return!0}async getCacheKey(e,s){if(!this._cacheKeys[s]){let r=e;for(const e of this.iterateCallbacks("cacheKeyWillBeUsed"))r=p(await e({mode:s,request:r,event:this.event,params:this.params}));this._cacheKeys[s]=r}return this._cacheKeys[s]}hasCallback(e){for(const s of this._strategy.plugins)if(e in s)return!0;return!1}async runCallbacks(e,s){for(const r of this.iterateCallbacks(e))await r(s)}*iterateCallbacks(e){for(const s of this._strategy.plugins)if("function"==typeof s[e]){const r=this._pluginStateMap.get(s),t=t=>{const a=Object.assign(Object.assign({},t),{state:r});return s[e](a)};yield t}}waitUntil(e){return this._extendLifetimePromises.push(e),e}async doneWaiting(){let e;for(;e=this._extendLifetimePromises.shift();)await e}destroy(){this._handlerDeferred.resolve(null)}async _ensureResponseSafeToCache(e){let s=e,r=!1;for(const t of this.iterateCallbacks("cacheWillUpdate"))if(s=await t({request:this.request,response:s,event:this.event})||void 0,r=!0,!s)break;return r||s&&200!==s.status&&(s=void 0),s}}class m extends class{constructor(e={}){this.cacheName=i(e.cacheName),this.plugins=e.plugins||[],this.fetchOptions=e.fetchOptions,this.matchOptions=e.matchOptions}handle(e){const[s]=this.handleAll(e);return s}handleAll(e){e instanceof FetchEvent&&(e={event:e,request:e.request});const s=e.event,r="string"==typeof e.request?new Request(e.request):e.request,t="params"in e?e.params:void 0,a=new f(this,{event:s,request:r,params:t}),i=this._getResponse(a,r,s);return[i,this._awaitComplete(i,a,r,s)]}async _getResponse(e,r,t){let a;await e.runCallbacks("handlerWillStart",{event:t,request:r});try{if(a=await this._handle(r,e),!a||"error"===a.type)throw new s("no-response",{url:r.url})}catch(i){if(i instanceof Error)for(const s of e.iterateCallbacks("handlerDidError"))if(a=await s({error:i,event:t,request:r}),a)break;if(!a)throw i}for(const s of e.iterateCallbacks("handlerWillRespond"))a=await s({event:t,request:r,response:a});return a}async _awaitComplete(e,s,r,t){let a,i;try{a=await e}catch(n){}try{await s.runCallbacks("handlerDidRespond",{event:t,request:r,response:a}),await s.doneWaiting()}catch(o){o instanceof Error&&(i=o)}if(await s.runCallbacks("handlerDidComplete",{event:t,request:r,response:a,error:i}),s.destroy(),i)throw i}}{constructor(e={}){e.cacheName=a(e.cacheName),super(e),this._fallbackToNetwork=!1!==e.fallbackToNetwork,this.plugins.push(m.copyRedirectedCacheableResponsesPlugin)}async _handle(e,s){const r=await s.cacheMatch(e);return r||(s.event&&"install"===s.event.type?await this._handleInstall(e,s):await this._handleFetch(e,s))}async _handleFetch(e,r){let t;const a=r.params||{};if(!this._fallbackToNetwork)throw new s("missing-precache-entry",{cacheName:this.cacheName,url:e.url});{const s=a.integrity,i=e.integrity,n=!i||i===s;t=await r.fetch(new Request(e,{integrity:i||s})),s&&n&&(this._useDefaultCacheabilityPluginIfNeeded(),await r.cachePut(e,t.clone()))}return t}async _handleInstall(e,r){this._useDefaultCacheabilityPluginIfNeeded();const t=await r.fetch(e);if(!(await r.cachePut(e,t.clone())))throw new s("bad-precaching-response",{url:e.url,status:t.status});return t}_useDefaultCacheabilityPluginIfNeeded(){let e=null,s=0;for(const[r,t]of this.plugins.entries())t!==m.copyRedirectedCacheableResponsesPlugin&&(t===m.defaultPrecacheCacheabilityPlugin&&(e=r),t.cacheWillUpdate&&s++);0===s?this.plugins.push(m.defaultPrecacheCacheabilityPlugin):s>1&&null!==e&&this.plugins.splice(e,1)}}m.defaultPrecacheCacheabilityPlugin={cacheWillUpdate:async({response:e})=>!e||e.status>=400?null:e},m.copyRedirectedCacheableResponsesPlugin={cacheWillUpdate:async({response:e})=>e.redirected?await h(e):e};class y{constructor({cacheName:e,plugins:s=[],fallbackToNetwork:r=!0}={}){this._urlsToCacheKeys=new Map,this._urlsToCacheModes=new Map,this._cacheKeysToIntegrities=new Map,this._strategy=new m({cacheName:a(e),plugins:[...s,new c({precacheController:this})],fallbackToNetwork:r}),this.install=this.install.bind(this),this.activate=this.activate.bind(this)}get strategy(){return this._strategy}precache(e){this.addToCacheList(e),this._installAndActiveListenersAdded||(self.addEventListener("install",this.install),self.addEventListener("activate",this.activate),this._installAndActiveListenersAdded=!0)}addToCacheList(e){const r=[];for(const t of e){"string"==typeof t?r.push(t):t&&void 0===t.revision&&r.push(t.url);const{cacheKey:e,url:a}=o(t),i="string"!=typeof t&&t.revision?"reload":"default";if(this._urlsToCacheKeys.has(a)&&this._urlsToCacheKeys.get(a)!==e)throw new s("add-to-cache-list-conflicting-entries",{firstEntry:this._urlsToCacheKeys.get(a),secondEntry:e});if("string"!=typeof t&&t.integrity){if(this._cacheKeysToIntegrities.has(e)&&this._cacheKeysToIntegrities.get(e)!==t.integrity)throw new s("add-to-cache-list-conflicting-integrities",{url:a});this._cacheKeysToIntegrities.set(e,t.integrity)}if(this._urlsToCacheKeys.set(a,e),this._urlsToCacheModes.set(a,i),r.length>0){const e=`Workbox is precaching URLs without revision info: ${r.join(", ")}\nThis is generally NOT safe. Learn more at https://bit.ly/wb-precache`;console.warn(e)}}}install(e){return n(e,(async()=>{const s=new l;this.strategy.plugins.push(s);for(const[a,i]of this._urlsToCacheKeys){const s=this._cacheKeysToIntegrities.get(i),r=this._urlsToCacheModes.get(a),t=new Request(a,{integrity:s,cache:r,credentials:"same-origin"});await Promise.all(this.strategy.handleAll({params:{cacheKey:i},request:t,event:e}))}const{updatedURLs:r,notUpdatedURLs:t}=s;return{updatedURLs:r,notUpdatedURLs:t}}))}activate(e){return n(e,(async()=>{const e=await self.caches.open(this.strategy.cacheName),s=await e.keys(),r=new Set(this._urlsToCacheKeys.values()),t=[];for(const a of s)r.has(a.url)||(await e.delete(a),t.push(a.url));return{deletedURLs:t}}))}getURLsToCacheKeys(){return this._urlsToCacheKeys}getCachedURLs(){return[...this._urlsToCacheKeys.keys()]}getCacheKeyForURL(e){const s=new URL(e,location.href);return this._urlsToCacheKeys.get(s.href)}getIntegrityForCacheKey(e){return this._cacheKeysToIntegrities.get(e)}async matchPrecache(e){const s=e instanceof Request?e.url:e,r=this.getCacheKeyForURL(s);if(r){return(await self.caches.open(this.strategy.cacheName)).match(r)}}createHandlerBoundToURL(e){const r=this.getCacheKeyForURL(e);if(!r)throw new s("non-precached-url",{url:e});return s=>(s.request=new Request(e),s.params=Object.assign({cacheKey:r},s.params),this.strategy.handle(s))}}let w;const b=()=>(w||(w=new y),w);try{self["workbox:routing:6.2.4"]&&_()}catch(K){}const k=e=>e&&"object"==typeof e?e:{handle:e};class R{constructor(e,s,r="GET"){this.handler=k(s),this.match=e,this.method=r}setCatchHandler(e){this.catchHandler=k(e)}}class q extends R{constructor(e,s,r){super((({url:s})=>{const r=e.exec(s.href);if(r&&(s.origin===location.origin||0===r.index))return r.slice(1)}),s,r)}}class C{constructor(){this._routes=new Map,this._defaultHandlerMap=new Map}get routes(){return this._routes}addFetchListener(){self.addEventListener("fetch",(e=>{const{request:s}=e,r=this.handleRequest({request:s,event:e});r&&e.respondWith(r)}))}addCacheListener(){self.addEventListener("message",(e=>{if(e.data&&"CACHE_URLS"===e.data.type){const{payload:s}=e.data,r=Promise.all(s.urlsToCache.map((s=>{"string"==typeof s&&(s=[s]);const r=new Request(...s);return this.handleRequest({request:r,event:e})})));e.waitUntil(r),e.ports&&e.ports[0]&&r.then((()=>e.ports[0].postMessage(!0)))}}))}handleRequest({request:e,event:s}){const r=new URL(e.url,location.href);if(!r.protocol.startsWith("http"))return;const t=r.origin===location.origin,{params:a,route:i}=this.findMatchingRoute({event:s,request:e,sameOrigin:t,url:r});let n=i&&i.handler;const o=e.method;if(!n&&this._defaultHandlerMap.has(o)&&(n=this._defaultHandlerMap.get(o)),!n)return;let l;try{l=n.handle({url:r,request:e,event:s,params:a})}catch(u){l=Promise.reject(u)}const c=i&&i.catchHandler;return l instanceof Promise&&(this._catchHandler||c)&&(l=l.catch((async t=>{if(c)try{return await c.handle({url:r,request:e,event:s,params:a})}catch(i){i instanceof Error&&(t=i)}if(this._catchHandler)return this._catchHandler.handle({url:r,request:e,event:s});throw t}))),l}findMatchingRoute({url:e,sameOrigin:s,request:r,event:t}){const a=this._routes.get(r.method)||[];for(const i of a){let a;const n=i.match({url:e,sameOrigin:s,request:r,event:t});if(n)return a=n,(Array.isArray(a)&&0===a.length||n.constructor===Object&&0===Object.keys(n).length||"boolean"==typeof n)&&(a=void 0),{route:i,params:a}}return{}}setDefaultHandler(e,s="GET"){this._defaultHandlerMap.set(s,k(e))}setCatchHandler(e){this._catchHandler=k(e)}registerRoute(e){this._routes.has(e.method)||this._routes.set(e.method,[]),this._routes.get(e.method).push(e)}unregisterRoute(e){if(!this._routes.has(e.method))throw new s("unregister-route-but-not-found-with-method",{method:e.method});const r=this._routes.get(e.method).indexOf(e);if(!(r>-1))throw new s("unregister-route-route-not-registered");this._routes.get(e.method).splice(r,1)}}let x;function j(e,r,t){let a;if("string"==typeof e){const s=new URL(e,location.href);a=new R((({url:e})=>e.href===s.href),r,t)}else if(e instanceof RegExp)a=new q(e,r,t);else if("function"==typeof e)a=new R(e,r,t);else{if(!(e instanceof R))throw new s("unsupported-route-type",{moduleName:"workbox-routing",funcName:"registerRoute",paramName:"capture"});a=e}return(x||(x=new C,x.addFetchListener(),x.addCacheListener()),x).registerRoute(a),a}class U extends R{constructor(e,s){super((({request:r})=>{const t=e.getURLsToCacheKeys();for(const a of function*(e,{ignoreURLParametersMatching:s=[/^utm_/,/^fbclid$/],directoryIndex:r="index.html",cleanURLs:t=!0,urlManipulation:a}={}){const i=new URL(e,location.href);i.hash="",yield i.href;const n=function(e,s=[]){for(const r of[...e.searchParams.keys()])s.some((e=>e.test(r)))&&e.searchParams.delete(r);return e}(i,s);if(yield n.href,r&&n.pathname.endsWith("/")){const e=new URL(n.href);e.pathname+=r,yield e.href}if(t){const e=new URL(n.href);e.pathname+=".html",yield e.href}if(a){const e=a({url:i});for(const s of e)yield s.href}}(r.url,s)){const s=t.get(a);if(s){return{cacheKey:s,integrity:e.getIntegrityForCacheKey(s)}}}}),e.strategy)}}var L;(function(e){b().precache(e)})([{url:"/_app/start-ba431e71.js",revision:"zb6kmf"},{url:"/_app/assets/start-464e9d0a.css",revision:"pjj6h3"},{url:"/_app/pages/__layout.svelte-c5f6779a.js",revision:"15adse"},{url:"/_app/assets/pages/__layout.svelte-d1e2d761.css",revision:"xc77ls"},{url:"/_app/error.svelte-175620c3.js",revision:"5zo7v7"},{url:"/_app/pages/index.svelte-cc1f96bd.js",revision:"tyifik"},{url:"/_app/assets/Table-ae3e56ab.css",revision:"p6a7ux"},{url:"/_app/pages/build/index.svelte-d7a63974.js",revision:"rgxlt0"},{url:"/_app/assets/pages/build/index.svelte-d1f12140.css",revision:"k65azm"},{url:"/_app/pages/play/index.svelte-1373c9f9.js",revision:"klaj7n"},{url:"/_app/pages/[slug].svelte-7ae26d62.js",revision:"36o6c3"},{url:"/_app/chunks/vendor-d4f88a2a.js",revision:"uehu1l"},{url:"/_app/assets/vendor-b8c56e4e.css",revision:"wdr9yc"},{url:"/_app/chunks/singletons-12a22614.js",revision:"32teec"},{url:"/_app/chunks/preload-helper-ec9aa979.js",revision:"d6bb1d"},{url:"/_app/chunks/GameControls-2d4a3440.js",revision:"iuez0v"},{url:"/_app/assets/GameControls-ae33bbbc.css",revision:"92f4bc"},{url:"/_app/chunks/Game-7fded968.js",revision:"u8lfdr"},{url:"/_app/chunks/README-03dbef2b.js",revision:"i6e2or"},{url:"/_app/chunks/navigation-51f4a605.js",revision:"whwals"},{url:"/_app/chunks/Table-eaf8b386.js",revision:"ye4om6"},{url:"/_app/chunks/workbox-window.prod.es5-a2ea44c0.js",revision:"y041k8"},{url:"/",revision:"rn1lfp"},{url:"/about",revision:"uhjyll"},{url:"/play",revision:"rj30m2"},{url:"/build",revision:"hv0jvh"},{url:"/.DS_Store",revision:"aaf9qk"},{url:"/.nojekyll",revision:"i9zdjd"},{url:"/CNAME",revision:"cjpn6b"},{url:"/apple-touch-icon.png",revision:"nbupv5"},{url:"/browserconfig.xml",revision:"124qnp"},{url:"/cards/.DS_Store",revision:"peszko"},{url:"/cards/2_clubs.svg",revision:"al1ypo"},{url:"/cards/2_diamonds.svg",revision:"u648wy"},{url:"/cards/2_hearts.svg",revision:"khhati"},{url:"/cards/2_spades.svg",revision:"tqm6j7"},{url:"/cards/3_clubs.svg",revision:"koq4ki"},{url:"/cards/3_diamonds.svg",revision:"rpjr7o"},{url:"/cards/3_hearts.svg",revision:"9hdpna"},{url:"/cards/3_spades.svg",revision:"tx2n2s"},{url:"/cards/4_clubs.svg",revision:"hp4fzg"},{url:"/cards/4_diamonds.svg",revision:"uz3v5j"},{url:"/cards/4_hearts.svg",revision:"i51kbm"},{url:"/cards/4_spades.svg",revision:"f1otgx"},{url:"/cards/5_clubs.svg",revision:"1e6lq"},{url:"/cards/5_diamonds.svg",revision:"4oxj65"},{url:"/cards/5_hearts.svg",revision:"9lof38"},{url:"/cards/5_spades.svg",revision:"1dmfe5"},{url:"/cards/6_clubs.svg",revision:"3lqt05"},{url:"/cards/6_diamonds.svg",revision:"ddi4j4"},{url:"/cards/6_hearts.svg",revision:"ds2c62"},{url:"/cards/6_spades.svg",revision:"yr35yx"},{url:"/cards/7_clubs.svg",revision:"bwneto"},{url:"/cards/7_diamonds.svg",revision:"gm393s"},{url:"/cards/7_hearts.svg",revision:"qbr4in"},{url:"/cards/7_spades.svg",revision:"g363zt"},{url:"/cards/8_clubs.svg",revision:"tyry1l"},{url:"/cards/8_diamonds.svg",revision:"jbt25r"},{url:"/cards/8_hearts.svg",revision:"hxvhlp"},{url:"/cards/8_spades.svg",revision:"b0t2kl"},{url:"/cards/9_clubs.svg",revision:"mga5pr"},{url:"/cards/9_diamonds.svg",revision:"pdqwyg"},{url:"/cards/9_hearts.svg",revision:"g8q7he"},{url:"/cards/9_spades.svg",revision:"pg24m"},{url:"/cards/A_clubs.svg",revision:"1q81h8"},{url:"/cards/A_diamonds.svg",revision:"rhxd5b"},{url:"/cards/A_hearts.svg",revision:"999v2g"},{url:"/cards/A_spades.svg",revision:"55h28x"},{url:"/cards/J_clubs.svg",revision:"yib733"},{url:"/cards/J_diamonds.svg",revision:"z867fk"},{url:"/cards/J_hearts.svg",revision:"9h2qtd"},{url:"/cards/J_spades.svg",revision:"5pwvio"},{url:"/cards/K_clubs.svg",revision:"hijxn7"},{url:"/cards/K_diamonds.svg",revision:"ba3uh2"},{url:"/cards/K_hearts.svg",revision:"l4em5z"},{url:"/cards/K_spades.svg",revision:"fv94fv"},{url:"/cards/Q_clubs.svg",revision:"vgk6iw"},{url:"/cards/Q_diamonds.svg",revision:"55vwdx"},{url:"/cards/Q_hearts.svg",revision:"d7ksyg"},{url:"/cards/Q_spades.svg",revision:"uv7g6c"},{url:"/cards/T_clubs.svg",revision:"38avme"},{url:"/cards/T_diamonds.svg",revision:"bdp8d7"},{url:"/cards/T_hearts.svg",revision:"5v7omn"},{url:"/cards/T_spades.svg",revision:"bxl8ha"},{url:"/cards/_back.svg",revision:"soejle"},{url:"/cards/_empty.svg",revision:"arlsd1"},{url:"/cards/_joker_black.svg",revision:"9u1ryd"},{url:"/cards/_joker_red.svg",revision:"w39omk"},{url:"/cards/small/.DS_Store",revision:"8iekyk"},{url:"/cards/small/2_clubs.svg",revision:"z67xuv"},{url:"/cards/small/2_diamonds.svg",revision:"orra7m"},{url:"/cards/small/2_hearts.svg",revision:"bax63i"},{url:"/cards/small/2_spades.svg",revision:"n6bj2c"},{url:"/cards/small/3_clubs.svg",revision:"cbdd4e"},{url:"/cards/small/3_diamonds.svg",revision:"hf2936"},{url:"/cards/small/3_hearts.svg",revision:"e8tw03"},{url:"/cards/small/3_spades.svg",revision:"8iqyhy"},{url:"/cards/small/4_clubs.svg",revision:"dta054"},{url:"/cards/small/4_diamonds.svg",revision:"9u09w8"},{url:"/cards/small/4_hearts.svg",revision:"mxzm9m"},{url:"/cards/small/4_spades.svg",revision:"ddwgj3"},{url:"/cards/small/5_clubs.svg",revision:"d4vjx7"},{url:"/cards/small/5_diamonds.svg",revision:"4dfo69"},{url:"/cards/small/5_hearts.svg",revision:"af0c22"},{url:"/cards/small/5_spades.svg",revision:"8popka"},{url:"/cards/small/6_clubs.svg",revision:"lsf27c"},{url:"/cards/small/6_diamonds.svg",revision:"2lb0kx"},{url:"/cards/small/6_hearts.svg",revision:"fimajk"},{url:"/cards/small/6_spades.svg",revision:"5ls3f9"},{url:"/cards/small/7_clubs.svg",revision:"ubzwrh"},{url:"/cards/small/7_diamonds.svg",revision:"m3fu5p"},{url:"/cards/small/7_hearts.svg",revision:"zcvjqz"},{url:"/cards/small/7_spades.svg",revision:"j2g8a0"},{url:"/cards/small/8_clubs.svg",revision:"nsi4m4"},{url:"/cards/small/8_diamonds.svg",revision:"vrrefb"},{url:"/cards/small/8_hearts.svg",revision:"sqf0ch"},{url:"/cards/small/8_spades.svg",revision:"nd4hoi"},{url:"/cards/small/9_clubs.svg",revision:"e9tsld"},{url:"/cards/small/9_diamonds.svg",revision:"vhrrql"},{url:"/cards/small/9_hearts.svg",revision:"endyb0"},{url:"/cards/small/9_spades.svg",revision:"f008va"},{url:"/cards/small/A_clubs.svg",revision:"yp3qbj"},{url:"/cards/small/A_diamonds.svg",revision:"tm681v"},{url:"/cards/small/A_hearts.svg",revision:"nbqgsn"},{url:"/cards/small/A_spades.svg",revision:"x3cosz"},{url:"/cards/small/J_clubs.svg",revision:"5awacg"},{url:"/cards/small/J_diamonds.svg",revision:"91rn2h"},{url:"/cards/small/J_hearts.svg",revision:"w2ipog"},{url:"/cards/small/J_spades.svg",revision:"4yj6u"},{url:"/cards/small/K_clubs.svg",revision:"e5yp35"},{url:"/cards/small/K_diamonds.svg",revision:"4w2ix1"},{url:"/cards/small/K_hearts.svg",revision:"ekg2zw"},{url:"/cards/small/K_spades.svg",revision:"2nvf4p"},{url:"/cards/small/Q_clubs.svg",revision:"t334bv"},{url:"/cards/small/Q_diamonds.svg",revision:"viibz5"},{url:"/cards/small/Q_hearts.svg",revision:"8qox71"},{url:"/cards/small/Q_spades.svg",revision:"yqmasm"},{url:"/cards/small/T_clubs.svg",revision:"b9x3tg"},{url:"/cards/small/T_diamonds.svg",revision:"1k5o68"},{url:"/cards/small/T_hearts.svg",revision:"7s2lia"},{url:"/cards/small/T_spades.svg",revision:"i3ajzl"},{url:"/cards/small/_back.svg",revision:"u4ql43"},{url:"/cards/small/_empty.svg",revision:"rz9g9e"},{url:"/cards/small/_joker_black.svg",revision:"ix0908"},{url:"/cards/small/_joker_red.svg",revision:"o2bbvw"},{url:"/favicon-16x16.png",revision:"1r652h"},{url:"/favicon-32x32.png",revision:"gdeztj"},{url:"/favicon.ico",revision:"9k7s5a"},{url:"/favicon.svg",revision:"jzdl7m"},{url:"/manifest.json",revision:"efg7q"},{url:"/mstile-144x144.png",revision:"y7eyjo"},{url:"/mstile-150x150.png",revision:"sfl6pk"},{url:"/mstile-310x150.png",revision:"snr6r8"},{url:"/mstile-310x310.png",revision:"sps898"},{url:"/mstile-70x70.png",revision:"9uvnt3"},{url:"/pwa-192x192.png",revision:"z0ol85"},{url:"/pwa-512x512.png",revision:"33obzh"},{url:"/safari-pinned-tab.svg",revision:"qhxt91"}]),function(e){const s=b();j(new U(s,e))}(L),self.addEventListener("message",(e=>{e.data&&"SKIP_WAITING"===e.data.type&&self.skipWaiting()}));
+const K = [
+  "/_app/immutable/start-efbab05e.js",
+  "/_app/immutable/components/pages/_layout.svelte-88419dda.js",
+  "/_app/immutable/assets/+layout-58f7abce.css",
+  "/_app/immutable/components/error.svelte-179191b0.js",
+  "/_app/immutable/components/pages/(page)/_layout.svelte-88f1402d.js",
+  "/_app/immutable/components/pages/(page)/_page.svelte-e85e42d7.js",
+  "/_app/immutable/assets/+page-352bac7e.css",
+  "/_app/immutable/components/pages/(page)/_slug_/_page.svelte-dc125cb3.js",
+  "/_app/immutable/components/pages/play/_page.svelte-bd387631.js",
+  "/_app/immutable/chunks/singletons-f098867a.js",
+  "/_app/immutable/chunks/index-e7dad187.js",
+  "/_app/immutable/chunks/preload-helper-aa6bc0ce.js",
+  "/_app/immutable/chunks/stores-836ff054.js",
+  "/_app/immutable/chunks/SiteLinks-f646642c.js",
+  "/_app/immutable/assets/SiteLinks-e3229107.css",
+  "/_app/immutable/chunks/navigation-1bcfb984.js",
+  "/_app/immutable/chunks/0-1d75a7be.js",
+  "/_app/immutable/chunks/1-dabc1193.js",
+  "/_app/immutable/chunks/2-8d0f167a.js",
+  "/_app/immutable/chunks/3-9322bcce.js",
+  "/_app/immutable/chunks/4-dec535c5.js",
+  "/_app/immutable/chunks/5-bf8a4cc2.js",
+  "/_app/immutable/chunks/workbox-window.prod.es5-daaa7301.js"
+], V = [
+  "/.nojekyll",
+  "/CNAME",
+  "/apple-touch-icon.png",
+  "/browserconfig.xml",
+  "/cards/2_clubs.svg",
+  "/cards/2_diamonds.svg",
+  "/cards/2_hearts.svg",
+  "/cards/2_spades.svg",
+  "/cards/3_clubs.svg",
+  "/cards/3_diamonds.svg",
+  "/cards/3_hearts.svg",
+  "/cards/3_spades.svg",
+  "/cards/4_clubs.svg",
+  "/cards/4_diamonds.svg",
+  "/cards/4_hearts.svg",
+  "/cards/4_spades.svg",
+  "/cards/5_clubs.svg",
+  "/cards/5_diamonds.svg",
+  "/cards/5_hearts.svg",
+  "/cards/5_spades.svg",
+  "/cards/6_clubs.svg",
+  "/cards/6_diamonds.svg",
+  "/cards/6_hearts.svg",
+  "/cards/6_spades.svg",
+  "/cards/7_clubs.svg",
+  "/cards/7_diamonds.svg",
+  "/cards/7_hearts.svg",
+  "/cards/7_spades.svg",
+  "/cards/8_clubs.svg",
+  "/cards/8_diamonds.svg",
+  "/cards/8_hearts.svg",
+  "/cards/8_spades.svg",
+  "/cards/9_clubs.svg",
+  "/cards/9_diamonds.svg",
+  "/cards/9_hearts.svg",
+  "/cards/9_spades.svg",
+  "/cards/A_clubs.svg",
+  "/cards/A_diamonds.svg",
+  "/cards/A_hearts.svg",
+  "/cards/A_spades.svg",
+  "/cards/J_clubs.svg",
+  "/cards/J_diamonds.svg",
+  "/cards/J_hearts.svg",
+  "/cards/J_spades.svg",
+  "/cards/K_clubs.svg",
+  "/cards/K_diamonds.svg",
+  "/cards/K_hearts.svg",
+  "/cards/K_spades.svg",
+  "/cards/Q_clubs.svg",
+  "/cards/Q_diamonds.svg",
+  "/cards/Q_hearts.svg",
+  "/cards/Q_spades.svg",
+  "/cards/T_clubs.svg",
+  "/cards/T_diamonds.svg",
+  "/cards/T_hearts.svg",
+  "/cards/T_spades.svg",
+  "/cards/_back.svg",
+  "/cards/_empty.svg",
+  "/cards/_joker_black.svg",
+  "/cards/_joker_red.svg",
+  "/cards/small/2_clubs.svg",
+  "/cards/small/2_diamonds.svg",
+  "/cards/small/2_hearts.svg",
+  "/cards/small/2_spades.svg",
+  "/cards/small/3_clubs.svg",
+  "/cards/small/3_diamonds.svg",
+  "/cards/small/3_hearts.svg",
+  "/cards/small/3_spades.svg",
+  "/cards/small/4_clubs.svg",
+  "/cards/small/4_diamonds.svg",
+  "/cards/small/4_hearts.svg",
+  "/cards/small/4_spades.svg",
+  "/cards/small/5_clubs.svg",
+  "/cards/small/5_diamonds.svg",
+  "/cards/small/5_hearts.svg",
+  "/cards/small/5_spades.svg",
+  "/cards/small/6_clubs.svg",
+  "/cards/small/6_diamonds.svg",
+  "/cards/small/6_hearts.svg",
+  "/cards/small/6_spades.svg",
+  "/cards/small/7_clubs.svg",
+  "/cards/small/7_diamonds.svg",
+  "/cards/small/7_hearts.svg",
+  "/cards/small/7_spades.svg",
+  "/cards/small/8_clubs.svg",
+  "/cards/small/8_diamonds.svg",
+  "/cards/small/8_hearts.svg",
+  "/cards/small/8_spades.svg",
+  "/cards/small/9_clubs.svg",
+  "/cards/small/9_diamonds.svg",
+  "/cards/small/9_hearts.svg",
+  "/cards/small/9_spades.svg",
+  "/cards/small/A_clubs.svg",
+  "/cards/small/A_diamonds.svg",
+  "/cards/small/A_hearts.svg",
+  "/cards/small/A_spades.svg",
+  "/cards/small/J_clubs.svg",
+  "/cards/small/J_diamonds.svg",
+  "/cards/small/J_hearts.svg",
+  "/cards/small/J_spades.svg",
+  "/cards/small/K_clubs.svg",
+  "/cards/small/K_diamonds.svg",
+  "/cards/small/K_hearts.svg",
+  "/cards/small/K_spades.svg",
+  "/cards/small/Q_clubs.svg",
+  "/cards/small/Q_diamonds.svg",
+  "/cards/small/Q_hearts.svg",
+  "/cards/small/Q_spades.svg",
+  "/cards/small/T_clubs.svg",
+  "/cards/small/T_diamonds.svg",
+  "/cards/small/T_hearts.svg",
+  "/cards/small/T_spades.svg",
+  "/cards/small/_back.svg",
+  "/cards/small/_empty.svg",
+  "/cards/small/_joker_black.svg",
+  "/cards/small/_joker_red.svg",
+  "/favicon-16x16.png",
+  "/favicon-32x32.png",
+  "/favicon.ico",
+  "/favicon.svg",
+  "/manifest.json",
+  "/mstile-144x144.png",
+  "/mstile-150x150.png",
+  "/mstile-310x150.png",
+  "/mstile-310x310.png",
+  "/mstile-70x70.png",
+  "/pwa-192x192.png",
+  "/pwa-512x512.png",
+  "/safari-pinned-tab.svg"
+];
+try {
+  self["workbox:core:6.2.4"] && _();
+} catch {
+}
+const A = {
+  "invalid-value": ({ paramName: t, validValueDescription: e, value: s }) => {
+    if (!t || !e)
+      throw new Error("Unexpected input to 'invalid-value' error.");
+    return `The '${t}' parameter was given a value with an unexpected value. ${e} Received a value of ${JSON.stringify(s)}.`;
+  },
+  "not-an-array": ({ moduleName: t, className: e, funcName: s, paramName: r }) => {
+    if (!t || !e || !s || !r)
+      throw new Error("Unexpected input to 'not-an-array' error.");
+    return `The parameter '${r}' passed into '${t}.${e}.${s}()' must be an array.`;
+  },
+  "incorrect-type": ({ expectedType: t, paramName: e, moduleName: s, className: r, funcName: a }) => {
+    if (!t || !e || !s || !a)
+      throw new Error("Unexpected input to 'incorrect-type' error.");
+    const n = r ? `${r}.` : "";
+    return `The parameter '${e}' passed into '${s}.${n}${a}()' must be of type ${t}.`;
+  },
+  "incorrect-class": ({ expectedClassName: t, paramName: e, moduleName: s, className: r, funcName: a, isReturnValueProblem: n }) => {
+    if (!t || !s || !a)
+      throw new Error("Unexpected input to 'incorrect-class' error.");
+    const o = r ? `${r}.` : "";
+    return n ? `The return value from '${s}.${o}${a}()' must be an instance of class ${t}.` : `The parameter '${e}' passed into '${s}.${o}${a}()' must be an instance of class ${t}.`;
+  },
+  "missing-a-method": ({ expectedMethod: t, paramName: e, moduleName: s, className: r, funcName: a }) => {
+    if (!t || !e || !s || !r || !a)
+      throw new Error("Unexpected input to 'missing-a-method' error.");
+    return `${s}.${r}.${a}() expected the '${e}' parameter to expose a '${t}' method.`;
+  },
+  "add-to-cache-list-unexpected-type": ({ entry: t }) => `An unexpected entry was passed to 'workbox-precaching.PrecacheController.addToCacheList()' The entry '${JSON.stringify(t)}' isn't supported. You must supply an array of strings with one or more characters, objects with a url property or Request objects.`,
+  "add-to-cache-list-conflicting-entries": ({ firstEntry: t, secondEntry: e }) => {
+    if (!t || !e)
+      throw new Error("Unexpected input to 'add-to-cache-list-duplicate-entries' error.");
+    return `Two of the entries passed to 'workbox-precaching.PrecacheController.addToCacheList()' had the URL ${t} but different revision details. Workbox is unable to cache and version the asset correctly. Please remove one of the entries.`;
+  },
+  "plugin-error-request-will-fetch": ({ thrownErrorMessage: t }) => {
+    if (!t)
+      throw new Error("Unexpected input to 'plugin-error-request-will-fetch', error.");
+    return `An error was thrown by a plugins 'requestWillFetch()' method. The thrown error message was: '${t}'.`;
+  },
+  "invalid-cache-name": ({ cacheNameId: t, value: e }) => {
+    if (!t)
+      throw new Error("Expected a 'cacheNameId' for error 'invalid-cache-name'");
+    return `You must provide a name containing at least one character for setCacheDetails({${t}: '...'}). Received a value of '${JSON.stringify(e)}'`;
+  },
+  "unregister-route-but-not-found-with-method": ({ method: t }) => {
+    if (!t)
+      throw new Error("Unexpected input to 'unregister-route-but-not-found-with-method' error.");
+    return `The route you're trying to unregister was not  previously registered for the method type '${t}'.`;
+  },
+  "unregister-route-route-not-registered": () => "The route you're trying to unregister was not previously registered.",
+  "queue-replay-failed": ({ name: t }) => `Replaying the background sync queue '${t}' failed.`,
+  "duplicate-queue-name": ({ name: t }) => `The Queue name '${t}' is already being used. All instances of backgroundSync.Queue must be given unique names.`,
+  "expired-test-without-max-age": ({ methodName: t, paramName: e }) => `The '${t}()' method can only be used when the '${e}' is used in the constructor.`,
+  "unsupported-route-type": ({ moduleName: t, className: e, funcName: s, paramName: r }) => `The supplied '${r}' parameter was an unsupported type. Please check the docs for ${t}.${e}.${s} for valid input types.`,
+  "not-array-of-class": ({ value: t, expectedClass: e, moduleName: s, className: r, funcName: a, paramName: n }) => `The supplied '${n}' parameter must be an array of '${e}' objects. Received '${JSON.stringify(t)},'. Please check the call to ${s}.${r}.${a}() to fix the issue.`,
+  "max-entries-or-age-required": ({ moduleName: t, className: e, funcName: s }) => `You must define either config.maxEntries or config.maxAgeSecondsin ${t}.${e}.${s}`,
+  "statuses-or-headers-required": ({ moduleName: t, className: e, funcName: s }) => `You must define either config.statuses or config.headersin ${t}.${e}.${s}`,
+  "invalid-string": ({ moduleName: t, funcName: e, paramName: s }) => {
+    if (!s || !t || !e)
+      throw new Error("Unexpected input to 'invalid-string' error.");
+    return `When using strings, the '${s}' parameter must start with 'http' (for cross-origin matches) or '/' (for same-origin matches). Please see the docs for ${t}.${e}() for more info.`;
+  },
+  "channel-name-required": () => "You must provide a channelName to construct a BroadcastCacheUpdate instance.",
+  "invalid-responses-are-same-args": () => "The arguments passed into responsesAreSame() appear to be invalid. Please ensure valid Responses are used.",
+  "expire-custom-caches-only": () => "You must provide a 'cacheName' property when using the expiration plugin with a runtime caching strategy.",
+  "unit-must-be-bytes": ({ normalizedRangeHeader: t }) => {
+    if (!t)
+      throw new Error("Unexpected input to 'unit-must-be-bytes' error.");
+    return `The 'unit' portion of the Range header must be set to 'bytes'. The Range header provided was "${t}"`;
+  },
+  "single-range-only": ({ normalizedRangeHeader: t }) => {
+    if (!t)
+      throw new Error("Unexpected input to 'single-range-only' error.");
+    return `Multiple ranges are not supported. Please use a  single start value, and optional end value. The Range header provided was "${t}"`;
+  },
+  "invalid-range-values": ({ normalizedRangeHeader: t }) => {
+    if (!t)
+      throw new Error("Unexpected input to 'invalid-range-values' error.");
+    return `The Range header is missing both start and end values. At least one of those values is needed. The Range header provided was "${t}"`;
+  },
+  "no-range-header": () => "No Range header was found in the Request provided.",
+  "range-not-satisfiable": ({ size: t, start: e, end: s }) => `The start (${e}) and end (${s}) values in the Range are not satisfiable by the cached response, which is ${t} bytes.`,
+  "attempt-to-cache-non-get-request": ({ url: t, method: e }) => `Unable to cache '${t}' because it is a '${e}' request and only 'GET' requests can be cached.`,
+  "cache-put-with-no-response": ({ url: t }) => `There was an attempt to cache '${t}' but the response was not defined.`,
+  "no-response": ({ url: t, error: e }) => {
+    let s = `The strategy could not generate a response for '${t}'.`;
+    return e && (s += ` The underlying error is ${e}.`), s;
+  },
+  "bad-precaching-response": ({ url: t, status: e }) => `The precaching request for '${t}' failed` + (e ? ` with an HTTP status of ${e}.` : "."),
+  "non-precached-url": ({ url: t }) => `createHandlerBoundToURL('${t}') was called, but that URL is not precached. Please pass in a URL that is precached instead.`,
+  "add-to-cache-list-conflicting-integrities": ({ url: t }) => `Two of the entries passed to 'workbox-precaching.PrecacheController.addToCacheList()' had the URL ${t} with different integrity values. Please remove one of them.`,
+  "missing-precache-entry": ({ cacheName: t, url: e }) => `Unable to find a precached response in ${t} for ${e}.`,
+  "cross-origin-copy-response": ({ origin: t }) => `workbox-core.copyResponse() can only be used with same-origin responses. It was passed a response with origin ${t}.`
+}, j = (t, ...e) => {
+  let s = t;
+  return e.length > 0 && (s += ` :: ${JSON.stringify(e)}`), s;
+}, q = (t, e = {}) => {
+  const s = A[t];
+  if (!s)
+    throw new Error(`Unable to find message for code '${t}'.`);
+  return s(e);
+}, S = process.env.NODE_ENV === "production" ? j : q;
+class u extends Error {
+  constructor(e, s) {
+    const r = S(e, s);
+    super(r), this.name = e, this.details = s;
+  }
+}
+const I = (t, e) => {
+  if (!Array.isArray(t))
+    throw new u("not-an-array", e);
+}, W = (t, e, s) => {
+  if (typeof t[e] !== "function")
+    throw s.expectedMethod = e, new u("missing-a-method", s);
+}, M = (t, e, s) => {
+  if (typeof t !== e)
+    throw s.expectedType = e, new u("incorrect-type", s);
+}, F = (t, e, s) => {
+  if (!(t instanceof e))
+    throw s.expectedClassName = e.name, new u("incorrect-class", s);
+}, H = (t, e, s) => {
+  if (!e.includes(t))
+    throw s.validValueDescription = `Valid values are ${JSON.stringify(e)}.`, new u("invalid-value", s);
+}, B = (t, e, s) => {
+  const r = new u("not-array-of-class", s);
+  if (!Array.isArray(t))
+    throw r;
+  for (const a of t)
+    if (!(a instanceof e))
+      throw r;
+}, d = process.env.NODE_ENV === "production" ? null : {
+  hasMethod: W,
+  isArray: I,
+  isInstance: F,
+  isOneOf: H,
+  isType: M,
+  isArrayOfClass: B
+}, g = {
+  googleAnalytics: "googleAnalytics",
+  precache: "precache-v2",
+  prefix: "workbox",
+  runtime: "runtime",
+  suffix: typeof registration < "u" ? registration.scope : ""
+}, C = (t) => [g.prefix, t, g.suffix].filter((e) => e && e.length > 0).join("-"), J = (t) => {
+  for (const e of Object.keys(g))
+    t(e);
+}, $ = {
+  updateDetails: (t) => {
+    J((e) => {
+      typeof t[e] == "string" && (g[e] = t[e]);
+    });
+  },
+  getGoogleAnalyticsName: (t) => t || C(g.googleAnalytics),
+  getPrecacheName: (t) => t || C(g.precache),
+  getPrefix: () => g.prefix,
+  getRuntimeName: (t) => t || C(g.runtime),
+  getSuffix: () => g.suffix
+}, i = process.env.NODE_ENV === "production" ? null : (() => {
+  "__WB_DISABLE_DEV_LOGS" in self || (self.__WB_DISABLE_DEV_LOGS = !1);
+  let t = !1;
+  const e = {
+    debug: "#7f8c8d",
+    log: "#2ecc71",
+    warn: "#f39c12",
+    error: "#c0392b",
+    groupCollapsed: "#3498db",
+    groupEnd: null
+  }, s = function(n, o) {
+    if (self.__WB_DISABLE_DEV_LOGS)
+      return;
+    if (n === "groupCollapsed" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+      console[n](...o);
+      return;
+    }
+    const c = [
+      `background: ${e[n]}`,
+      "border-radius: 0.5em",
+      "color: white",
+      "font-weight: bold",
+      "padding: 2px 0.5em"
+    ], l = t ? [] : ["%cworkbox", c.join(";")];
+    console[n](...l, ...o), n === "groupCollapsed" && (t = !0), n === "groupEnd" && (t = !1);
+  }, r = {}, a = Object.keys(e);
+  for (const n of a) {
+    const o = n;
+    r[o] = (...c) => {
+      s(o, c);
+    };
+  }
+  return r;
+})();
+function T(t, e) {
+  const s = e();
+  return t.waitUntil(s), s;
+}
+try {
+  self["workbox:precaching:6.2.4"] && _();
+} catch {
+}
+const G = "__WB_REVISION__";
+function Q(t) {
+  if (!t)
+    throw new u("add-to-cache-list-unexpected-type", { entry: t });
+  if (typeof t == "string") {
+    const n = new URL(t, location.href);
+    return {
+      cacheKey: n.href,
+      url: n.href
+    };
+  }
+  const { revision: e, url: s } = t;
+  if (!s)
+    throw new u("add-to-cache-list-unexpected-type", { entry: t });
+  if (!e) {
+    const n = new URL(s, location.href);
+    return {
+      cacheKey: n.href,
+      url: n.href
+    };
+  }
+  const r = new URL(s, location.href), a = new URL(s, location.href);
+  return r.searchParams.set(G, e), {
+    cacheKey: r.href,
+    url: a.href
+  };
+}
+class Y {
+  constructor() {
+    this.updatedURLs = [], this.notUpdatedURLs = [], this.handlerWillStart = async ({ request: e, state: s }) => {
+      s && (s.originalRequest = e);
+    }, this.cachedResponseWillBeUsed = async ({ event: e, state: s, cachedResponse: r }) => {
+      if (e.type === "install" && s && s.originalRequest && s.originalRequest instanceof Request) {
+        const a = s.originalRequest.url;
+        r ? this.notUpdatedURLs.push(a) : this.updatedURLs.push(a);
+      }
+      return r;
+    };
+  }
+}
+class X {
+  constructor({ precacheController: e }) {
+    this.cacheKeyWillBeUsed = async ({ request: s, params: r }) => {
+      const a = (r == null ? void 0 : r.cacheKey) || this._precacheController.getCacheKeyForURL(s.url);
+      return a ? new Request(a, { headers: s.headers }) : s;
+    }, this._precacheController = e;
+  }
+}
+const Z = (t, e) => {
+  i.groupCollapsed(t);
+  for (const s of e)
+    i.log(s);
+  i.groupEnd();
+};
+function z(t) {
+  const e = t.length;
+  e > 0 && (i.groupCollapsed(`During precaching cleanup, ${e} cached request${e === 1 ? " was" : "s were"} deleted.`), Z("Deleted Cache Requests", t), i.groupEnd());
+}
+function U(t, e) {
+  if (e.length !== 0) {
+    i.groupCollapsed(t);
+    for (const s of e)
+      i.log(s);
+    i.groupEnd();
+  }
+}
+function ee(t, e) {
+  const s = t.length, r = e.length;
+  if (s || r) {
+    let a = `Precaching ${s} file${s === 1 ? "" : "s"}.`;
+    r > 0 && (a += ` ${r} file${r === 1 ? " is" : "s are"} already cached.`), i.groupCollapsed(a), U("View newly precached URLs.", t), U("View previously precached URLs.", e), i.groupEnd();
+  }
+}
+let b;
+function se() {
+  if (b === void 0) {
+    const t = new Response("");
+    if ("body" in t)
+      try {
+        new Response(t.body), b = !0;
+      } catch {
+        b = !1;
+      }
+    b = !1;
+  }
+  return b;
+}
+async function te(t, e) {
+  let s = null;
+  if (t.url && (s = new URL(t.url).origin), s !== self.location.origin)
+    throw new u("cross-origin-copy-response", { origin: s });
+  const r = t.clone(), a = {
+    headers: new Headers(r.headers),
+    status: r.status,
+    statusText: r.statusText
+  }, n = e ? e(a) : a, o = se() ? r.body : await r.blob();
+  return new Response(o, n);
+}
+const h = (t) => new URL(String(t), location.href).href.replace(new RegExp(`^${location.origin}`), "");
+function O(t, e) {
+  const s = new URL(t);
+  for (const r of e)
+    s.searchParams.delete(r);
+  return s.href;
+}
+async function re(t, e, s, r) {
+  const a = O(e.url, s);
+  if (e.url === a)
+    return t.match(e, r);
+  const n = Object.assign(Object.assign({}, r), { ignoreSearch: !0 }), o = await t.keys(e, n);
+  for (const c of o) {
+    const l = O(c.url, s);
+    if (a === l)
+      return t.match(c, r);
+  }
+}
+class ae {
+  constructor() {
+    this.promise = new Promise((e, s) => {
+      this.resolve = e, this.reject = s;
+    });
+  }
+}
+const L = /* @__PURE__ */ new Set();
+async function ne() {
+  process.env.NODE_ENV !== "production" && i.log(`About to run ${L.size} callbacks to clean up caches.`);
+  for (const t of L)
+    await t(), process.env.NODE_ENV !== "production" && i.log(t, "is complete.");
+  process.env.NODE_ENV !== "production" && i.log("Finished running callbacks.");
+}
+function oe(t) {
+  return new Promise((e) => setTimeout(e, t));
+}
+try {
+  self["workbox:strategies:6.2.4"] && _();
+} catch {
+}
+function E(t) {
+  return typeof t == "string" ? new Request(t) : t;
+}
+class ce {
+  constructor(e, s) {
+    this._cacheKeys = {}, process.env.NODE_ENV !== "production" && d.isInstance(s.event, ExtendableEvent, {
+      moduleName: "workbox-strategies",
+      className: "StrategyHandler",
+      funcName: "constructor",
+      paramName: "options.event"
+    }), Object.assign(this, s), this.event = s.event, this._strategy = e, this._handlerDeferred = new ae(), this._extendLifetimePromises = [], this._plugins = [...e.plugins], this._pluginStateMap = /* @__PURE__ */ new Map();
+    for (const r of this._plugins)
+      this._pluginStateMap.set(r, {});
+    this.event.waitUntil(this._handlerDeferred.promise);
+  }
+  async fetch(e) {
+    const { event: s } = this;
+    let r = E(e);
+    if (r.mode === "navigate" && s instanceof FetchEvent && s.preloadResponse) {
+      const o = await s.preloadResponse;
+      if (o)
+        return process.env.NODE_ENV !== "production" && i.log(`Using a preloaded navigation response for '${h(r.url)}'`), o;
+    }
+    const a = this.hasCallback("fetchDidFail") ? r.clone() : null;
+    try {
+      for (const o of this.iterateCallbacks("requestWillFetch"))
+        r = await o({ request: r.clone(), event: s });
+    } catch (o) {
+      if (o instanceof Error)
+        throw new u("plugin-error-request-will-fetch", { thrownErrorMessage: o.message });
+    }
+    const n = r.clone();
+    try {
+      let o;
+      o = await fetch(r, r.mode === "navigate" ? void 0 : this._strategy.fetchOptions), process.env.NODE_ENV !== "production" && i.debug(`Network request for '${h(r.url)}' returned a response with status '${o.status}'.`);
+      for (const c of this.iterateCallbacks("fetchDidSucceed"))
+        o = await c({
+          event: s,
+          request: n,
+          response: o
+        });
+      return o;
+    } catch (o) {
+      throw process.env.NODE_ENV !== "production" && i.log(`Network request for '${h(r.url)}' threw an error.`, o), a && await this.runCallbacks("fetchDidFail", {
+        error: o,
+        event: s,
+        originalRequest: a.clone(),
+        request: n.clone()
+      }), o;
+    }
+  }
+  async fetchAndCachePut(e) {
+    const s = await this.fetch(e), r = s.clone();
+    return this.waitUntil(this.cachePut(e, r)), s;
+  }
+  async cacheMatch(e) {
+    const s = E(e);
+    let r;
+    const { cacheName: a, matchOptions: n } = this._strategy, o = await this.getCacheKey(s, "read"), c = Object.assign(Object.assign({}, n), { cacheName: a });
+    r = await caches.match(o, c), process.env.NODE_ENV !== "production" && (r ? i.debug(`Found a cached response in '${a}'.`) : i.debug(`No cached response found in '${a}'.`));
+    for (const l of this.iterateCallbacks("cachedResponseWillBeUsed"))
+      r = await l({
+        cacheName: a,
+        matchOptions: n,
+        cachedResponse: r,
+        request: o,
+        event: this.event
+      }) || void 0;
+    return r;
+  }
+  async cachePut(e, s) {
+    const r = E(e);
+    await oe(0);
+    const a = await this.getCacheKey(r, "write");
+    if (process.env.NODE_ENV !== "production") {
+      if (a.method && a.method !== "GET")
+        throw new u("attempt-to-cache-non-get-request", {
+          url: h(a.url),
+          method: a.method
+        });
+      const p = s.headers.get("Vary");
+      p && i.debug(`The response for ${h(a.url)} has a 'Vary: ${p}' header. Consider setting the {ignoreVary: true} option on your strategy to ensure cache matching and deletion works as expected.`);
+    }
+    if (!s)
+      throw process.env.NODE_ENV !== "production" && i.error(`Cannot cache non-existent response for '${h(a.url)}'.`), new u("cache-put-with-no-response", {
+        url: h(a.url)
+      });
+    const n = await this._ensureResponseSafeToCache(s);
+    if (!n)
+      return process.env.NODE_ENV !== "production" && i.debug(`Response '${h(a.url)}' will not be cached.`, n), !1;
+    const { cacheName: o, matchOptions: c } = this._strategy, l = await self.caches.open(o), m = this.hasCallback("cacheDidUpdate"), w = m ? await re(
+      l,
+      a.clone(),
+      ["__WB_REVISION__"],
+      c
+    ) : null;
+    process.env.NODE_ENV !== "production" && i.debug(`Updating the '${o}' cache with a new Response for ${h(a.url)}.`);
+    try {
+      await l.put(a, m ? n.clone() : n);
+    } catch (p) {
+      if (p instanceof Error)
+        throw p.name === "QuotaExceededError" && await ne(), p;
+    }
+    for (const p of this.iterateCallbacks("cacheDidUpdate"))
+      await p({
+        cacheName: o,
+        oldResponse: w,
+        newResponse: n.clone(),
+        request: a,
+        event: this.event
+      });
+    return !0;
+  }
+  async getCacheKey(e, s) {
+    if (!this._cacheKeys[s]) {
+      let r = e;
+      for (const a of this.iterateCallbacks("cacheKeyWillBeUsed"))
+        r = E(await a({
+          mode: s,
+          request: r,
+          event: this.event,
+          params: this.params
+        }));
+      this._cacheKeys[s] = r;
+    }
+    return this._cacheKeys[s];
+  }
+  hasCallback(e) {
+    for (const s of this._strategy.plugins)
+      if (e in s)
+        return !0;
+    return !1;
+  }
+  async runCallbacks(e, s) {
+    for (const r of this.iterateCallbacks(e))
+      await r(s);
+  }
+  *iterateCallbacks(e) {
+    for (const s of this._strategy.plugins)
+      if (typeof s[e] == "function") {
+        const r = this._pluginStateMap.get(s);
+        yield (n) => {
+          const o = Object.assign(Object.assign({}, n), { state: r });
+          return s[e](o);
+        };
+      }
+  }
+  waitUntil(e) {
+    return this._extendLifetimePromises.push(e), e;
+  }
+  async doneWaiting() {
+    let e;
+    for (; e = this._extendLifetimePromises.shift(); )
+      await e;
+  }
+  destroy() {
+    this._handlerDeferred.resolve(null);
+  }
+  async _ensureResponseSafeToCache(e) {
+    let s = e, r = !1;
+    for (const a of this.iterateCallbacks("cacheWillUpdate"))
+      if (s = await a({
+        request: this.request,
+        response: s,
+        event: this.event
+      }) || void 0, r = !0, !s)
+        break;
+    return r || (s && s.status !== 200 && (s = void 0), process.env.NODE_ENV !== "production" && s && s.status !== 200 && (s.status === 0 ? i.warn(`The response for '${this.request.url}' is an opaque response. The caching strategy that you're using will not cache opaque responses by default.`) : i.debug(`The response for '${this.request.url}' returned a status code of '${e.status}' and won't be cached as a result.`))), s;
+  }
+}
+class ie {
+  constructor(e = {}) {
+    this.cacheName = $.getRuntimeName(e.cacheName), this.plugins = e.plugins || [], this.fetchOptions = e.fetchOptions, this.matchOptions = e.matchOptions;
+  }
+  handle(e) {
+    const [s] = this.handleAll(e);
+    return s;
+  }
+  handleAll(e) {
+    e instanceof FetchEvent && (e = {
+      event: e,
+      request: e.request
+    });
+    const s = e.event, r = typeof e.request == "string" ? new Request(e.request) : e.request, a = "params" in e ? e.params : void 0, n = new ce(this, { event: s, request: r, params: a }), o = this._getResponse(n, r, s), c = this._awaitComplete(o, n, r, s);
+    return [o, c];
+  }
+  async _getResponse(e, s, r) {
+    await e.runCallbacks("handlerWillStart", { event: r, request: s });
+    let a;
+    try {
+      if (a = await this._handle(s, e), !a || a.type === "error")
+        throw new u("no-response", { url: s.url });
+    } catch (n) {
+      if (n instanceof Error) {
+        for (const o of e.iterateCallbacks("handlerDidError"))
+          if (a = await o({ error: n, event: r, request: s }), a)
+            break;
+      }
+      if (a)
+        process.env.NODE_ENV !== "production" && i.log(`While responding to '${h(s.url)}', an ${n instanceof Error ? n.toString() : ""} error occurred. Using a fallback response provided by a handlerDidError plugin.`);
+      else
+        throw n;
+    }
+    for (const n of e.iterateCallbacks("handlerWillRespond"))
+      a = await n({ event: r, request: s, response: a });
+    return a;
+  }
+  async _awaitComplete(e, s, r, a) {
+    let n, o;
+    try {
+      n = await e;
+    } catch {
+    }
+    try {
+      await s.runCallbacks("handlerDidRespond", {
+        event: a,
+        request: r,
+        response: n
+      }), await s.doneWaiting();
+    } catch (c) {
+      c instanceof Error && (o = c);
+    }
+    if (await s.runCallbacks("handlerDidComplete", {
+      event: a,
+      request: r,
+      response: n,
+      error: o
+    }), s.destroy(), o)
+      throw o;
+  }
+}
+class y extends ie {
+  constructor(e = {}) {
+    e.cacheName = $.getPrecacheName(e.cacheName), super(e), this._fallbackToNetwork = e.fallbackToNetwork !== !1, this.plugins.push(y.copyRedirectedCacheableResponsesPlugin);
+  }
+  async _handle(e, s) {
+    const r = await s.cacheMatch(e);
+    return r || (s.event && s.event.type === "install" ? await this._handleInstall(e, s) : await this._handleFetch(e, s));
+  }
+  async _handleFetch(e, s) {
+    let r;
+    const a = s.params || {};
+    if (this._fallbackToNetwork) {
+      process.env.NODE_ENV !== "production" && i.warn(`The precached response for ${h(e.url)} in ${this.cacheName} was not found. Falling back to the network.`);
+      const n = a.integrity, o = e.integrity, c = !o || o === n;
+      if (r = await s.fetch(new Request(e, {
+        integrity: o || n
+      })), n && c) {
+        this._useDefaultCacheabilityPluginIfNeeded();
+        const l = await s.cachePut(e, r.clone());
+        process.env.NODE_ENV !== "production" && l && i.log(`A response for ${h(e.url)} was used to "repair" the precache.`);
+      }
+    } else
+      throw new u("missing-precache-entry", {
+        cacheName: this.cacheName,
+        url: e.url
+      });
+    if (process.env.NODE_ENV !== "production") {
+      const n = a.cacheKey || await s.getCacheKey(e, "read");
+      i.groupCollapsed("Precaching is responding to: " + h(e.url)), i.log(`Serving the precached url: ${h(n instanceof Request ? n.url : n)}`), i.groupCollapsed("View request details here."), i.log(e), i.groupEnd(), i.groupCollapsed("View response details here."), i.log(r), i.groupEnd(), i.groupEnd();
+    }
+    return r;
+  }
+  async _handleInstall(e, s) {
+    this._useDefaultCacheabilityPluginIfNeeded();
+    const r = await s.fetch(e);
+    if (!await s.cachePut(e, r.clone()))
+      throw new u("bad-precaching-response", {
+        url: e.url,
+        status: r.status
+      });
+    return r;
+  }
+  _useDefaultCacheabilityPluginIfNeeded() {
+    let e = null, s = 0;
+    for (const [r, a] of this.plugins.entries())
+      a !== y.copyRedirectedCacheableResponsesPlugin && (a === y.defaultPrecacheCacheabilityPlugin && (e = r), a.cacheWillUpdate && s++);
+    s === 0 ? this.plugins.push(y.defaultPrecacheCacheabilityPlugin) : s > 1 && e !== null && this.plugins.splice(e, 1);
+  }
+}
+y.defaultPrecacheCacheabilityPlugin = {
+  async cacheWillUpdate({ response: t }) {
+    return !t || t.status >= 400 ? null : t;
+  }
+};
+y.copyRedirectedCacheableResponsesPlugin = {
+  async cacheWillUpdate({ response: t }) {
+    return t.redirected ? await te(t) : t;
+  }
+};
+class le {
+  constructor({ cacheName: e, plugins: s = [], fallbackToNetwork: r = !0 } = {}) {
+    this._urlsToCacheKeys = /* @__PURE__ */ new Map(), this._urlsToCacheModes = /* @__PURE__ */ new Map(), this._cacheKeysToIntegrities = /* @__PURE__ */ new Map(), this._strategy = new y({
+      cacheName: $.getPrecacheName(e),
+      plugins: [
+        ...s,
+        new X({ precacheController: this })
+      ],
+      fallbackToNetwork: r
+    }), this.install = this.install.bind(this), this.activate = this.activate.bind(this);
+  }
+  get strategy() {
+    return this._strategy;
+  }
+  precache(e) {
+    this.addToCacheList(e), this._installAndActiveListenersAdded || (self.addEventListener("install", this.install), self.addEventListener("activate", this.activate), this._installAndActiveListenersAdded = !0);
+  }
+  addToCacheList(e) {
+    process.env.NODE_ENV !== "production" && d.isArray(e, {
+      moduleName: "workbox-precaching",
+      className: "PrecacheController",
+      funcName: "addToCacheList",
+      paramName: "entries"
+    });
+    const s = [];
+    for (const r of e) {
+      typeof r == "string" ? s.push(r) : r && r.revision === void 0 && s.push(r.url);
+      const { cacheKey: a, url: n } = Q(r), o = typeof r != "string" && r.revision ? "reload" : "default";
+      if (this._urlsToCacheKeys.has(n) && this._urlsToCacheKeys.get(n) !== a)
+        throw new u("add-to-cache-list-conflicting-entries", {
+          firstEntry: this._urlsToCacheKeys.get(n),
+          secondEntry: a
+        });
+      if (typeof r != "string" && r.integrity) {
+        if (this._cacheKeysToIntegrities.has(a) && this._cacheKeysToIntegrities.get(a) !== r.integrity)
+          throw new u("add-to-cache-list-conflicting-integrities", {
+            url: n
+          });
+        this._cacheKeysToIntegrities.set(a, r.integrity);
+      }
+      if (this._urlsToCacheKeys.set(n, a), this._urlsToCacheModes.set(n, o), s.length > 0) {
+        const c = `Workbox is precaching URLs without revision info: ${s.join(", ")}
+This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
+        process.env.NODE_ENV === "production" ? console.warn(c) : i.warn(c);
+      }
+    }
+  }
+  install(e) {
+    return T(e, async () => {
+      const s = new Y();
+      this.strategy.plugins.push(s);
+      for (const [n, o] of this._urlsToCacheKeys) {
+        const c = this._cacheKeysToIntegrities.get(o), l = this._urlsToCacheModes.get(n), m = new Request(n, {
+          integrity: c,
+          cache: l,
+          credentials: "same-origin"
+        });
+        await Promise.all(this.strategy.handleAll({
+          params: { cacheKey: o },
+          request: m,
+          event: e
+        }));
+      }
+      const { updatedURLs: r, notUpdatedURLs: a } = s;
+      return process.env.NODE_ENV !== "production" && ee(r, a), { updatedURLs: r, notUpdatedURLs: a };
+    });
+  }
+  activate(e) {
+    return T(e, async () => {
+      const s = await self.caches.open(this.strategy.cacheName), r = await s.keys(), a = new Set(this._urlsToCacheKeys.values()), n = [];
+      for (const o of r)
+        a.has(o.url) || (await s.delete(o), n.push(o.url));
+      return process.env.NODE_ENV !== "production" && z(n), { deletedURLs: n };
+    });
+  }
+  getURLsToCacheKeys() {
+    return this._urlsToCacheKeys;
+  }
+  getCachedURLs() {
+    return [...this._urlsToCacheKeys.keys()];
+  }
+  getCacheKeyForURL(e) {
+    const s = new URL(e, location.href);
+    return this._urlsToCacheKeys.get(s.href);
+  }
+  getIntegrityForCacheKey(e) {
+    return this._cacheKeysToIntegrities.get(e);
+  }
+  async matchPrecache(e) {
+    const s = e instanceof Request ? e.url : e, r = this.getCacheKeyForURL(s);
+    if (r)
+      return (await self.caches.open(this.strategy.cacheName)).match(r);
+  }
+  createHandlerBoundToURL(e) {
+    const s = this.getCacheKeyForURL(e);
+    if (!s)
+      throw new u("non-precached-url", { url: e });
+    return (r) => (r.request = new Request(e), r.params = Object.assign({ cacheKey: s }, r.params), this.strategy.handle(r));
+  }
+}
+let k;
+const D = () => (k || (k = new le()), k);
+try {
+  self["workbox:routing:6.2.4"] && _();
+} catch {
+}
+const P = "GET", ue = [
+  "DELETE",
+  "GET",
+  "HEAD",
+  "PATCH",
+  "POST",
+  "PUT"
+], N = (t) => t && typeof t == "object" ? (process.env.NODE_ENV !== "production" && d.hasMethod(t, "handle", {
+  moduleName: "workbox-routing",
+  className: "Route",
+  funcName: "constructor",
+  paramName: "handler"
+}), t) : (process.env.NODE_ENV !== "production" && d.isType(t, "function", {
+  moduleName: "workbox-routing",
+  className: "Route",
+  funcName: "constructor",
+  paramName: "handler"
+}), { handle: t });
+class R {
+  constructor(e, s, r = P) {
+    process.env.NODE_ENV !== "production" && (d.isType(e, "function", {
+      moduleName: "workbox-routing",
+      className: "Route",
+      funcName: "constructor",
+      paramName: "match"
+    }), r && d.isOneOf(r, ue, { paramName: "method" })), this.handler = N(s), this.match = e, this.method = r;
+  }
+  setCatchHandler(e) {
+    this.catchHandler = N(e);
+  }
+}
+class he extends R {
+  constructor(e, s, r) {
+    process.env.NODE_ENV !== "production" && d.isInstance(e, RegExp, {
+      moduleName: "workbox-routing",
+      className: "RegExpRoute",
+      funcName: "constructor",
+      paramName: "pattern"
+    });
+    const a = ({ url: n }) => {
+      const o = e.exec(n.href);
+      if (!!o) {
+        if (n.origin !== location.origin && o.index !== 0) {
+          process.env.NODE_ENV !== "production" && i.debug(`The regular expression '${e.toString()}' only partially matched against the cross-origin URL '${n.toString()}'. RegExpRoute's will only handle cross-origin requests if they match the entire URL.`);
+          return;
+        }
+        return o.slice(1);
+      }
+    };
+    super(a, s, r);
+  }
+}
+class de {
+  constructor() {
+    this._routes = /* @__PURE__ */ new Map(), this._defaultHandlerMap = /* @__PURE__ */ new Map();
+  }
+  get routes() {
+    return this._routes;
+  }
+  addFetchListener() {
+    self.addEventListener("fetch", (e) => {
+      const { request: s } = e, r = this.handleRequest({ request: s, event: e });
+      r && e.respondWith(r);
+    });
+  }
+  addCacheListener() {
+    self.addEventListener("message", (e) => {
+      if (e.data && e.data.type === "CACHE_URLS") {
+        const { payload: s } = e.data;
+        process.env.NODE_ENV !== "production" && i.debug("Caching URLs from the window", s.urlsToCache);
+        const r = Promise.all(s.urlsToCache.map((a) => {
+          typeof a == "string" && (a = [a]);
+          const n = new Request(...a);
+          return this.handleRequest({ request: n, event: e });
+        }));
+        e.waitUntil(r), e.ports && e.ports[0] && r.then(() => e.ports[0].postMessage(!0));
+      }
+    });
+  }
+  handleRequest({ request: e, event: s }) {
+    process.env.NODE_ENV !== "production" && d.isInstance(e, Request, {
+      moduleName: "workbox-routing",
+      className: "Router",
+      funcName: "handleRequest",
+      paramName: "options.request"
+    });
+    const r = new URL(e.url, location.href);
+    if (!r.protocol.startsWith("http")) {
+      process.env.NODE_ENV !== "production" && i.debug("Workbox Router only supports URLs that start with 'http'.");
+      return;
+    }
+    const a = r.origin === location.origin, { params: n, route: o } = this.findMatchingRoute({
+      event: s,
+      request: e,
+      sameOrigin: a,
+      url: r
+    });
+    let c = o && o.handler;
+    const l = [];
+    process.env.NODE_ENV !== "production" && c && (l.push([
+      "Found a route to handle this request:",
+      o
+    ]), n && l.push([
+      "Passing the following params to the route's handler:",
+      n
+    ]));
+    const m = e.method;
+    if (!c && this._defaultHandlerMap.has(m) && (process.env.NODE_ENV !== "production" && l.push(`Failed to find a matching route. Falling back to the default handler for ${m}.`), c = this._defaultHandlerMap.get(m)), !c) {
+      process.env.NODE_ENV !== "production" && i.debug(`No route found for: ${h(r)}`);
+      return;
+    }
+    process.env.NODE_ENV !== "production" && (i.groupCollapsed(`Router is responding to: ${h(r)}`), l.forEach((f) => {
+      Array.isArray(f) ? i.log(...f) : i.log(f);
+    }), i.groupEnd());
+    let w;
+    try {
+      w = c.handle({ url: r, request: e, event: s, params: n });
+    } catch (f) {
+      w = Promise.reject(f);
+    }
+    const p = o && o.catchHandler;
+    return w instanceof Promise && (this._catchHandler || p) && (w = w.catch(async (f) => {
+      if (p) {
+        process.env.NODE_ENV !== "production" && (i.groupCollapsed(`Error thrown when responding to:  ${h(r)}. Falling back to route's Catch Handler.`), i.error("Error thrown by:", o), i.error(f), i.groupEnd());
+        try {
+          return await p.handle({ url: r, request: e, event: s, params: n });
+        } catch (x) {
+          x instanceof Error && (f = x);
+        }
+      }
+      if (this._catchHandler)
+        return process.env.NODE_ENV !== "production" && (i.groupCollapsed(`Error thrown when responding to:  ${h(r)}. Falling back to global Catch Handler.`), i.error("Error thrown by:", o), i.error(f), i.groupEnd()), this._catchHandler.handle({ url: r, request: e, event: s });
+      throw f;
+    })), w;
+  }
+  findMatchingRoute({ url: e, sameOrigin: s, request: r, event: a }) {
+    const n = this._routes.get(r.method) || [];
+    for (const o of n) {
+      let c;
+      const l = o.match({ url: e, sameOrigin: s, request: r, event: a });
+      if (l)
+        return process.env.NODE_ENV !== "production" && l instanceof Promise && i.warn(`While routing ${h(e)}, an async matchCallback function was used. Please convert the following route to use a synchronous matchCallback function:`, o), c = l, (Array.isArray(c) && c.length === 0 || l.constructor === Object && Object.keys(l).length === 0 || typeof l == "boolean") && (c = void 0), { route: o, params: c };
+    }
+    return {};
+  }
+  setDefaultHandler(e, s = P) {
+    this._defaultHandlerMap.set(s, N(e));
+  }
+  setCatchHandler(e) {
+    this._catchHandler = N(e);
+  }
+  registerRoute(e) {
+    process.env.NODE_ENV !== "production" && (d.isType(e, "object", {
+      moduleName: "workbox-routing",
+      className: "Router",
+      funcName: "registerRoute",
+      paramName: "route"
+    }), d.hasMethod(e, "match", {
+      moduleName: "workbox-routing",
+      className: "Router",
+      funcName: "registerRoute",
+      paramName: "route"
+    }), d.isType(e.handler, "object", {
+      moduleName: "workbox-routing",
+      className: "Router",
+      funcName: "registerRoute",
+      paramName: "route"
+    }), d.hasMethod(e.handler, "handle", {
+      moduleName: "workbox-routing",
+      className: "Router",
+      funcName: "registerRoute",
+      paramName: "route.handler"
+    }), d.isType(e.method, "string", {
+      moduleName: "workbox-routing",
+      className: "Router",
+      funcName: "registerRoute",
+      paramName: "route.method"
+    })), this._routes.has(e.method) || this._routes.set(e.method, []), this._routes.get(e.method).push(e);
+  }
+  unregisterRoute(e) {
+    if (!this._routes.has(e.method))
+      throw new u("unregister-route-but-not-found-with-method", {
+        method: e.method
+      });
+    const s = this._routes.get(e.method).indexOf(e);
+    if (s > -1)
+      this._routes.get(e.method).splice(s, 1);
+    else
+      throw new u("unregister-route-route-not-registered");
+  }
+}
+let v;
+const pe = () => (v || (v = new de(), v.addFetchListener(), v.addCacheListener()), v);
+function fe(t, e, s) {
+  let r;
+  if (typeof t == "string") {
+    const n = new URL(t, location.href);
+    if (process.env.NODE_ENV !== "production") {
+      if (!(t.startsWith("/") || t.startsWith("http")))
+        throw new u("invalid-string", {
+          moduleName: "workbox-routing",
+          funcName: "registerRoute",
+          paramName: "capture"
+        });
+      const c = t.startsWith("http") ? n.pathname : t, l = "[*:?+]";
+      new RegExp(`${l}`).exec(c) && i.debug(`The '$capture' parameter contains an Express-style wildcard character (${l}). Strings are now always interpreted as exact matches; use a RegExp for partial or wildcard matches.`);
+    }
+    const o = ({ url: c }) => (process.env.NODE_ENV !== "production" && c.pathname === n.pathname && c.origin !== n.origin && i.debug(`${t} only partially matches the cross-origin URL ${c.toString()}. This route will only handle cross-origin requests if they match the entire URL.`), c.href === n.href);
+    r = new R(o, e, s);
+  } else if (t instanceof RegExp)
+    r = new he(t, e, s);
+  else if (typeof t == "function")
+    r = new R(t, e, s);
+  else if (t instanceof R)
+    r = t;
+  else
+    throw new u("unsupported-route-type", {
+      moduleName: "workbox-routing",
+      funcName: "registerRoute",
+      paramName: "capture"
+    });
+  return pe().registerRoute(r), r;
+}
+function ge(t, e = []) {
+  for (const s of [...t.searchParams.keys()])
+    e.some((r) => r.test(s)) && t.searchParams.delete(s);
+  return t;
+}
+function* me(t, { ignoreURLParametersMatching: e = [/^utm_/, /^fbclid$/], directoryIndex: s = "index.html", cleanURLs: r = !0, urlManipulation: a } = {}) {
+  const n = new URL(t, location.href);
+  n.hash = "", yield n.href;
+  const o = ge(n, e);
+  if (yield o.href, s && o.pathname.endsWith("/")) {
+    const c = new URL(o.href);
+    c.pathname += s, yield c.href;
+  }
+  if (r) {
+    const c = new URL(o.href);
+    c.pathname += ".html", yield c.href;
+  }
+  if (a) {
+    const c = a({ url: n });
+    for (const l of c)
+      yield l.href;
+  }
+}
+class we extends R {
+  constructor(e, s) {
+    const r = ({ request: a }) => {
+      const n = e.getURLsToCacheKeys();
+      for (const o of me(a.url, s)) {
+        const c = n.get(o);
+        if (c) {
+          const l = e.getIntegrityForCacheKey(c);
+          return { cacheKey: c, integrity: l };
+        }
+      }
+      process.env.NODE_ENV !== "production" && i.debug("Precaching did not find a match for " + h(a.url));
+    };
+    super(r, e.strategy);
+  }
+}
+function _e(t) {
+  const e = D(), s = new we(e, t);
+  fe(s);
+}
+function ye(t) {
+  D().precache(t);
+}
+function be(t, e) {
+  ye(t), _e(e);
+}
+let ve = [
+  ...K,
+  ...V.filter((t) => !/(?:\.DS_Store|\.nojekyll$)/.test(t.url))
+];
+be(ve);
+self.addEventListener("message", (t) => {
+  t.data && t.data.type === "SKIP_WAITING" && self.skipWaiting();
+});
