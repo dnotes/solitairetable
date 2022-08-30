@@ -9,17 +9,28 @@
   export let cardIndex:number = 0
 
   $: cardDepth = stack?.getCardDepth(cardIndex)
-  $: cards = cardDepth ? stack.look(cardDepth) : []
-  $: draggable = card && !facedown && !$game.conf.multiSelect && cardDepth && !card.facedown && ($game.conf.selectBlockedStacks || !stack.isBlocked) && (!stack.conf.limitAvailable || cardDepth <= stack.conf.limitAvailable)
+  $: cards = cardDepth ? stack?.look(cardDepth) : []
+  $: draggable = card &&
+                !facedown &&
+                !$game?.conf?.multiSelect &&
+                cardDepth && !card.facedown &&
+                (
+                  $game?.conf?.selectBlockedStacks ||
+                  !stack?.isBlocked
+                ) &&
+                (
+                  !stack?.conf?.limitAvailable ||
+                  cardDepth <= stack.conf.limitAvailable
+                )
 
-	function turn(node, {
+	function turn(node:any, {
 		delay = 0,
 		duration = 80
 	}) {
 		return {
 			delay,
 			duration,
-			css: (t, u) => `
+			css: (t:number, u:number) => `
 				transform: rotateY(${1 - (u * 180)}deg);
 				opacity: ${1 - u};
         ${u ? 'position:absolute;' : 'position:static'}
@@ -28,14 +39,14 @@
   }
 
   // Set up card overlays
-  let visibleCardNumber, direction, distance
+  let visibleCardNumber:number, direction:string, distance:number
   $: if (stack) {
     visibleCardNumber = Math.max(cardIndex - stack.firstVisible, 0)
     distance = stack?.isDeck ? 0 : visibleCardNumber * (stack.conf['horizontal'] ? $edgeWidth : $edgeHeight)
     direction = stack.conf['horizontal'] ? 'left' : 'top'
   }
 
-  let textColor, fileName, alt
+  let textColor:string, fileName:string, alt:string
   if (card) {
     textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
     fileName = !card.isJoker ? `${card.rank}_${card.suitName}` : ( card.char === '1' ? '_joker_black' : '_joker_red' )
@@ -46,30 +57,32 @@
 
 </script>
 
-<div class:selected={$game.selection.filter(c => c?.id === card?.id).length} class="card container {textColor} rounded-xl absolute" style="{direction}:{distance}px"
+<div class:selected={$game?.selection?.filter(c => c?.id === card?.id).length} class="card container {textColor} rounded-xl absolute" style="{direction}:{distance}px"
   on:dragstart={(e) => {
-    draggedCards.set({
-      cards,
-      cardDepth,
-      fromStack: stack.index,
-    });
-    $game.clearSelected();
-    $game.setSelected(cards,stack);
+    if (stack && cards?.length) {
+      draggedCards.set({
+        cards,
+        cardDepth,
+        fromStack: stack?.index,
+      });
+      $game?.clearSelected();
+      $game?.setSelected(cards,stack);
+    }
   }}
   on:dragend={(e) => {
     draggedCards.set({});
-    $game.clearSelected();
+    $game?.clearSelected();
     game.set($game)
   }}
   on:click >
-<div class="cursor-pointer" {draggable}>
+<div class="cursor-pointer" draggable={Boolean(draggable)}>
   {#if card}
     {#if facedown || card.facedown}
-      <div transition:turn>
+      <div transition:turn|local>
         <img class="w-full" src="{dir}_back.svg" alt="?" />
       </div>
     {:else}
-      <div transition:turn>
+      <div transition:turn|local>
         <img class="w-full" src="{dir}{fileName}.svg" {alt}>
       </div>
     {/if}

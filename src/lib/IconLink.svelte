@@ -1,5 +1,7 @@
 <script lang="ts">
+// @ts-ignore
 import { goto } from '$app/navigation';
+import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { onMount } from 'svelte'
 import Fa from 'svelte-fa'
 
@@ -7,7 +9,7 @@ import Fa from 'svelte-fa'
   export let title=""
   export let rel=""
 
-  export let icon = undefined
+  export let icon:IconDefinition|undefined = undefined
   export let size:
     | 'xs'
     | 'sm'
@@ -24,32 +26,32 @@ import Fa from 'svelte-fa'
     | '10x'
   ="2x"
 
-  export let dropdownFrom:
+  export let dropdownFrom: undefined
     | 'top'
     | 'bottom'
     | 'left'
     | 'right'
-  =undefined
+  = undefined
   let dropdownBorder = dropdownFrom ? 'border-t border-b-2 border-r border-l'.replace(`border-${dropdownFrom[0]}`, '').replace(' -2 ', '') : ''
 
   export let linear=false
 
   let open = false
-  let menu
-  let link
+  let menu:HTMLElement
+  let link:HTMLAnchorElement
 
   let cls = ''
   export { cls as class }
 
   onMount(() => {
-    const handleOutsideClick = (event) => {
-      if (open && !menu.contains(event.target)) {
+    const handleOutsideClick = (e:any) => {
+      if (open && !menu.contains(e.target)) {
         open = false;
       }
     };
 
-    const handleEscape = (event) => {
-      if (open && event.key === 'Escape') {
+    const handleEscape = (e:any) => {
+      if (open && e.key === 'Escape') {
         open = false;
       }
     };
@@ -65,7 +67,7 @@ import Fa from 'svelte-fa'
     };
   });
 
-  function clickLink(e) {
+  function clickLink(e:any) {
     if (link.href !== '#') goto(link.href)
     else if ($$slots.menu) {
       e.stopPropagation()

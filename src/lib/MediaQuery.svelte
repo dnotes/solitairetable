@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
 
-import { browser } from '$app/env';
+// @ts-ignore
+import { browser } from '$app/environment';
 import { readable, derived } from 'svelte/store'
 
   export const breakpoint = readable("l",(set)=>{

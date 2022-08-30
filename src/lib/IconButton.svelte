@@ -1,25 +1,13 @@
 <script lang="ts">
+import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+
 import { onMount } from 'svelte'
 import Fa from 'svelte-fa'
 
-  export let icon = undefined
-  export let size:
-    | 'xs'
-    | 'sm'
-    | 'lg'
-    | '1x'
-    | '2x'
-    | '3x'
-    | '4x'
-    | '5x'
-    | '6x'
-    | '7x'
-    | '8x'
-    | '9x'
-    | '10x'
-  ="2x"
+  export let icon:IconDefinition|undefined = undefined
+  export let size: 'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'='2x'
 
-  export let dropdownFrom:
+  export let dropdownFrom: undefined
     | 'top'
     | 'bottom'
     | 'left'
@@ -29,22 +17,30 @@ import Fa from 'svelte-fa'
 
   export let linear=false
 
+  export let overlay:IconDefinition|undefined = undefined
+
+
   let open = false
-  let menu
-  let btn
+  let menu:HTMLElement
+  let btn:HTMLButtonElement
 
   let cls = ''
   export { cls as class }
 
+  const sizes = ['xs','sm','lg','1x','2x','3x','4x','5x','6x','7x','8x','9x','10x']
+  let overlaySize:'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'
+  // @ts-ignore
+  $: overlaySize = size.match(/[gx]$/) ? sizes[Math.round(sizes.indexOf(size)/2.8)] : undefined
+
   onMount(() => {
-    const handleOutsideClick = (event) => {
-      if (open && !menu.contains(event.target)) {
+    const handleOutsideClick = (e:any) => {
+      if (open && !menu.contains(e.target)) {
         open = false;
       }
     };
 
-    const handleEscape = (event) => {
-      if (open && event.key === 'Escape') {
+    const handleEscape = (e:any) => {
+      if (open && e.key === 'Escape') {
         open = false;
       }
     };
@@ -60,7 +56,7 @@ import Fa from 'svelte-fa'
     };
   });
 
-  function btnClick(e) {
+  function btnClick(e:any) {
     if ($$slots.menu) {
       e.stopPropagation()
       open = !open
@@ -75,11 +71,14 @@ import Fa from 'svelte-fa'
     bind:this={btn}
     on:click
     on:click={btnClick}
-    class="{cls} {linear ? 'whitespace-nowrap' : ''}"
+    class="px-2 py-1 text-center leading-none {cls} {linear ? 'whitespace-nowrap' : ''}"
   >
     {#if icon}
-      <span class="{linear ? 'inline-block px-1 align-middle' : ''}">
+      <span class="relative {linear ? 'inline-block px-1 align-middle' : 'block'}">
         <Fa class="{linear ? '' : 'mx-auto'}" {icon} {size} />
+        {#if overlay && sizes.includes(overlaySize)}
+          <Fa class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" icon={overlay} size="{overlaySize}" />
+        {/if}
       </span>
     {/if}
     <span class="align-middle">
@@ -96,7 +95,3 @@ import Fa from 'svelte-fa'
   {/if}
 
 </div>
-
-<style lang="postcss">
-  button { @apply px-2 py-1 text-center leading-none caps-small }
-</style>

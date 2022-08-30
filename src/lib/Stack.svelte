@@ -21,10 +21,10 @@
   $: stackWidth = $maxCardWidth + extraWidth
   $: stackHeight = ($maxCardWidth * 1.5) + extraHeight
 
-  function clickCard(stack:string|StackInterface, card?:CardInterface) {
-    if (typeof stack === 'string') return
-    if (!card) $game.deal()
-    else $game.clickCard(card, stack)
+  function clickCard(stack:string|StackInterface|undefined, card?:CardInterface) {
+    if (!stack || typeof stack === 'string') return
+    if (!card) $game?.deal()
+    else $game?.clickCard(card, stack)
     game.set($game)
   }
 
@@ -33,7 +33,7 @@
 
 </script>
 
-{#if typeof stack !== 'string'}
+{#if $game && typeof stack !== 'string'}
   <div
     class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)}
     class:p-1={$maxCardWidth > 100}

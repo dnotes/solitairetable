@@ -1,20 +1,7 @@
 <script lang="ts">
-  import IconLink from '$lib/IconLink.svelte'
-  import * as icons from '@fortawesome/free-solid-svg-icons'
-  const files = import.meta.globEager('/*.md')
-  const links: { text:string, href:string, title?:string, icon?:any }[] = [
-    { text: 'Home', href: '/', icon: "faHome" },
-    ...Object.keys(files).map(f => {
-      let href = f.replace(/\//g,'').replace(/\.md$/, '').replace(/^README/, 'About')
-      let text = files[f].attributes?.title || href[0].toUpperCase() + href.slice(1)
-      let title = files[f].attributes?.description || ''
-      let icon = files[f].attributes?.icon || ''
-      return { text, href, title, icon }
-    })
-  ].map(l => {
-    l.icon = l.icon ? icons[`${l.icon}`] || undefined : undefined
-    return l
-  })
+
+import IconLink from '$lib/IconLink.svelte'
+import { faHome, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
   export let linear = false
   export let size:
@@ -35,6 +22,11 @@
 
   let cls = ''
   export { cls as class }
+
+  const links: { text:string, href:string, title?:string, icon?:any }[] = [
+    { text: 'Home', href: '/', icon: faHome },
+    { text: 'About', href: 'about', icon: faInfoCircle }
+  ]
 </script>
 
 {#each links as {href,text,title,icon} }

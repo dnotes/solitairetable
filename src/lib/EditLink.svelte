@@ -1,5 +1,6 @@
 <script lang="ts">
   import IconLink from "$lib/IconLink.svelte"
+  // @ts-ignore
   import { page } from "$app/stores"
   import { game } from "$lib/data/stores"
   import { faEdit } from '@fortawesome/free-solid-svg-icons'
@@ -27,7 +28,7 @@
 
   export let text = true
 
-  let isBuild = $page.path.match(/^\/build/i)
+  let isBuild = $page.url.pathname.match(/^\/build/i)
   let url = isBuild ? 'play' : 'build'
 
 </script>

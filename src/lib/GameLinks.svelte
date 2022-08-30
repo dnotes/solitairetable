@@ -22,10 +22,10 @@ import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
     | '10x'
   ="2x"
 
-  let links = family ? [games[family], ...games[family].variants] : Object.keys(games).map(k => games[k]).filter(g => g.family === g.name)
+  let links = family ? [games[family], ...(games[family].variants || [])] : Object.keys(games).map(k => games[k]).filter(g => g.family === g.name)
   let title = family ? `Variants` : 'Games'
 
-  export let dropdownFrom:
+  export let dropdownFrom: undefined
     | 'top'
     | 'bottom'
     | 'left'

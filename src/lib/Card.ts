@@ -53,7 +53,7 @@ export default class Card {
 
 export class SelectedCard {
 
-  id: number
+  id: number = 0
   char: string = ''
   suit: string = ''
   color: string = ''

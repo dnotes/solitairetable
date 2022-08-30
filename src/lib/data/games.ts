@@ -5,24 +5,29 @@ import { slugify } from 'transliteration'
 export type NamedGameConfigSetting = GameConfigSetting & {
   family?: string
   title: string
-  variants?: NamedGameConfigSetting[]
+  variants?: NamedGameConfig[]
 }
 
 export type NamedGameConfig = NamedGameConfigSetting & {
   name: string
 }
 
-let games = <NamedGameConfig[]> {}
+let games:{[key:string]:NamedGameConfig} = {}
 
 function register(config:NamedGameConfigSetting):void {
   let name = slugify(`${config.family || ''} ${config.title}`.trim())
   if (games[name]) throw new Error(`Duplicate name ${name}`)
-  config['name'] = name
-  config['family']=slugify(config.family || config.title)
-  games[name] = config
+
+  let game:NamedGameConfig = {
+    ...config,
+    name,
+    family: slugify(config.family || config.title),
+  }
+  games[name] = game
+
   if (!config.family || config?.family?.toLowerCase() === config.title.toLowerCase()) games[name].variants = []
   else if (games[config.family]) {
-    games[config.family].variants.push(config)
+    games[config.family]?.variants?.push(game)
   }
 }
 
@@ -42,25 +47,21 @@ register({
   layout: '0000-D8,1234567',
 })
 
-register(Object.assign({}, games['klondike'], {
-  family: 'Klondike',
+register({...games['klondike'],
   title: 'Vegas',
   limitCycles: 3,
-}))
+})
 
-register(Object.assign({}, games['klondike-vegas'], {
-  family: 'klondike',
+register({...games['klondike-vegas'],
   title: 'Vegas Strict (1 undo)',
   limitUndo: 1,
-}))
+})
 
-register(Object.assign({}, games['klondike'], {
-  family: 'klondike',
+register({...games['klondike'],
   title: 'Draw One',
-  stackConfig: [...games['klondike'].stackConfig].map(c => {
-    if (c.deal) c = Object.assign({}, c, { deal:1 })
-  })
-}))
+  // @ts-ignore
+  stackConfig: games['klondike'].stackConfig.map(c => (typeof c !== 'string' && c.deal) ? {...c, deal:1 } : c)
+})
 
 register({
   title: 'Freecell',
@@ -88,24 +89,21 @@ register({
   footer: '_D 1 2_'
 })
 
-register(Object.assign({}, games['pyramid'], {
-  family: 'pyramid',
+register({...games['pyramid'],
   title: 'Extra',
   deckConfig: { jokers:3 },
   layout: '0,00,000,0000,00000,000000,0000000,00000000'
-}))
+})
 
-register(Object.assign({}, games['pyramid'], {
-  name: 'pyramid-exact-draw-three',
-  family: 'pyramid',
+register({...games['pyramid'],
   title: 'Exact, Draw 3',
   stackConfig: [
     { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
-    { name:"play", deal:true, limitAvailable:1, limitVisible:5, horizontal:true },
+    { name:"play", deal:1, limitAvailable:1, limitVisible:5, horizontal:true },
     { name:"discard", canGet:false, empty:'', limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
   ],
   footer: 'D 1 1 1 2'
-}))
+})
 
 register({
   title: 'Golf',
@@ -136,13 +134,12 @@ register({
   layout: 'D 00000000,1111222222'
 })
 
-register(Object.assign({}, games['spider'], {
-  family: 'spider',
+register({...games['spider'],
   title: 'Two suits',
   deckConfig: {
     decks: 4,
     suits:'SD',
   }
-}))
+})
 
 export default games

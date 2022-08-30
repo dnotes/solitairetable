@@ -226,7 +226,7 @@ export default class Deck implements StackInterface,DeckInterface {
   }
 
   toString():string {
-    return this.deck.map(c => c.id).join('')
+    return this.deck.map(c => c.char).join('')
   }
 
   wants() { return 0 }

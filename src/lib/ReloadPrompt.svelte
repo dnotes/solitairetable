@@ -1,6 +1,6 @@
 <script lang="ts">
 
-import { dev, browser } from '$app/env';
+import { dev, browser } from '$app/environment';
 
 if (!dev && browser) {
   (async () => {

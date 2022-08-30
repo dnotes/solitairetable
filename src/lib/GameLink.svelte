@@ -2,8 +2,9 @@
 import Game from '$lib/Game'
 import { game } from '$lib/data/stores'
 import IconLink from './IconLink.svelte'
+import type { NamedGameConfig } from './data/games';
 
-  export let config
+  export let config:NamedGameConfig
 
   let cls = ''
   export {cls as class}

@@ -1,12 +1,14 @@
-<script>
+<script lang="ts">
 import Game from "./Game";
 import Pile from "$lib/StackIcon.svelte"
+// @ts-ignore
 import { goto } from "$app/navigation";
 import { onMount } from "svelte"
-export let config
+import type { NamedGameConfig } from "./data/games";
+export let config:NamedGameConfig
 
-  let game, rowCount, topEdgeCount
-  let maxCardWidth, edgeHeight
+  let game:Game, rowCount:number, topEdgeCount:number
+  let maxCardWidth:number, edgeHeight:number
   let w=160, h=128
 
   onMount(() => {
@@ -60,7 +62,7 @@ export let config
 
 <div class="leading-loose text-center bg-white rounded-b overflow-hidden pt-1 -mt-1">
   <div class="w-40"><a href="/play?g={config.name}">{config.title}</a></div>
-  {#each config.variants as conf}
+  {#each (config.variants || []) as conf}
     <div><a href="/play?g={conf.name}">{conf.title}</a></div>
   {/each}
 </div>
