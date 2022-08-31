@@ -1,24 +1,12 @@
 <script lang="ts">
 
-import IconLink from '$lib/IconLink.svelte'
+import IconButton from '$lib/IconButton.svelte'
 import { faHome, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
-  export let linear = false
-  export let size:
-    | 'xs'
-    | 'sm'
-    | 'lg'
-    | '1x'
-    | '2x'
-    | '3x'
-    | '4x'
-    | '5x'
-    | '6x'
-    | '7x'
-    | '8x'
-    | '9x'
-    | '10x'
-  ="2x"
+  // Whether links should be linear
+  export let linear = true
+  // Icon size from svelte-fa
+  export let size: 'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'='2x'
 
   let cls = ''
   export { cls as class }
@@ -30,7 +18,7 @@ import { faHome, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 </script>
 
 {#each links as {href,text,title,icon} }
-  <IconLink rel="prefetch" class={cls} {href} {title} {icon} {linear} {size}>
+  <IconButton rel="prefetch" class={cls} {href} {title} {icon} {linear} {size}>
     {text}
-  </IconLink>
+  </IconButton>
 {/each}

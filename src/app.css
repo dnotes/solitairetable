@@ -6,6 +6,7 @@
 * {
   box-sizing: border-box;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  @apply border-gray-800;
 }
 h1 {
   font-size: 2rem;
@@ -19,7 +20,7 @@ h3 {
   font-size: 1.25rem;
   margin: 1.25rem 0 1rem;
 }
-a {
+a:not(.no-link),button.link {
   color: cornflowerblue;
 }
 a:hover {

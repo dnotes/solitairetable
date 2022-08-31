@@ -2,7 +2,7 @@
 import games from '$lib/data/games'
 import GameLink from './GameLink.svelte'
 import IconButton from './IconButton.svelte'
-import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
+import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 
   export let family = ''
   export let linear = false
@@ -39,7 +39,7 @@ import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 
 </script>
 
-<IconButton icon={faFolderPlus} class={cls} {dropdownFrom} {size} {linear}>
+<IconButton icon={faFolderOpen} class={cls} {dropdownFrom} {size} {linear}>
   {title}
   <div slot="menu" class="min-w-full {cls} {menuClass}">
     {#each links as config}

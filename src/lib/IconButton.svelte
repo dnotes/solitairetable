@@ -4,9 +4,13 @@ import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { onMount } from 'svelte'
 import Fa from 'svelte-fa'
 
+  // Icon definition from fontawesome
   export let icon:IconDefinition|undefined = undefined
+
+  // Size from svelte-fa
   export let size: 'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'='2x'
 
+  // Whether this will be a menu
   export let dropdownFrom: undefined
     | 'top'
     | 'bottom'
@@ -15,10 +19,20 @@ import Fa from 'svelte-fa'
   =undefined
   let dropdownBorder = dropdownFrom ? 'border-t border-b-2 border-r border-l'.replace(`border-${dropdownFrom[0]}`, '').replace(' -2 ', '') : ''
 
+  // Whether the button text should be linear (default: stacked)
   export let linear=false
 
-  export let overlay:IconDefinition|undefined = undefined
+  // Text elements for building links
+  export let href=""
+  export let title=""
+  export let rel=""
 
+  // Whether there is a second icon overlayed over the main one
+  export let overlay:IconDefinition|undefined = undefined
+  const sizes = ['xs','sm','lg','1x','2x','3x','4x','5x','6x','7x','8x','9x','10x']
+  let overlaySize:'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'
+  // @ts-ignore Get the overlayed icon's size automatically
+  $: overlaySize = size.match(/[gx]$/) ? sizes[Math.round(sizes.indexOf(size)/2.8)] : undefined
 
   let open = false
   let menu:HTMLElement
@@ -26,11 +40,6 @@ import Fa from 'svelte-fa'
 
   let cls = ''
   export { cls as class }
-
-  const sizes = ['xs','sm','lg','1x','2x','3x','4x','5x','6x','7x','8x','9x','10x']
-  let overlaySize:'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'
-  // @ts-ignore
-  $: overlaySize = size.match(/[gx]$/) ? sizes[Math.round(sizes.indexOf(size)/2.8)] : undefined
 
   onMount(() => {
     const handleOutsideClick = (e:any) => {
@@ -65,17 +74,22 @@ import Fa from 'svelte-fa'
 
 </script>
 
-<div class="relative inline-block max-h-full {cls}" bind:this={menu}>
+<div class="relative inline-block max-h-full h-full {cls}" bind:this={menu}>
 
-  <button
+  <svelte:element
+    this={href ? 'a' : 'button'}
+    type="button"
+    {href}
+    {title}
+    {rel}
     bind:this={btn}
     on:click
     on:click={btnClick}
-    class="px-2 py-1 text-center leading-none {cls} {linear ? 'whitespace-nowrap' : ''}"
+    class="px-2 py-1 text-center leading-none h-full flex flex-{linear ? 'row' : 'col'} items-center justify-center {cls} {linear ? 'whitespace-nowrap' : ''}"
   >
     {#if icon}
-      <span class="relative {cls} {linear ? 'inline-block px-1 align-middle' : 'block'}">
-        <Fa class="{linear ? '' : 'mx-auto'}" {icon} {size} />
+      <span class="relative px-1 mb-1 inline-block {cls}">
+        <Fa {icon} {size} />
         {#if overlay && sizes.includes(overlaySize)}
           <Fa class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" icon={overlay} size="{overlaySize}" />
         {/if}
@@ -84,7 +98,7 @@ import Fa from 'svelte-fa'
     <span class="align-middle">
       <slot />
     </span>
-  </button>
+  </svelte:element>
   {#if open}
     <div
       on:click={(e) => {open=false}}

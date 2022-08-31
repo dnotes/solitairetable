@@ -13,15 +13,12 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 <div class="h-screen flex flex-col overflow-hidden">
 
   {#if $platform==='desktop'}
-    <header class="flex-grow-0 flex flex-row z-10 w-full px-2 md:px-6 lg:px-12 border-b-2 border-gray-800 bg-gray-700 text-white">
-      <GameLinks dropdownFrom="top" linear size="lg" class="text-blue-400 text-lg py-1 bg-gray-700 rounded-b border-gray-800" />
-      <SiteLinks linear size="lg" class="text-lg h-full py-1" />
+    <header class="flex-grow-0 flex flex-row z-10 w-full h-14 px-2 md:px-6 lg:px-12 border-b-2 bg-gray-700 text-white">
+      <GameLinks dropdownFrom="top" linear size="lg" class="link bg-gray-700 rounded-b" />
+      <SiteLinks size="lg" />
       <div class="flex-grow"/>
       {#if $game}
-        <GameControls size="lg" class="align-middle text-sm text-white bg-gray-700" position="top" />
-        {#if $game?.conf?.family}
-          <GameLinks dropdownFrom="top" size="lg" class="text-sm bg-gray-700 rounded-b right-0 border-gray-800 text-right text-white" childClass="min-w-full" family="{$game.conf.family}" />
-        {/if}
+        <GameControls size="lg" class="text-sm text-white bg-gray-700" position="top" />
       {/if}
     </header>
   {/if}
@@ -37,24 +34,21 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
     {#if $platform==='mobile'}
 
       {#if $game}
-        <GameControls class="text-white bg-gray-900 border-gray-900" buttons="undo,redo,game" position="bottom" />
-        {#if $game?.conf?.family}
-          <GameLinks dropdownFrom="bottom" class="bg-gray-900 rounded-t right-0 border-gray-800 text-right text-white" childClass="min-w-full" family="{$game.conf.family}" />
-        {/if}
+        <GameControls class="text-white bg-gray-900" position="bottom" />
       {/if}
       <div class="flex-grow"></div>
 
       <IconButton icon={faEllipsis} dropdownFrom="bottom" class="bg-gray-900 text-white right-0 text-right">
         Menu
         <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full right-0">
-          <SiteLinks linear class="text-white hover:no-underline text-right" />
+          <SiteLinks class="no-link" />
         </div>
       </IconButton>
 
     {:else}
 
       <div class="flex-grow"/>
-      <SiteLinks linear size="sm" class="text-white" />
+      <SiteLinks size="sm" class="no-link" />
 
     {/if}
 

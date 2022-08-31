@@ -82,6 +82,7 @@ export class GameConfig {
   stackConfig: Array<StackConfig> // configuration of types of stacks
   layout: string = ''             // layout string
   footer?: string = ''            // footer, unused except in building
+  isOfficial?: boolean = false
   constructor(conf?:string|GameConfig|GameConfigSetting) {
 
     if (!conf) {
@@ -92,8 +93,9 @@ export class GameConfig {
       let config = games[conf]
       if (config.overlayRows && !config.hasOwnProperty('selectBlockedStacks')) config['selectBlockedStacks'] = false
       Object.assign(this, config)
-      this.deckConfig = new DeckConfig(this.deckConfig)
-      this.stackConfig = Array.isArray(this.stackConfig) ? this.stackConfig.map(c => new StackConfig(c)) : [ new StackConfig ]
+      this.isOfficial = true
+      this.deckConfig = new DeckConfig(config.deckConfig)
+      this.stackConfig = Array.isArray(config.stackConfig) ? config.stackConfig.map(c => new StackConfig(c)) : [ new StackConfig(config.stackConfig) ]
     }
     else if (typeof conf === 'string') {
       let config = conf.split('!');
@@ -107,8 +109,8 @@ export class GameConfig {
     else {
       if (conf.overlayRows && !conf.hasOwnProperty('selectBlockedStacks')) conf['selectBlockedStacks'] = false
       Object.assign(this, conf)
-      this.deckConfig = new DeckConfig(this.deckConfig)
-      this.stackConfig.forEach(c => new StackConfig(c))
+      this.deckConfig = new DeckConfig(conf.deckConfig)
+      this.stackConfig = Array.isArray(conf.stackConfig) ? conf.stackConfig.map(c => new StackConfig(c)) : [ new StackConfig(conf.stackConfig) ]
     }
     return this
   }
@@ -119,7 +121,7 @@ export class GameConfig {
       this.deckConfig,
       this.stackConfig.join('|'),
       this.layout,
-    ].join('!').replace(' ', '+')
+    ].join('!').replace(/ /g, '+')
   }
 }
 
@@ -134,7 +136,7 @@ export default class Game {
   footer: Row[] = []
   longestRow: number = 0
   conf: GameConfig
-  selection: SelectedCard[]
+  selection?: SelectedCard[]
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|DeckConfig|DeckConfigSetting) {
     this.conf = new GameConfig(conf)
@@ -212,8 +214,15 @@ export default class Game {
   }
 
   get title():string {
+    if (this.conf.title && (this.conf.family?.toLowerCase() === this.conf.title?.toLowerCase())) return this.conf.title
     return `${unslug(this.conf.family)} ${this.conf.title || unslug(this.conf.name)}`.trim()
   }
+
+  get href():string {
+    return `/play?g=${this.isOfficial ? this.name : this.conf.toString()}&d=${this.deck.toString()}`
+  }
+
+  get isOfficial() { return this.conf.isOfficial }
 
   initialize() {
 

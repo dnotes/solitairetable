@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconLink from "$lib/IconLink.svelte"
+  import IconButton from "$lib/IconButton.svelte"
   // @ts-ignore
   import { page } from "$app/stores"
   import { game } from "$lib/data/stores"
@@ -33,7 +33,7 @@
 
 </script>
 
-<IconLink
+<IconButton
   href="/{url}?g={$game?.name || $game?.conf?.toString()}"
   icon="{faEdit}"
   class="{cls} {isBuild && ('text-green-500')}"
@@ -43,4 +43,4 @@
   {#if text}
     Edit
   {/if}
-</IconLink>
+</IconButton>

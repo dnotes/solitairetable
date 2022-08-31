@@ -5,6 +5,9 @@
   import { Action, Activity } from '$lib/Game'
   import GameControls from "./GameControls.svelte"
   import type CardInterface from '$lib/Card'
+import IconButton from "./IconButton.svelte";
+import { faShareSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
+import { faAsterisk, faBackward } from "@fortawesome/free-solid-svg-icons";
 
   export let stack:string|StackInterface|undefined
 
@@ -30,6 +33,11 @@
 
   // @ts-ignore
   $: wanted = (stack && typeof stack !== 'string' && $draggedCards?.cards && stack.wants($draggedCards.cards))
+
+  let bigCards:boolean
+  let buttonSize:'2x'|'lg' = '2x'
+  $: bigCards = $maxCardWidth > 75
+  $: buttonSize = bigCards ? '2x' : 'lg'
 
 </script>
 
@@ -67,7 +75,28 @@
                   {/if}
                 </div>
               {:else}
-                <div><GameControls buttons="{$maxCardWidth > 56 ? 'new,restart' : 'new'}" text={$maxCardWidth > 72} class="w-full"></GameControls></div>
+                <div class="flex flex-row flex-wrap justify-center items-center">
+                  <div class="{bigCards ? 'w-1/2' : 'w-full'}">
+                    <IconButton icon={faShareSquare} dropdownFrom="top" href="{$game.href}" class="no-link {bigCards ? '' : 'py-0'}" on:click={(e)=>{
+                      e.preventDefault()
+                      navigator.clipboard.writeText(new URL($game.href, window.location.href).toString())
+
+                    }}>
+                      {#if bigCards}Share{/if}
+                      <span class="p-2" slot="menu">Link&nbsp;copied!</span>
+                    </IconButton>
+                  </div>
+                  <div class="{bigCards ? 'w-1/2' : 'w-full'}">
+                    <IconButton icon={faSquare} overlay={faBackward} class="{bigCards ? '' : 'py-0'}" on:click={() => { $game.reset(); game.set($game); }}>
+                      {#if bigCards}Restart{/if}
+                    </IconButton>
+                  </div>
+                  <div class="{bigCards ? 'w-1/2' : 'w-full'}">
+                    <IconButton icon={faSquare} overlay={faAsterisk} class="{bigCards ? '' : 'py-0'}" on:click={() => { $game.new(); game.set($game); }}>
+                      {#if bigCards}New{/if}
+                    </IconButton>
+                  </div>
+                </div>
               {/if}
             </Card>
           {/each}
