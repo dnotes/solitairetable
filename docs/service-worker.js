@@ -1,26 +1,28 @@
 const K = [
-  "/_app/immutable/start-efbab05e.js",
-  "/_app/immutable/components/pages/_layout.svelte-88419dda.js",
-  "/_app/immutable/assets/+layout-58f7abce.css",
-  "/_app/immutable/components/error.svelte-179191b0.js",
-  "/_app/immutable/components/pages/(page)/_layout.svelte-88f1402d.js",
-  "/_app/immutable/components/pages/(page)/_page.svelte-e85e42d7.js",
+  "/_app/immutable/start-89f10f1b.js",
+  "/_app/immutable/components/pages/_layout.svelte-ce3f89df.js",
+  "/_app/immutable/assets/+layout-b222f1c7.css",
+  "/_app/immutable/components/error.svelte-de54867e.js",
+  "/_app/immutable/components/pages/(page)/_layout.svelte-b00f644a.js",
+  "/_app/immutable/components/pages/(page)/_page.svelte-3bc13dfd.js",
   "/_app/immutable/assets/+page-352bac7e.css",
-  "/_app/immutable/components/pages/(page)/_slug_/_page.svelte-dc125cb3.js",
-  "/_app/immutable/components/pages/play/_page.svelte-bd387631.js",
-  "/_app/immutable/chunks/singletons-f098867a.js",
-  "/_app/immutable/chunks/index-e7dad187.js",
+  "/_app/immutable/components/pages/(page)/_slug_/_page.svelte-69c7bb11.js",
+  "/_app/immutable/components/pages/play/_page.svelte-bfc2a12f.js",
+  "/_app/immutable/chunks/singletons-ba9da0f9.js",
+  "/_app/immutable/chunks/index-4f26f8ba.js",
+  "/_app/immutable/chunks/index-6634cca6.js",
   "/_app/immutable/chunks/preload-helper-aa6bc0ce.js",
-  "/_app/immutable/chunks/stores-836ff054.js",
-  "/_app/immutable/chunks/SiteLinks-f646642c.js",
-  "/_app/immutable/assets/SiteLinks-e3229107.css",
-  "/_app/immutable/chunks/navigation-1bcfb984.js",
-  "/_app/immutable/chunks/0-1d75a7be.js",
-  "/_app/immutable/chunks/1-dabc1193.js",
-  "/_app/immutable/chunks/2-8d0f167a.js",
-  "/_app/immutable/chunks/3-9322bcce.js",
-  "/_app/immutable/chunks/4-dec535c5.js",
-  "/_app/immutable/chunks/5-bf8a4cc2.js",
+  "/_app/immutable/chunks/index.es-725136b3.js",
+  "/_app/immutable/assets/index-53ae24f9.css",
+  "/_app/immutable/chunks/Game-6b953bb7.js",
+  "/_app/immutable/chunks/stores-df3726a5.js",
+  "/_app/immutable/chunks/navigation-e2146536.js",
+  "/_app/immutable/chunks/0-41ba8cdc.js",
+  "/_app/immutable/chunks/1-5578b234.js",
+  "/_app/immutable/chunks/2-815eedb9.js",
+  "/_app/immutable/chunks/3-e64057da.js",
+  "/_app/immutable/chunks/4-a540000b.js",
+  "/_app/immutable/chunks/5-18bee820.js",
   "/_app/immutable/chunks/workbox-window.prod.es5-daaa7301.js"
 ], V = [
   "/.nojekyll",
@@ -157,7 +159,7 @@ try {
   self["workbox:core:6.2.4"] && _();
 } catch {
 }
-const A = {
+const j = {
   "invalid-value": ({ paramName: t, validValueDescription: e, value: s }) => {
     if (!t || !e)
       throw new Error("Unexpected input to 'invalid-value' error.");
@@ -250,15 +252,15 @@ const A = {
   "add-to-cache-list-conflicting-integrities": ({ url: t }) => `Two of the entries passed to 'workbox-precaching.PrecacheController.addToCacheList()' had the URL ${t} with different integrity values. Please remove one of them.`,
   "missing-precache-entry": ({ cacheName: t, url: e }) => `Unable to find a precached response in ${t} for ${e}.`,
   "cross-origin-copy-response": ({ origin: t }) => `workbox-core.copyResponse() can only be used with same-origin responses. It was passed a response with origin ${t}.`
-}, j = (t, ...e) => {
+}, A = (t, ...e) => {
   let s = t;
   return e.length > 0 && (s += ` :: ${JSON.stringify(e)}`), s;
 }, q = (t, e = {}) => {
-  const s = A[t];
+  const s = j[t];
   if (!s)
     throw new Error(`Unable to find message for code '${t}'.`);
   return s(e);
-}, S = process.env.NODE_ENV === "production" ? j : q;
+}, S = process.env.NODE_ENV === "production" ? A : q;
 class u extends Error {
   constructor(e, s) {
     const r = S(e, s);
@@ -300,12 +302,12 @@ const I = (t, e) => {
   prefix: "workbox",
   runtime: "runtime",
   suffix: typeof registration < "u" ? registration.scope : ""
-}, C = (t) => [g.prefix, t, g.suffix].filter((e) => e && e.length > 0).join("-"), J = (t) => {
+}, C = (t) => [g.prefix, t, g.suffix].filter((e) => e && e.length > 0).join("-"), G = (t) => {
   for (const e of Object.keys(g))
     t(e);
 }, $ = {
   updateDetails: (t) => {
-    J((e) => {
+    G((e) => {
       typeof t[e] == "string" && (g[e] = t[e]);
     });
   },
@@ -356,7 +358,7 @@ try {
   self["workbox:precaching:6.2.4"] && _();
 } catch {
 }
-const G = "__WB_REVISION__";
+const J = "__WB_REVISION__";
 function Q(t) {
   if (!t)
     throw new u("add-to-cache-list-unexpected-type", { entry: t });
@@ -378,7 +380,7 @@ function Q(t) {
     };
   }
   const r = new URL(s, location.href), a = new URL(s, location.href);
-  return r.searchParams.set(G, e), {
+  return r.searchParams.set(J, e), {
     cacheKey: r.href,
     url: a.href
   };
