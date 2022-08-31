@@ -19,7 +19,6 @@ const config: UserConfig = {
 				'/',
 				'/about',
 				'/play',
-				'/build',
 			]
 		}),
 		sveltekit(),
