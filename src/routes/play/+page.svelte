@@ -8,7 +8,6 @@ import Game from '$lib/Game'
 import Table from '$lib/Table.svelte'
 
   beforeNavigate((nav:any) => {
-    console.log({before: nav})
     // @ts-ignore
     // This seems to be needed for everything to reset. Not sure why.
     // If it's omitted, strange things start to happen, like if you are on a "/play" page
@@ -20,7 +19,6 @@ import Table from '$lib/Table.svelte'
   })
 
   afterNavigate((nav:any) => {
-    console.log({after: nav})
     let config = $page.url.searchParams.get('g')
     if (!config) config = 'klondike-vegas'
     let deck = $page.url.searchParams.get('d') || undefined
