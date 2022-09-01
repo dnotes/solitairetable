@@ -78,11 +78,11 @@
 <div class="cursor-pointer" draggable={Boolean(draggable)}>
   {#if card}
     {#if facedown || card.facedown}
-      <div transition:turn|local>
+      <div transition:turn>
         <img class="w-full" src="{dir}_back.svg" alt="?" />
       </div>
     {:else}
-      <div transition:turn|local>
+      <div transition:turn>
         <img class="w-full" src="{dir}{fileName}.svg" {alt}>
       </div>
     {/if}
