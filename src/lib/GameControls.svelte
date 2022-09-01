@@ -5,6 +5,7 @@ import { faFile, faShareSquare, faSquare } from '@fortawesome/free-regular-svg-i
 import { game } from '$lib/data/stores'
 import GameLinks from './GameLinks.svelte';
 import { breakpoint } from './MediaQuery.svelte';
+import LinkCopied from './LinkCopied.svelte';
 
   export let collapseGameButtons = false
   export let text = true
@@ -64,7 +65,7 @@ import { breakpoint } from './MediaQuery.svelte';
     {#if text}
       Share
     {/if}
-    <span class="p-2" slot="menu">Link&nbsp;copied!</span>
+    <span slot="menu"><LinkCopied /></span>
   </IconButton>
 
 {:else}
@@ -82,11 +83,11 @@ import { breakpoint } from './MediaQuery.svelte';
           Restart
         {/if}
       </IconButton>
-      <IconButton linear icon={faShareSquare} class={cls} {size} dropdownFrom="left" on:click={share}>
+      <IconButton linear icon={faShareSquare} class={cls} {size} dropdownFrom="top" on:click={share}>
         {#if text}
           Share
         {/if}
-        <span class="p-2" slot="menu">Link&nbsp;copied!</span>
+        <span slot="menu"><LinkCopied /></span>
       </IconButton>
 
     </div>
