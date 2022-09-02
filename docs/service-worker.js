@@ -1,29 +1,29 @@
 const K = [
-  "/_app/immutable/start-89f10f1b.js",
-  "/_app/immutable/components/pages/_layout.svelte-ce3f89df.js",
-  "/_app/immutable/assets/+layout-b222f1c7.css",
-  "/_app/immutable/components/error.svelte-de54867e.js",
+  "/_app/immutable/start-f88dac31.js",
+  "/_app/immutable/components/pages/_layout.svelte-7827e368.js",
+  "/_app/immutable/assets/+layout-5a44d604.css",
+  "/_app/immutable/components/error.svelte-4f84560d.js",
   "/_app/immutable/components/pages/(page)/_layout.svelte-b00f644a.js",
-  "/_app/immutable/components/pages/(page)/_page.svelte-3bc13dfd.js",
+  "/_app/immutable/components/pages/(page)/_page.svelte-e1b67885.js",
   "/_app/immutable/assets/+page-352bac7e.css",
-  "/_app/immutable/components/pages/(page)/_slug_/_page.svelte-69c7bb11.js",
-  "/_app/immutable/components/pages/play/_page.svelte-bfc2a12f.js",
-  "/_app/immutable/chunks/singletons-ba9da0f9.js",
+  "/_app/immutable/components/pages/(page)/_...slug_/_page.svelte-5dce05ec.js",
+  "/_app/immutable/components/pages/play/_page.svelte-8493136d.js",
+  "/_app/immutable/chunks/singletons-8b064a00.js",
   "/_app/immutable/chunks/index-4f26f8ba.js",
   "/_app/immutable/chunks/index-6634cca6.js",
   "/_app/immutable/chunks/preload-helper-aa6bc0ce.js",
-  "/_app/immutable/chunks/index.es-725136b3.js",
-  "/_app/immutable/assets/index-53ae24f9.css",
-  "/_app/immutable/chunks/Game-6b953bb7.js",
-  "/_app/immutable/chunks/stores-df3726a5.js",
-  "/_app/immutable/chunks/navigation-e2146536.js",
-  "/_app/immutable/chunks/0-41ba8cdc.js",
-  "/_app/immutable/chunks/1-5578b234.js",
+  "/_app/immutable/chunks/LinkCopied-fff47d77.js",
+  "/_app/immutable/assets/LinkCopied-53ae24f9.css",
+  "/_app/immutable/chunks/Game-2cabc409.js",
+  "/_app/immutable/chunks/stores-da88eb8c.js",
+  "/_app/immutable/chunks/navigation-cbe181e1.js",
+  "/_app/immutable/chunks/0-ea97d618.js",
+  "/_app/immutable/chunks/1-d3e62294.js",
   "/_app/immutable/chunks/2-815eedb9.js",
-  "/_app/immutable/chunks/3-e64057da.js",
-  "/_app/immutable/chunks/4-a540000b.js",
-  "/_app/immutable/chunks/5-18bee820.js",
-  "/_app/immutable/chunks/workbox-window.prod.es5-daaa7301.js"
+  "/_app/immutable/chunks/3-ac59f77b.js",
+  "/_app/immutable/chunks/4-05687545.js",
+  "/_app/immutable/chunks/5-a547c7bd.js",
+  "/_app/immutable/chunks/workbox-window.prod.es5-5729c1a5.js"
 ], V = [
   "/.nojekyll",
   "/CNAME",
@@ -156,7 +156,7 @@ const K = [
   "/safari-pinned-tab.svg"
 ];
 try {
-  self["workbox:core:6.2.4"] && _();
+  self["workbox:core:6.5.3"] && _();
 } catch {
 }
 const j = {
@@ -251,7 +251,11 @@ const j = {
   "non-precached-url": ({ url: t }) => `createHandlerBoundToURL('${t}') was called, but that URL is not precached. Please pass in a URL that is precached instead.`,
   "add-to-cache-list-conflicting-integrities": ({ url: t }) => `Two of the entries passed to 'workbox-precaching.PrecacheController.addToCacheList()' had the URL ${t} with different integrity values. Please remove one of them.`,
   "missing-precache-entry": ({ cacheName: t, url: e }) => `Unable to find a precached response in ${t} for ${e}.`,
-  "cross-origin-copy-response": ({ origin: t }) => `workbox-core.copyResponse() can only be used with same-origin responses. It was passed a response with origin ${t}.`
+  "cross-origin-copy-response": ({ origin: t }) => `workbox-core.copyResponse() can only be used with same-origin responses. It was passed a response with origin ${t}.`,
+  "opaque-streams-source": ({ type: t }) => {
+    const e = `One of the workbox-streams sources resulted in an '${t}' response.`;
+    return t === "opaqueredirect" ? `${e} Please do not use a navigation request that results in a redirect as a source.` : `${e} Please ensure your sources are CORS-enabled.`;
+  }
 }, A = (t, ...e) => {
   let s = t;
   return e.length > 0 && (s += ` :: ${JSON.stringify(e)}`), s;
@@ -305,7 +309,7 @@ const I = (t, e) => {
 }, C = (t) => [g.prefix, t, g.suffix].filter((e) => e && e.length > 0).join("-"), G = (t) => {
   for (const e of Object.keys(g))
     t(e);
-}, $ = {
+}, k = {
   updateDetails: (t) => {
     G((e) => {
       typeof t[e] == "string" && (g[e] = t[e]);
@@ -355,7 +359,7 @@ function T(t, e) {
   return t.waitUntil(s), s;
 }
 try {
-  self["workbox:precaching:6.2.4"] && _();
+  self["workbox:precaching:6.5.3"] && _();
 } catch {
 }
 const J = "__WB_REVISION__";
@@ -492,7 +496,7 @@ function oe(t) {
   return new Promise((e) => setTimeout(e, t));
 }
 try {
-  self["workbox:strategies:6.2.4"] && _();
+  self["workbox:strategies:6.5.3"] && _();
 } catch {
 }
 function E(t) {
@@ -524,7 +528,9 @@ class ce {
         r = await o({ request: r.clone(), event: s });
     } catch (o) {
       if (o instanceof Error)
-        throw new u("plugin-error-request-will-fetch", { thrownErrorMessage: o.message });
+        throw new u("plugin-error-request-will-fetch", {
+          thrownErrorMessage: o.message
+        });
     }
     const n = r.clone();
     try {
@@ -609,18 +615,19 @@ class ce {
     return !0;
   }
   async getCacheKey(e, s) {
-    if (!this._cacheKeys[s]) {
-      let r = e;
-      for (const a of this.iterateCallbacks("cacheKeyWillBeUsed"))
-        r = E(await a({
+    const r = `${e.url} | ${s}`;
+    if (!this._cacheKeys[r]) {
+      let a = e;
+      for (const n of this.iterateCallbacks("cacheKeyWillBeUsed"))
+        a = E(await n({
           mode: s,
-          request: r,
+          request: a,
           event: this.event,
           params: this.params
         }));
-      this._cacheKeys[s] = r;
+      this._cacheKeys[r] = a;
     }
-    return this._cacheKeys[s];
+    return this._cacheKeys[r];
   }
   hasCallback(e) {
     for (const s of this._strategy.plugins)
@@ -667,7 +674,7 @@ class ce {
 }
 class ie {
   constructor(e = {}) {
-    this.cacheName = $.getRuntimeName(e.cacheName), this.plugins = e.plugins || [], this.fetchOptions = e.fetchOptions, this.matchOptions = e.matchOptions;
+    this.cacheName = k.getRuntimeName(e.cacheName), this.plugins = e.plugins || [], this.fetchOptions = e.fetchOptions, this.matchOptions = e.matchOptions;
   }
   handle(e) {
     const [s] = this.handleAll(e);
@@ -728,7 +735,7 @@ class ie {
 }
 class y extends ie {
   constructor(e = {}) {
-    e.cacheName = $.getPrecacheName(e.cacheName), super(e), this._fallbackToNetwork = e.fallbackToNetwork !== !1, this.plugins.push(y.copyRedirectedCacheableResponsesPlugin);
+    e.cacheName = k.getPrecacheName(e.cacheName), super(e), this._fallbackToNetwork = e.fallbackToNetwork !== !1, this.plugins.push(y.copyRedirectedCacheableResponsesPlugin);
   }
   async _handle(e, s) {
     const r = await s.cacheMatch(e);
@@ -741,8 +748,8 @@ class y extends ie {
       process.env.NODE_ENV !== "production" && i.warn(`The precached response for ${h(e.url)} in ${this.cacheName} was not found. Falling back to the network.`);
       const n = a.integrity, o = e.integrity, c = !o || o === n;
       if (r = await s.fetch(new Request(e, {
-        integrity: o || n
-      })), n && c) {
+        integrity: e.mode !== "no-cors" ? o || n : void 0
+      })), n && c && e.mode !== "no-cors") {
         this._useDefaultCacheabilityPluginIfNeeded();
         const l = await s.cachePut(e, r.clone());
         process.env.NODE_ENV !== "production" && l && i.log(`A response for ${h(e.url)} was used to "repair" the precache.`);
@@ -788,7 +795,7 @@ y.copyRedirectedCacheableResponsesPlugin = {
 class le {
   constructor({ cacheName: e, plugins: s = [], fallbackToNetwork: r = !0 } = {}) {
     this._urlsToCacheKeys = /* @__PURE__ */ new Map(), this._urlsToCacheModes = /* @__PURE__ */ new Map(), this._cacheKeysToIntegrities = /* @__PURE__ */ new Map(), this._strategy = new y({
-      cacheName: $.getPrecacheName(e),
+      cacheName: k.getPrecacheName(e),
       plugins: [
         ...s,
         new X({ precacheController: this })
@@ -885,10 +892,10 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
     return (r) => (r.request = new Request(e), r.params = Object.assign({ cacheKey: s }, r.params), this.strategy.handle(r));
   }
 }
-let k;
-const D = () => (k || (k = new le()), k);
+let $;
+const D = () => ($ || ($ = new le()), $);
 try {
-  self["workbox:routing:6.2.4"] && _();
+  self["workbox:routing:6.5.3"] && _();
 } catch {
 }
 const P = "GET", ue = [
@@ -990,10 +997,7 @@ class de {
     });
     let c = o && o.handler;
     const l = [];
-    process.env.NODE_ENV !== "production" && c && (l.push([
-      "Found a route to handle this request:",
-      o
-    ]), n && l.push([
+    process.env.NODE_ENV !== "production" && c && (l.push(["Found a route to handle this request:", o]), n && l.push([
       "Passing the following params to the route's handler:",
       n
     ]));
