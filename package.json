@@ -13,7 +13,6 @@
 		"@sveltejs/kit": "^1.0.0-next.445",
 		"autoprefixer": "^10.3.4",
 		"cssnano": "^5.0.8",
-		"kit-sw-workbox": "^1.0.1",
 		"lodash": "^4.17.21",
 		"markdown-it-attrs": "^4.1.0",
 		"postcss": "^8.3.6",
@@ -30,8 +29,7 @@
 		"typescript": "^4.7.4",
 		"vite": "^3.0.9",
 		"vite-plugin-markdown": "^2.1.0",
-		"workbox-precaching": "^6.3.0",
-		"workbox-window": "^6.3.0"
+		"workbox-precaching": "^6.5.4"
 	},
 	"type": "module"
 }

@@ -1,5 +1,4 @@
 <script lang="ts">
-import ReloadPrompt from '$lib/ReloadPrompt.svelte'
 import "../app.css"
 import { platform } from '$lib/MediaQuery.svelte';
 import { game } from '$lib/data/stores'
@@ -55,5 +54,3 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
   </footer>
 
 </div>
-
-<ReloadPrompt/>

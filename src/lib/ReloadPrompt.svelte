@@ -7,7 +7,7 @@ if (!dev && browser) {
     if ('serviceWorker' in navigator) {
       const { Workbox, messageSW } = await import('workbox-window');
       const wb = new Workbox('/service-worker.js');
-      let registration;
+      let registration:any;
 
       // this will always activate the new build on available
 
@@ -15,9 +15,9 @@ if (!dev && browser) {
       // whether they wish to actiavte now and restart the page
       // thereby losing their current webapp state
       // or they want restart later
-      const skipWaiting = (event) => {
+      const skipWaiting = () => {
         // fires when the waiting service worker becomes active
-        wb.addEventListener('controlling', (event) => {
+        wb.addEventListener('controlling', () => {
           window.location.reload();
         });
 
