@@ -99,7 +99,7 @@ export default class Deck implements StackInterface,DeckInterface {
     // Ensure an array
     if (typeof stack === 'string') stack = stack.split('')
     if (!Array.isArray(stack)) throw new Error('Invalid deck : Not a valid string or array of cards')
-    if (stack.length !== this.base.length) throw new Error(`Invalid deck : Wrong number of cards (${stack.length}/${this.base.length})`)
+    if (stack.length !== this.base.length * this.conf.decks) throw new Error(`Invalid deck : Wrong number of cards (${stack.length}/${this.base.length * this.conf.decks})`)
 
     // Get a map of single characters (incase Card[] was passed)
     let charMap = stack.map(c => typeof c === 'string' ? c : c.id)
