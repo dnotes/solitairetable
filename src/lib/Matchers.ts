@@ -27,6 +27,8 @@ export type MatchConfigSetting = {
   suit?: boolean
   hasJoker?: boolean
   useFreecells?: boolean
+  moveWhenEmpty?: boolean
+  moveWhenFacedown?: boolean
   fromStack?: StackMatch
   color?: ColorMatch
   rank?: RankMatch
@@ -42,6 +44,8 @@ export class MatchConfig {
   suit: boolean = false
   hasJoker: boolean = false
   useFreecells: boolean = false
+  moveWhenEmpty: boolean = false
+  moveWhenFacedown: boolean = false
   fromStack: StackMatch = StackMatch.Any
   color: ColorMatch = ColorMatch.None
   rank: RankMatch = RankMatch.None
@@ -72,13 +76,13 @@ export class MatchConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.suit, this.hasJoker, this.useFreecells),
+      confBoolean.encode(this.suit, this.hasJoker, this.useFreecells, this.moveWhenEmpty, this.moveWhenFacedown),
       confBoolean.encode(this.countLT, this.countGT, this.totalLT, this.totalGT),
       confNumber.encode(this.color, this.rank, this.count, this.total, this.fromStack),
     ].join('')
   }
   get description() {
-    let out = []
+    let out:any = []
     return out.join(',')
   }
 }
@@ -102,10 +106,10 @@ export class MatchTest {
   test(cards:Card|Card[], stack?:StackInterface):number {
 
     let isMoveTest = stack ? true : false
-    let topCard = isMoveTest ? stack.topCard : false
+    let topCard = isMoveTest ? stack?.topCard : false
 
-    // These tests must have a topcard to compare against when being moved
-    if (isMoveTest && (!topCard || topCard?.facedown) && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
+    // Tests for suit, color, and rank must generally have a topcard to compare against when being moved
+    if (isMoveTest && ((!topCard && !this.conf.moveWhenEmpty) || (topCard && topCard.facedown && !this.conf.moveWhenFacedown)) && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
 
     // Setup further variables
     if (!Array.isArray(cards)) cards = [cards]
@@ -129,7 +133,7 @@ export class MatchTest {
     }
 
     if (this.conf.useFreecells) {
-      if (cards.length -1 <= stack.freecellStacks.filter(s => s.isEmpty).length) matched++
+      if (cards.length -1 <= (stack?.freecellStacks || []).filter(s => s.isEmpty)?.length) matched++
       else return 0
     }
 
@@ -169,7 +173,7 @@ export class MatchTest {
       }
     }
 
-    return isMoveTest ? stack.conf.matchPriority : 1
+    return isMoveTest ? stack?.conf?.matchPriority : 1
 
   }
   toString() {
