@@ -7,7 +7,7 @@ icon: faInfoCircle
 
 [Solitaire Table] is an installable [PWA] made with [SvelteKit](https://kit.svelte.dev) and [Tailwind CSS](https://tailwindcss.com),
 hosted on Github, open source, and free for use with no advertising.
-It was created by [David Hunt] (me) over a few evenings and weekends in September/October 2021, mainly because none of
+It was created by [David Hunt] (me) over a few evenings and weekends in September/October 2021, mainly as a way to learn SvelteKit and because none of
 my solitaire apps would play [pyramid solitaire] the way I like and my phone app had a wonky UI for Klondike.
 
 ## Acknowledgements

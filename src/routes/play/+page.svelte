@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { PageData } from './$types';
 // @ts-ignore
 import { afterNavigate, beforeNavigate } from '$app/navigation'
 // @ts-ignore
@@ -6,6 +7,14 @@ import { page } from '$app/stores'
 import { game } from '$lib/data/stores'
 import Game from '$lib/Game'
 import Table from '$lib/Table.svelte'
+
+  export let data:PageData & {
+    name:string
+    image:string
+    game:string
+    deck:string
+    link:string
+  }
 
   beforeNavigate((nav:any) => {
     // @ts-ignore
@@ -28,11 +37,14 @@ import Table from '$lib/Table.svelte'
 </script>
 
 <svelte:head>
-  <title>{$game?.title} | Solitaire Table</title>
+  <title>{data?.name ?? 'Custom Game'} | Solitaire Table</title>
+  <meta property="og:title" content="{data.name}" />
+  <meta property="og:image" content="{data.image}" />
+  <meta property="og:url" content="{data.link}" />
+  <meta property="og:site_name" content="Solitaire Table" />
 </svelte:head>
 
 
 <div class="w-full h-full bg-green-800 overflow-x-auto pt-4 md:pt-8">
   <Table />
 </div>
-

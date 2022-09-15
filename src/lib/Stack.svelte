@@ -56,7 +56,6 @@ import LinkCopied from "./LinkCopied.svelte"
       e.preventDefault();
       // @ts-ignore
       if (stack.wants($draggedCards.cards)) {
-        console.log('dropped!');
         // @ts-ignore
         $game.do(new Activity('move', new Action($draggedCards.cardDepth, $draggedCards.fromStack, stack.index)));
       }

@@ -138,12 +138,13 @@ export default class Game {
   conf: GameConfig
   selection?: SelectedCard[]
 
-  constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|DeckConfig|DeckConfigSetting) {
+  constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[]) {
     this.conf = new GameConfig(conf)
     this.name = this.conf.name || ''
 
     // Setup the deck
-    this.deck = new Deck(deck || this.conf.deckConfig);
+    this.deck = new Deck(this.conf.deckConfig);
+    if (deck) this.deck.deck = deck;
 
     // Setup the stacks and the layout, at the same time
     ['layout','footer'].forEach(k => {

@@ -46,7 +46,7 @@ export const confString = {
         return v === '1' ? possible[i] : ''
       })
       .join('');
-    console.log(`${log}"${val}"`)
+    // console.log(`${log}"${val}"`)
     return val
   }
 }
@@ -58,7 +58,7 @@ export const confBoolean = {
   decode: function(number) {
     let log = `boolean: "${number}" = `
     let val = b64.decode(number).toString(2).split('').reverse().map(v => (v === '1')  ? true : false)
-    console.log(`${log}"${val}"`)
+    // console.log(`${log}"${val}"`)
     return val
   }
 }
@@ -73,7 +73,7 @@ export const confNumber = {
   decode: function(number) {
     let log = `number: "${number}" = `
     let val = b64.decode(number)
-    console.log(`${log}"${val}"`)
+    // console.log(`${log}"${val}"`)
     return val
   }
 }

@@ -64,6 +64,7 @@ export interface DeckInterface {
 export default class Deck implements StackInterface,DeckInterface {
 
   _deck = <Card[]>[]
+  base = <string[]>[]
   stack = <Card[]>[]
   index = -1
   isDeck = true
@@ -77,19 +78,13 @@ export default class Deck implements StackInterface,DeckInterface {
   stacksOverlaying = []
   conf: DeckConfig
 
-  constructor(conf?:string|string[]|Card[]|DeckConfigSetting) {
-
-    // For passing sorted cardlist as string
-    if (typeof conf === 'string' && conf.match(/^[a-zA-Z1-9]{6,}$/)) this.deck = conf.split('')
-    else if (Array.isArray(conf)) this.deck = conf
+  constructor(conf?:string|DeckConfigSetting) {
 
     // for passing options object
-    else {
-      this.conf = new DeckConfig(conf)
-      let base = [...cards.filter(c => this.ranks.match(c.rank) && this.suits.match(c.suitName[0])).map(c => c.char), ...Array.from({length:this.conf.jokers}, (_,i) => i+1).map(v => v.toString())]
-      this.deck = new Array(this.conf.decks).fill(base).flat()
-      if (!this.isShuffled) this.shuffle()
-    }
+    this.conf = new DeckConfig(conf)
+    this.base = [...cards.filter(c => this.ranks.match(c.rank) && this.suits.match(c.suitName[0])).map(c => c.char), ...Array.from({length:this.conf.jokers}, (_,i) => i+1).map(v => v.toString())]
+    this.deck = new Array(this.conf.decks).fill(this.base).flat()
+    if (!this.isShuffled) this.shuffle()
 
     return this
 
@@ -99,10 +94,12 @@ export default class Deck implements StackInterface,DeckInterface {
     return this._deck
   }
 
-  set deck(stack:string[]|Card[]) {
+  set deck(stack:string|string[]|Card[]) {
 
     // Ensure an array
-    if (!Array.isArray(stack)) throw new Error('Invalid deck given')
+    if (typeof stack === 'string') stack = stack.split('')
+    if (!Array.isArray(stack)) throw new Error('Invalid deck : Not a valid string or array of cards')
+    if (stack.length !== this.base.length) throw new Error(`Invalid deck : Wrong number of cards (${stack.length}/${this.base.length})`)
 
     // Get a map of single characters (incase Card[] was passed)
     let charMap = stack.map(c => typeof c === 'string' ? c : c.id)
@@ -128,7 +125,7 @@ export default class Deck implements StackInterface,DeckInterface {
       let hasRanks = this.deck.filter(c => c.char.match(/[a-zA-Z]/)).map(c => c.rank).join('')
       let rankList = ranks.split('').filter(r => hasRanks.match(r)).join('')
       let firstCharOfDeck = hasRanks[0]
-      let cardRankInDeck = cards.find(c => c.char === firstCharOfDeck).rank
+      let cardRankInDeck = cards?.find(c => c.char === firstCharOfDeck)?.rank
       let allSuitsInDeck = cards.filter(c => c.rank === cardRankInDeck).map(c => c.suitName[0])
       let numberOfDecks = hasRanks.length - hasRanks.replace(RegExp(firstCharOfDeck, 'g'), '').length
       let numberOfJokers = charMap.filter(c => c.match(/\d/)).length
