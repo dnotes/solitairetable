@@ -1,1 +1,0 @@
-import{default as n}from"../components/pages/play/_page.svelte-395e54d8.js";import"./index-4f26f8ba.js";import"./navigation-d91a7844.js";import"./singletons-7037dab1.js";import"./index-6634cca6.js";import"./stores-e1794a0a.js";import"./LinkCopied-fff47d77.js";import"./Game-2cabc409.js";export{n as component};
