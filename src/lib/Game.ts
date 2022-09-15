@@ -136,7 +136,7 @@ export default class Game {
   footer: Row[] = []
   longestRow: number = 0
   conf: GameConfig
-  selection?: SelectedCard[]
+  selection: SelectedCard[] = []
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[]) {
     this.conf = new GameConfig(conf)
@@ -366,12 +366,13 @@ export default class Game {
     if (card.facedown) this.do(new Activity('flip', new Action(cardDepth, stack.index)))
 
     else if (this.conf.multiSelect) {
+      if (!stack.conf.canGet) return
       let cards = stack.look(cardDepth)
 
       // If the stack is already selected, remove it
       let alreadySelected = this.selection.find(c => c.stackIndex === stack.index && c.cardDepth >= cardDepth)
       if (alreadySelected) this.removeSelected(stack.index)
-      // Otherwise, add the clicked card and all cards above it
+      // Otherwise, add the clicked card and all cards stacked on top of it
       else this.setSelected(cards, stack)
 
       // Try to move the cards
@@ -407,7 +408,7 @@ export default class Game {
     this.selection = []
   }
 
-  removeSelected(stackIndex) {
+  removeSelected(stackIndex:number) {
     this.selection = this.selection.filter(c => c.stackIndex !== stackIndex)
   }
 

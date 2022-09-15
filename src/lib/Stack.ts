@@ -85,7 +85,7 @@ export interface StackInterface {
   stack:Card[]
   firstVisible:number
   isDeck:boolean
-  conf:any
+  conf:StackConfig
   maxHeight:number
   maxWidth:number
   initialized:boolean
