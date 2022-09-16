@@ -27,6 +27,8 @@ import { game } from '$lib/data/stores'
 
   {#if $game}
 
+    <h1 class="absolute left-2 bottom-0 m-0 leading-tight text-lg">{$game.title}</h1>
+
     <!-- ROWS -->
     {#each $game.layout as row, rowIndex}
       <div
@@ -62,6 +64,8 @@ import { game } from '$lib/data/stores'
     {/each}
 
   {/if}
+
+  <slot></slot>
 
 </div>
 
