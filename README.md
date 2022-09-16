@@ -23,4 +23,4 @@ Here are some resources consulted and/or used in making this project:
 [Solitaire Table]: https://solitaire.dnotes.net "This site/app/project is the Solitaire Table"
 [David Hunt]: https://github.com/dnotes "David Hunt"
 [PWA]: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps "Progressive Web App"
-[pyramid solitaire]: https://solitaire.dnotes.net/play?g=pyramid
+[pyramid solitaire]: https://solitaire.dnotes.net/play/pyramid

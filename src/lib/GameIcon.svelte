@@ -23,14 +23,14 @@ function clicklink(e:any) {
   on:mouseout={()=>{hovering=false}}
 >
 
-  <a class="block w-40 h-32 overflow-hidden rounded" href="/play?g={config.name}" on:click={clicklink}>
+  <a class="block w-40 h-32 overflow-hidden rounded" href="/play/{config.name}" on:click={clicklink}>
     <img src="/img/{config.name}.jpg" alt="A game of {config.title} solitaire.">
   </a>
 
   <div class="leading-loose bg-white rounded-b overflow-hidden px-2 pt-1 -mt-1">
-    <div class="w-40"><a href="/play?g={config.name}" on:click={clicklink}>{config.title}</a></div>
+    <div class="w-40"><a href="/play/{config.name}" on:click={clicklink}>{config.title}</a></div>
     {#each (config.variants || []) as conf}
-      <div><a href="/play?g={conf.name}">{conf.title}</a></div>
+      <div><a href="/play/{conf.name}">{conf.title}</a></div>
     {/each}
   </div>
 

@@ -11,7 +11,7 @@ import type { NamedGameConfig } from './data/games';
 </script>
 
 <IconButton
-  href="/play?g={config.name}"
+  href="/play/{config.name}"
   title="play {config.title} solitaire"
   linear
   class="{cls}"

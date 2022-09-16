@@ -34,7 +34,7 @@
 </script>
 
 <IconButton
-  href="/{url}?g={$game?.name || $game?.conf?.toString()}"
+  href="/{url}/{$game?.name || $game?.conf?.toString()}"
   icon="{faEdit}"
   class="{cls} {isBuild && ('text-green-500')}"
   {size}

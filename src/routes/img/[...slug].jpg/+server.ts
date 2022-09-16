@@ -16,7 +16,7 @@ export async function GET(e:RequestEvent) {
     if (!namedGame) throw error(404)
 
     // Get the address from which the image resource should be created
-    let href = `${origin}/play?g=${gameStr}`
+    let href = `${origin}/play/${gameStr}`
 
     // Get the full deck, if necessary
     if (deckStr) {
@@ -28,7 +28,7 @@ export async function GET(e:RequestEvent) {
         // If the deck sequence does not parse, that's an error
         throw error(400, e?.message)
       }
-      href += `&d=${deckStr}`
+      href += `/${deckStr}`
       cacheControl+=',immutable'
     }
 

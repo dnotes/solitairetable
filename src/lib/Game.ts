@@ -220,7 +220,7 @@ export default class Game {
   }
 
   get href():string {
-    return `/play?g=${this.isOfficial ? this.name : this.conf.toString()}&d=${this.deck.toString()}`
+    return `/play/${this.isOfficial ? this.name : this.conf.toString()}/${this.deck.toString()}`
   }
 
   get isOfficial() { return this.conf.isOfficial }

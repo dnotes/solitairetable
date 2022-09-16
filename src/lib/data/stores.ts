@@ -1,6 +1,7 @@
-import { writable, readable, derived } from "svelte/store";
+import type Game from "$lib/Game";
+import { writable, readable, derived, type Writable } from "svelte/store";
 
-export const game = writable()
+export const game:Writable<Game> = writable()
 
 export const maxCardWidth = writable(120)
 export const edgeWidth = derived(maxCardWidth, $maxCardWidth => $maxCardWidth > 100 ? $maxCardWidth * .14 : $maxCardWidth * .24 )
