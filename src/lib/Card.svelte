@@ -46,10 +46,9 @@
     direction = stack.conf['horizontal'] ? 'left' : 'top'
   }
 
-  let textColor:string, fileName:string, alt:string
+  let textColor:string, alt:string
   if (card) {
     textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
-    fileName = !card.isJoker ? `${card.rank}_${card.suitName}` : ( card.char === '1' ? '_joker_black' : '_joker_red' )
     alt = card.isJoker ? 'joker' : `${card.rank}${card.suit}`
   }
 
@@ -83,7 +82,7 @@
       </div>
     {:else}
       <div transition:turn|local>
-        <img class="w-full" src="{dir}{fileName}.svg" {alt}>
+        <img class="w-full" src="{dir}{card.filename}" {alt}>
       </div>
     {/if}
   {:else}

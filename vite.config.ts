@@ -16,23 +16,10 @@ export default defineConfig(({ mode }) => {
 			md,
 			sveltekit(),
 		],
-		define: {
-			'process.env.NODE_ENV': mode === 'production' ? '"production"' : '"development"',
-		},
-		build: {
-			rollupOptions: {
-				output: {
-					manualChunks: {
-						'captureWebsite': ['capture-website'],
-					}
-				}
-			}
-		},
 		ssr: {
 			noExternal: [
 				'@fortawesome/free-solid-svg-icons',
 				'@fortawesome/free-regular-svg-icons',
-				'capture-website',
 			]
 		}
 	}

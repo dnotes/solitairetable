@@ -10,6 +10,7 @@ export default class Card {
   rank: string = ''
   text: string = '<blank>'
   value: number = 0
+  filename: string = ''
   isJoker: boolean = false
   facedown: boolean = false
 
@@ -27,12 +28,14 @@ export default class Card {
         this.suitName = 'joker'
         this.text = 'Joker'
         this.value = 0
+        this.filename = ( this.char === '1' ? '_joker_black' : '_joker_red' ) + '.svg'
       }
       else {
         card = cards.find(c => c.char === char)
         Object.assign(this, card)
         this.text = this.rank.replace('T', '10')
         this.value = ranks.indexOf(this.rank) + 1
+        this.filename = `${this.rank}_${this.suitName}.svg`
       }
     }
     this.facedown = facedown ? true : false
