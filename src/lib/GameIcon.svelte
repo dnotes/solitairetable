@@ -25,7 +25,7 @@ function clicklink(e:any) {
 >
 
   <a class="block w-40 h-32 overflow-hidden rounded" href="/play/{config.name}" on:click={clicklink}>
-    <img src="/img/tn/{config.name}.svg" alt="A game of {config.title} solitaire.">
+    <img src="/img/tn/{config.name}.png" alt="A game of {config.title} solitaire.">
   </a>
 
   <div class="leading-loose bg-white rounded-b overflow-hidden px-2 pt-1 -mt-1">

@@ -12,7 +12,7 @@ import { game } from '$lib/data/stores'
     // Horizontal constraint
     (w / $game?.longestRow) - 5,
     // Vertical constraint
-    ((-.018 * h * topEdgeCount) + (h * .55)) / (rowCount * ($game?.conf?.overlayRows ? $game?.layout?.length * .1 : 1))
+    ((-.018 * h * topEdgeCount) + (h * .5)) / (rowCount * ($game?.conf?.overlayRows ? $game?.layout?.length * .08 : 1))
   ))
   $: cardHeight = $maxCardWidth * 1.5
 
@@ -20,7 +20,7 @@ import { game } from '$lib/data/stores'
 
 <div
   id="game"
-  class="flex flex-col text-white h-full"
+  class="flex flex-col text-white h-full overflow-hidden"
   bind:clientWidth={w}
   bind:clientHeight={h}
 >
