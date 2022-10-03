@@ -7,9 +7,6 @@ const config = {
 	// for more information about preprocessors
 
 	kit: {
-		prerender: {
-			default: true,
-		},
 		adapter: adapter()
 	},
 	preprocess: [preprocess({
