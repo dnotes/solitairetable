@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => {
 			md,
 			sveltekit(),
 		],
+		define: {
+			'process.env.NODE_ENV': mode === 'production' ? '"production"' : '"development"',
+		},
 		ssr: {
 			noExternal: [
 				'@fortawesome/free-solid-svg-icons',
