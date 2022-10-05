@@ -6,7 +6,7 @@ let cacheEntries:PrecacheEntry[] = [
   ...build,
   // for some reason, npm build script generates phantom .DS_Store
   // @ts-ignore
-  ...files.filter(v => !/(?:\.DS_Store|\.nojekyll)$/.test(v)),
+  ...files.filter(v => !/(?:\.DS_Store|\/img\/\w+\.png)$/.test(v)),
   ...prerendered,
 ].map(url => ({ url, revision: version }))
 precacheAndRoute(cacheEntries)
