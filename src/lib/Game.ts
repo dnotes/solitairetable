@@ -254,11 +254,13 @@ export default class Game {
   reset() {
     this.deck.reset()
     this.initialize()
+    return this
   }
 
   new() {
     this.deck.shuffle()
     this.initialize()
+    return this
   }
 
   getStack(index:number) {
@@ -271,6 +273,7 @@ export default class Game {
     this.redo.push(activity)
     this.do(activity.reverse(), true)
     this.clearSelected()
+    return this
   }
   doRedo() {
     if (!this.redo.length) return
@@ -278,6 +281,7 @@ export default class Game {
     this.undo.push(activity)
     this.do(activity, true)
     this.clearSelected()
+    return this
   }
 
   do(activity:Activity, isUndoRedo:boolean = false) {
@@ -299,6 +303,7 @@ export default class Game {
         this.deck.cycles += (activity.actions[0].toStack === -1) ? 1 : -1
       }
     }
+    return this
   }
 
   setUndo(activity:Activity) {
@@ -306,6 +311,7 @@ export default class Game {
       this.undo.push(activity)
       if (this.conf.limitUndo && (this.undo.length > this.conf.limitUndo)) this.undo.shift()
     }
+    return this
   }
 
   stacksWant(cards:SelectedCard[]):Stack[] {
@@ -349,6 +355,7 @@ export default class Game {
       ))
     }
     this.selection = []
+    return this
   }
 
   clickCard(crd:number|Card, stk:number|StackInterface) {
@@ -408,10 +415,12 @@ export default class Game {
 
   clearSelected() {
     this.selection = []
+    return this
   }
 
   removeSelected(stackIndex:number) {
     this.selection = this.selection.filter(c => c.stackIndex !== stackIndex)
+    return this
   }
 
   setSelected(cards:Card[], stack:StackInterface) {
@@ -420,6 +429,7 @@ export default class Game {
     })
     this.removeSelected(stack.index)
     this.selection = [...this.selection, ...selectedCards]
+    return this
   }
 
 }

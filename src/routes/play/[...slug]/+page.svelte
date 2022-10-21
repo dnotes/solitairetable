@@ -1,13 +1,18 @@
 <script lang="ts">
 import type { PageData } from './$types';
 // @ts-ignore
-import { afterNavigate, beforeNavigate } from '$app/navigation'
+import { afterNavigate, beforeNavigate, goto } from '$app/navigation'
 // @ts-ignore
 import { game } from '$lib/data/stores'
 import Game from '$lib/Game'
 import Table from '$lib/Table.svelte'
 
   export let data:PageData
+
+  $: if ($game && !data.deck) goto($game.href, {
+    replaceState: true,
+    keepfocus: true,
+  })
 
   beforeNavigate((nav:any) => {
     // @ts-ignore

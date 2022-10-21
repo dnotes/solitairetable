@@ -6,6 +6,7 @@ import { game } from '$lib/data/stores'
 import GameLinks from './GameLinks.svelte';
 import { breakpoint } from './MediaQuery.svelte';
 import LinkCopied from './LinkCopied.svelte';
+import { goto } from '$app/navigation';
 
   export let collapseGameButtons = false
   export let text = true
@@ -56,7 +57,7 @@ import LinkCopied from './LinkCopied.svelte';
       Restart
     {/if}
   </IconButton>
-  <IconButton icon={faSquare} overlay={faAsterisk} class={cls} {size} {linear} on:click={() => { $game.new(); game.set($game); }}>
+  <IconButton icon={faSquare} overlay={faAsterisk} class={cls} {size} {linear} on:click={() => { goto($game.new().href ) }}>
     {#if text}
       New
     {/if}
@@ -73,7 +74,7 @@ import LinkCopied from './LinkCopied.svelte';
   <IconButton icon={faFile} class={cls} {size} {linear} dropdownFrom="{position}">
     <div slot="menu">
 
-      <IconButton linear icon={faSquare} overlay={faAsterisk} class={cls} {size} on:click={() => { $game.new(); game.set($game); }}>
+      <IconButton linear icon={faSquare} overlay={faAsterisk} class={cls} {size} on:click={() => { goto($game.new().href) }}>
         {#if text}
           New
         {/if}
