@@ -270,12 +270,14 @@ export default class Game {
     let activity = this.undo.pop()
     this.redo.push(activity)
     this.do(activity.reverse(), true)
+    this.clearSelected()
   }
   doRedo() {
     if (!this.redo.length) return
     let activity = this.redo.pop()
     this.undo.push(activity)
     this.do(activity, true)
+    this.clearSelected()
   }
 
   do(activity:Activity, isUndoRedo:boolean = false) {
