@@ -241,7 +241,7 @@ export default class Stack implements StackInterface {
     if (this.stack.join('').match(RegExp(cards.join('') + '$'))) return 0
 
     // first try empty
-    if (this.isEmpty && this.conf.empty.match(cards[0].rank) && (!this.conf.limitCards || cards.length <= this.conf.limitCards)) return this.conf.matchPriority
+    if (this.isEmpty && !this.conf.empty.match(cards[0].rank)) return 0
 
     // ensure max number of cards
     if (this.conf.limitCards && this.length + cards.length > this.conf.limitCards) return 0

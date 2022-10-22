@@ -44,7 +44,7 @@ export class MatchConfig {
   suit: boolean = false
   hasJoker: boolean = false
   useFreecells: boolean = false
-  moveWhenEmpty: boolean = false
+  blockWhenEmpty: boolean = false
   moveWhenFacedown: boolean = false
   fromStack: StackMatch = StackMatch.Any
   color: ColorMatch = ColorMatch.None
@@ -76,7 +76,7 @@ export class MatchConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.suit, this.hasJoker, this.useFreecells, this.moveWhenEmpty, this.moveWhenFacedown),
+      confBoolean.encode(this.suit, this.hasJoker, this.useFreecells, this.blockWhenEmpty, this.moveWhenFacedown),
       confBoolean.encode(this.countLT, this.countGT, this.totalLT, this.totalGT),
       confNumber.encode(this.color, this.rank, this.count, this.total, this.fromStack),
     ].join('')
@@ -108,8 +108,8 @@ export class MatchTest {
     let isMoveTest = stack ? true : false
     let topCard = isMoveTest ? stack?.topCard : false
 
-    // Tests for suit, color, and rank must generally have a topcard to compare against when being moved
-    if (isMoveTest && ((!topCard && !this.conf.moveWhenEmpty) || (topCard && topCard.facedown && !this.conf.moveWhenFacedown)) && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
+    // Tests for suit, color, and rank may require a face-up topcard to compare against when being moved
+    if (isMoveTest && ((!topCard && this.conf.blockWhenEmpty) || (topCard && topCard.facedown && !this.conf.moveWhenFacedown)) && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
 
     // Setup further variables
     if (!Array.isArray(cards)) cards = [cards]
@@ -150,8 +150,11 @@ export class MatchTest {
 
     if (this.conf.color) {
       let color = topCard ? topCard.color : cards[0].color
+      let hasTopCard = topCard ? 1 : 0
       if (this.conf.color === ColorMatch.Same && cards.length === cards.filter(c => c.color === color).length) matched++
-      else if (cards.length === cards.filter((c,i) => (i%2 ? c.color === color : (c.color && c.color !== color))).length) matched++
+      else if (cards.length === cards.filter((c,i) => (
+        (i%2 === hasTopCard) === (c.color === color)
+      )).length) matched++
       else return 0
     }
 
