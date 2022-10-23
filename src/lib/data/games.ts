@@ -53,7 +53,7 @@ register({...games['klondike'],
 })
 
 register({...games['klondike-vegas'],
-  title: 'Vegas Strict (1 undo)',
+  title: 'Vegas, One Undo',
   limitUndo: 1,
 })
 
@@ -83,24 +83,23 @@ register({
   stackConfig: [
     { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
     { name:"play", empty:'', deal:1, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
-    { name:"discard", canGet:false, empty:'', limitVisible:1, match: [{ total: 13 }, { hasJoker:true }] }
+    { name:"discard", canGet:false, limitVisible:1, match: [{ total: 13 }, { total: 13, totalLT: true, hasJoker:true }] }
   ],
   layout: '0,00,000,0000,00000,000000,0000000',
   footer: '_D 1 2_'
 })
 
 register({...games['pyramid'],
-  title: 'Extra',
-  deckConfig: { jokers:3 },
-  layout: '0,00,000,0000,00000,000000,0000000,00000000'
+  title: 'No Jokers',
+  deckConfig: { jokers:0 },
 })
 
 register({...games['pyramid'],
-  title: 'Exact, Draw 3',
+  title: 'Pairs, Draw Three',
   stackConfig: [
     { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
     { name:"play", deal:1, limitAvailable:1, limitVisible:5, horizontal:true },
-    { name:"discard", canGet:false, empty:'', limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
+    { name:"discard", canGet:false, limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
   ],
   footer: 'D 1 1 1 2'
 })
@@ -109,7 +108,7 @@ register({
   title: 'Golf',
   stackConfig: [
     { name:"play", init:5, canPut:false },
-    { name:"discard",limitVisible:1, limitAvailable:1, deal:1, canGet:true, canPut:true, match: [
+    { name:"discard",limitVisible:1, limitAvailable:1, deal:1, empty:'', canGet:true, canPut:true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc }
     ] },
@@ -135,7 +134,7 @@ register({
 })
 
 register({...games['spider'],
-  title: 'Two suits',
+  title: 'Two Suits',
   deckConfig: {
     decks: 4,
     suits:'SD',
