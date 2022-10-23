@@ -13,8 +13,6 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
   {#if import.meta.env.SSR || $platform==='desktop'}
     <header class="flex-grow-0 flex flex-row z-10 w-full h-14 px-2 md:px-6 lg:px-12 border-b-2 bg-gray-700 text-white">
-      <GameLinks dropdownFrom="top" linear size="lg" class="link bg-gray-700 rounded-b" />
-      <SiteLinks size="lg" />
       <div class="flex-grow"/>
       {#if $game}
         <GameControls size="lg" class="text-sm text-white bg-gray-700" position="top" />
@@ -34,20 +32,23 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
       {#if $game}
         <GameControls class="text-white bg-gray-900" position="bottom" />
+        <div class="flex-grow"></div>
+      {:else}
+        <GameLinks dropdownFrom="bottom" class="no-link bg-gray-900 text-white" />
       {/if}
-      <div class="flex-grow"></div>
 
       <IconButton icon={faEllipsis} dropdownFrom="bottom" class="bg-gray-900 text-white right-0 text-right">
         Menu
         <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full right-0">
-          <SiteLinks class="no-link" />
+          <SiteLinks class="no-link bg-gray-900 text-white" />
         </div>
       </IconButton>
 
     {:else}
 
       <div class="flex-grow"/>
-      <SiteLinks size="sm" class="no-link" />
+      <GameLinks linear dropdownFrom="bottom" size="sm" class="no-link bg-gray-900 text-white" />
+      <SiteLinks size="sm" class="no-link bg-gray-900 text-white rounded-t" />
 
     {/if}
 

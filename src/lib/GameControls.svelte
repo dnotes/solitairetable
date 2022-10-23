@@ -1,6 +1,6 @@
 <script lang="ts">
 import IconButton from '$lib/IconButton.svelte'
-import { faArrowRotateLeft, faArrowRotateRight, faAsterisk, faBackward } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRotateLeft, faArrowRotateRight, faAsterisk, faBackward, faBackwardStep, faForward, faForwardStep } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faShareSquare, faSquare } from '@fortawesome/free-regular-svg-icons'
 import { game } from '$lib/data/stores'
 import GameLinks from './GameLinks.svelte';
@@ -38,17 +38,7 @@ import { goto } from '$app/navigation';
 
 </script>
 
-
-  <IconButton icon={faArrowRotateLeft} class={cls} {size} {linear} on:click={() => { $game.doUndo(); game.set($game); }}>
-    {#if text}
-      Undo
-    {/if}
-  </IconButton>
-  <IconButton icon={faArrowRotateRight} class={cls} {size} {linear} on:click={() => { $game.doRedo(); game.set($game); }}>
-    {#if text}
-      Redo
-    {/if}
-  </IconButton>
+<GameLinks dropdownFrom="{position}" class="{cls}" {size} />
 
 {#if !collapseGameButtons && $breakpoint.includes('l')}
 
@@ -84,6 +74,8 @@ import { goto } from '$app/navigation';
           Restart
         {/if}
       </IconButton>
+      <IconButton linear icon={faBackwardStep} class={cls} {size} on:click={() => { history.back(); }}>Prev</IconButton>
+      <IconButton linear icon={faForwardStep} class={cls} {size} on:click={() => { history.forward(); }}>Next</IconButton>
       <IconButton linear icon={faShareSquare} class={cls} {size} dropdownFrom="top" on:click={share}>
         {#if text}
           Share
@@ -93,12 +85,21 @@ import { goto } from '$app/navigation';
 
     </div>
     {#if text}
-      Game
+      Deal
     {/if}
   </IconButton>
 
 {/if}
 
-{#if $game?.conf?.family}
-  <GameLinks dropdownFrom="{position}" {size} class="{cls} right-0" childClass="min-w-full text-right no-link" family="{$game.conf.family}" />
-{/if}
+
+<IconButton icon={faArrowRotateLeft} class={cls} {size} {linear} on:click={() => { $game.doUndo(); game.set($game); }}>
+  {#if text}
+    Undo
+  {/if}
+</IconButton>
+<IconButton icon={faArrowRotateRight} class={cls} {size} {linear} on:click={() => { $game.doRedo(); game.set($game); }}>
+  {#if text}
+    Redo
+  {/if}
+</IconButton>
+

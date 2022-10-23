@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+  import type { DropdownDirection } from 'src/global';
 
 import { onMount } from 'svelte'
 import Fa from 'svelte-fa'
@@ -11,13 +12,9 @@ import Fa from 'svelte-fa'
   export let size: 'xs'|'sm'|'lg'|'1x'|'2x'|'3x'|'4x'|'5x'|'6x'|'7x'|'8x'|'9x'|'10x'='2x'
 
   // Whether this will be a menu
-  export let dropdownFrom: undefined
-    | 'top'
-    | 'bottom'
-    | 'left'
-    | 'right'
-  =undefined
-  let dropdownBorder = dropdownFrom ? 'border-t border-b-2 border-r border-l'.replace(`border-${dropdownFrom[0]}`, '').replace(' -2 ', '') : ''
+  export let dropdownFrom:undefined|DropdownDirection = undefined
+  $: noBorderDirection = dropdownFrom ? dropdownFrom[(dropdownFrom?.indexOf(' ') + 1)] : ''
+  $: dropdownBorder = dropdownFrom ? 'border-t border-b-2 border-r border-l'.replace(`border-${noBorderDirection}`, '').replace(' -2 ', '') : ''
 
   // Whether the button text should be linear (default: stacked)
   export let linear=false
@@ -67,6 +64,7 @@ import Fa from 'svelte-fa'
 
   function btnClick(e:any) {
     if ($$slots.menu) {
+      e.preventDefault()
       e.stopPropagation()
       open = !open
     }
@@ -102,7 +100,7 @@ import Fa from 'svelte-fa'
   {#if open}
     <div
       on:click={(e) => {open=false}}
-      class="{dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder}` : ''} {cls}"
+      class="{dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder} ${dropdownFrom.match(/(right|left)/) && 'top-0'}` : ''} {cls}"
     >
       <slot name="menu"></slot>
     </div>

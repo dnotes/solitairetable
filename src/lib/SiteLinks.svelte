@@ -13,12 +13,12 @@ import { faHome, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
   const links: { text:string, href:string, title?:string, icon?:any }[] = [
     { text: 'Home', href: '/', icon: faHome },
-    { text: 'About', href: 'about', icon: faInfoCircle }
+    { text: 'About', href: '/about', icon: faInfoCircle }
   ]
 </script>
 
 {#each links as {href,text,title,icon} }
-  <IconButton rel="prefetch" class={cls} {href} {title} {icon} {linear} {size}>
+  <IconButton rel="prefetch" class="no-link {cls}" {href} {title} {icon} {linear} {size}>
     {text}
   </IconButton>
 {/each}

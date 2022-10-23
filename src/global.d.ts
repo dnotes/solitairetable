@@ -6,3 +6,4 @@ declare namespace svelte.JSX {
         onfinalize?: (event: CustomEvent<DndEvent> & {target: EventTarget & T}) => void;
     }
 }
+export type DropdownDirection='top'|'bottom'|'left'|'right'|'bottom-0 right'|'bottom-0 left'
