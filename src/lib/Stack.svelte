@@ -9,6 +9,7 @@ import IconButton from "./IconButton.svelte";
 import { faShareSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
 import { faAsterisk, faBackward } from "@fortawesome/free-solid-svg-icons";
 import LinkCopied from "./LinkCopied.svelte"
+  import { goto } from "$app/navigation";
 
   export let stack:string|StackInterface|undefined
 
@@ -89,7 +90,7 @@ import LinkCopied from "./LinkCopied.svelte"
                       Restart
                     </IconButton>
                   {/if}
-                  <IconButton icon={faSquare} overlay={faAsterisk} class="{hugeCards ? 'text-lg' : 'text-xs'} {bigCards ? '' : 'py-0'}" on:click={() => { $game.new(); game.set($game); }}>
+                  <IconButton icon={faSquare} overlay={faAsterisk} class="{hugeCards ? 'text-lg' : 'text-xs'} {bigCards ? '' : 'py-0'}" on:click={() => { goto($game.new().href) }}>
                     {#if bigCards}New{/if}
                   </IconButton>
                 </div>
