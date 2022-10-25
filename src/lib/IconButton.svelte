@@ -19,6 +19,9 @@ import Fa from 'svelte-fa'
   // Whether the button text should be linear (default: stacked)
   export let linear=false
 
+  // Whether the button should be disabled
+  export let disabled=false
+
   // Text elements for building links
   export let href=""
   export let title=""
@@ -80,6 +83,8 @@ import Fa from 'svelte-fa'
     {href}
     {title}
     {rel}
+    {disabled}
+    class:opacity-40={disabled}
     bind:this={btn}
     on:click
     on:click={btnClick}

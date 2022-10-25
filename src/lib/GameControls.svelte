@@ -3,7 +3,6 @@ import IconButton from '$lib/IconButton.svelte'
 import { faArrowRotateLeft, faArrowRotateRight, faAsterisk, faBackward, faBackwardStep, faForward, faForwardStep } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faShareSquare, faSquare } from '@fortawesome/free-regular-svg-icons'
 import { game } from '$lib/data/stores'
-import GameLinks from './GameLinks.svelte';
 import { breakpoint } from './MediaQuery.svelte';
 import LinkCopied from './LinkCopied.svelte';
 import { goto } from '$app/navigation';
@@ -31,14 +30,13 @@ import { goto } from '$app/navigation';
   let cls=''
   export { cls as class }
 
+  const sleep:(ms:number)=>Promise<void> = ms => new Promise(resolve => setTimeout(resolve, ms))
 
   function share() {
     navigator.clipboard.writeText(new URL($game.href, window.location.href).toString())
   }
 
 </script>
-
-<GameLinks dropdownFrom="{position}" class="{cls}" {size} />
 
 {#if !collapseGameButtons && $breakpoint.includes('l')}
 
@@ -100,6 +98,19 @@ import { goto } from '$app/navigation';
 <IconButton icon={faArrowRotateRight} class={cls} {size} {linear} on:click={() => { $game.doRedo(); game.set($game); }}>
   {#if text}
     Redo
+  {/if}
+</IconButton>
+<IconButton icon={faSquare} overlay={faForward} class={cls} {size} {linear} disabled={ !$game.canAutoplay || $game.isComplete } on:click={async () => {
+  let i = 0, working = true
+  while (i < 1000 && !$game.isComplete && working) {
+    working = $game.autoplay()
+    $game = $game
+    i++
+    await sleep(20)
+  }
+}}>
+  {#if text}
+    Auto
   {/if}
 </IconButton>
 

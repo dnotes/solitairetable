@@ -25,6 +25,7 @@ export type StackConfigSetting = {
   matchPriority?: number  // the priority of the row for matches (1)
   match?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the match configuration for the top card (undefined)
   complete?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the completion conditions for the stack (undefined)
+  autoplay?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the completion conditions for the stack (undefined)
 }
 
 export class StackConfig {
@@ -44,6 +45,9 @@ export class StackConfig {
   matchPriority = 1
   match:MatchTest[] = []
   complete:MatchTest[] = []
+  autoplay:MatchTest[] = []
+  isAutoplayStack:boolean = false
+  isCompletionStack:boolean = false
 
   constructor(conf?:string|boolean|StackConfig|StackConfigSetting) {
     if (!conf || typeof conf === 'boolean') return this
@@ -55,13 +59,17 @@ export class StackConfig {
       [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[3].split("").map(confNumber.decode);
       this.match = config[4].split(",").map(t => new MatchTest(t));
       this.complete = config[5].split(",").map(t => new MatchTest(t));
+      this.autoplay = config[6].split(",").map(t => new MatchTest(t))
     }
     else {
       if (conf.deal && !conf.canPut) conf.canPut = false
       if (conf.match) conf.match = Array.isArray(conf.match) ? conf.match.map(c => new MatchTest(c)) : [new MatchTest(conf.match)]
-      if (conf.complete) conf.complete = Array.isArray(conf.complete) ? conf.complete.map(c => new MatchTest(c)) : [new MatchTest(conf.complete)]
+      if (conf.complete) conf.complete = Array.isArray(conf.complete) ? conf.complete.map(t => new MatchTest(t)) : [new MatchTest(conf.complete)]
+      if (conf.autoplay) conf.autoplay = Array.isArray(conf.autoplay) ? conf.autoplay.map(t => new MatchTest(t)) : [new MatchTest(conf.autoplay)]
       Object.assign(this, conf)
     }
+    if (this.autoplay.length) this.isAutoplayStack = true
+    if (this.complete.length) this.isCompletionStack = true
     return this
   }
   toString():string {
@@ -72,6 +80,7 @@ export class StackConfig {
       confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority),
       this.match.join(","),
       this.complete.join(","),
+      this.autoplay.join(","),
     ].join(";")
   }
   get description() {
@@ -161,6 +170,13 @@ export default class Stack implements StackInterface {
 
   get isComplete():boolean {
     return this.conf.complete.reduce((agg,match) => {
+      return agg && (match.test(this.stack) ? true : false)
+    }, true)
+  }
+
+  get canAutoplay():boolean {
+    if (!this.length) return true
+    return this.conf.autoplay.reduce((agg,match) => {
       return agg && (match.test(this.stack) ? true : false)
     }, true)
   }

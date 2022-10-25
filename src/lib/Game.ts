@@ -137,6 +137,8 @@ export default class Game {
   longestRow: number = 0
   conf: GameConfig
   selection: SelectedCard[] = []
+  autoplayStacks: number[]
+  completionStacks: number[]
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[]) {
     this.conf = new GameConfig(conf)
@@ -178,6 +180,9 @@ export default class Game {
       if (!s.conf.isFreecell) s.freecellStacks = freecellStacks
     })
 
+    this.autoplayStacks = this.stacks.filter(stack => stack.conf.isAutoplayStack).map(stack => stack.index)
+    this.completionStacks = this.stacks.filter(stack => stack.conf.isCompletionStack).map(stack => stack.index)
+
     // Set layout indexes
     this.layout.forEach(row => {
       row.stacks.forEach((stack,i) => {
@@ -212,6 +217,21 @@ export default class Game {
 
   get canRecycle():boolean|number {
     return !this.conf.limitCycles || (this.conf.limitCycles - this.deck.cycles)
+  }
+
+  get canAutoplay():boolean {
+    if (!this.autoplayStacks.length) return false
+    for (let i = 0; i < this.autoplayStacks.length; i++) {
+      if (!this.stacks[this.autoplayStacks[i]].canAutoplay) return false
+    }
+    return true
+  }
+
+  get isComplete():boolean {
+    for (let i = 0; i < this.completionStacks.length; i++) {
+      if (!this.stacks[this.completionStacks[i]].isComplete) return false
+    }
+    return true
   }
 
   get title():string {
@@ -365,7 +385,6 @@ export default class Game {
 
     // If the card is not available, do nothing
     if (stack.conf.limitAvailable && cardDepth > stack.conf.limitAvailable) return
-    if (stack.conf.discard) return
     if (!this.conf.selectBlockedStacks && stack.isBlocked) return
 
     // Also if the card is facedown and not the top card
@@ -430,6 +449,28 @@ export default class Game {
     this.removeSelected(stack.index)
     this.selection = [...this.selection, ...selectedCards]
     return this
+  }
+
+  autoplay():boolean {
+    if (!this.canAutoplay || this.isComplete) return false
+    for (let i = 0; i < this.autoplayStacks.length; i++) {
+      let stack = this.stacks[this.autoplayStacks[i]]
+      if (!stack.length) continue;
+      else if (this.autoplayStack(stack)) return true
+    }
+    return false
+  }
+
+  autoplayStack(stack:StackInterface):boolean {
+    if (!stack.conf.isAutoplayStack || !stack.topCard) return false
+    for (let i = 0; i < this.completionStacks.length; i++) {
+      if (this.stacks[this.completionStacks[i]].wants([stack.topCard])) {
+        let action = new Action(1, stack.index, this.completionStacks[i])
+        this.do(new Activity('move', action))
+        return true
+      }
+    }
+    return false
   }
 
 }

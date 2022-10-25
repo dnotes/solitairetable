@@ -112,6 +112,7 @@ export class MatchTest {
     if (isMoveTest && ((!topCard && this.conf.blockWhenEmpty) || (topCard && topCard.facedown && !this.conf.moveWhenFacedown)) && (this.conf.suit || this.conf.color || this.conf.rank)) return 0
 
     // Setup further variables
+    if (!cards) cards = []
     if (!Array.isArray(cards)) cards = [cards]
     let matched = 0
 
@@ -143,40 +144,49 @@ export class MatchTest {
     }
 
     if (this.conf.suit) {
-      let suit = topCard ? topCard.suit : cards[0].suit
-      if (cards.filter(c => c.suit === suit).length === cards.length) matched++
-      else return 0
+      if (!cards.length) matched++ // suit, color, and rank tests pass for empty arrays (is this right?)
+      else {
+        let suit = topCard ? topCard.suit : cards[0].suit
+        if (cards.filter(c => c.suit === suit).length === cards.length) matched++
+        else return 0
+      }
     }
 
     if (this.conf.color) {
-      let color = topCard ? topCard.color : cards[0].color
-      let hasTopCard = topCard ? 1 : 0
-      if (this.conf.color === ColorMatch.Same && cards.length === cards.filter(c => c.color === color).length) matched++
-      else if (cards.length === cards.filter((c,i) => (
-        (i%2 === hasTopCard) === (c.color === color)
-      )).length) matched++
-      else return 0
+      if (!cards.length) matched++ // suit, color, and rank tests pass for empty arrays (is this right?)
+      else {
+        let color = topCard ? topCard.color : cards[0].color
+        let hasTopCard = topCard ? 1 : 0
+        if (this.conf.color === ColorMatch.Same && cards.length === cards.filter(c => c.color === color).length) matched++
+        else if (cards.length === cards.filter((c,i) => (
+          (i%2 === hasTopCard) === (c.color === color)
+        )).length) matched++
+        else return 0
+      }
     }
 
     if (this.conf.rank) {
-      let rankTest = topCard ? topCard.rank : ''
-      if (this.conf.rank === RankMatch.Equal) {
-        if (cards.filter(c => c.rank === rankTest).length === cards.length) matched++
-        else return 0
-      }
-      else if (this.conf.rank === RankMatch.Asc) {
-        rankTest += cards.map(c => c.rank).join('')
-        if (ranks.match(rankTest)) matched++
-        else return 0
-      }
-      else if (this.conf.rank === RankMatch.Desc) {
-        rankTest = cards.map(c => c.rank).reverse().join('') + rankTest
-        if (ranks.match(rankTest)) matched++
-        else return 0
+      if (!cards.length) matched++ // suit, color, and rank tests pass for empty arrays (is this right?)
+      else {
+        let rankTest = topCard ? topCard.rank : ''
+        if (this.conf.rank === RankMatch.Equal) {
+          if (cards.filter(c => c.rank === rankTest).length === cards.length) matched++
+          else return 0
+        }
+        else if (this.conf.rank === RankMatch.Asc) {
+          rankTest += cards.map(c => c.rank).join('')
+          if (ranks.match(rankTest)) matched++
+          else return 0
+        }
+        else if (this.conf.rank === RankMatch.Desc) {
+          rankTest = cards.map(c => c.rank).reverse().join('') + rankTest
+          if (ranks.match(rankTest)) matched++
+          else return 0
+        }
       }
     }
 
-    return isMoveTest ? stack?.conf?.matchPriority : 1
+    return isMoveTest ? (stack?.conf?.matchPriority || 0) : 1
 
   }
   toString() {
