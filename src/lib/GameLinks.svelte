@@ -1,5 +1,5 @@
 <script lang="ts">
-import games, { type NamedGameConfig, type NamedGameConfigSetting } from '$lib/data/games'
+import games from '$lib/data/games'
 import IconButton from './IconButton.svelte'
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
   import type { DropdownDirection } from 'src/global';
@@ -30,9 +30,6 @@ import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
   let cls = ''
   export { cls as class }
 
-  let childDropdownFrom:DropdownDirection
-  $: childDropdownFrom = dropdownFrom === "bottom" ? "right" : "left"
-
 </script>
 
 <IconButton icon={faFolderOpen} class={cls} {dropdownFrom} {size} {linear}>
@@ -44,7 +41,7 @@ import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
         title="play {game.title} solitaire"
         linear
         class="no-link {cls}"
-        dropdownFrom="{childDropdownFrom}"
+        dropdownFrom="left"
         on:click={(e)=>{
           if (!game?.variants?.length) {
             e.stopImmediatePropagation()
