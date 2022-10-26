@@ -108,7 +108,7 @@ register({
   title: 'Golf',
   stackConfig: [
     { name:"play", init:5, canPut:false, complete: { count:0 } },
-    { name:"discard",limitVisible:1, limitAvailable:1, deal:1, empty:'', canGet:true, canPut:true, match: [
+    { name:"discard",limitVisible:1, limitAvailable:1, deal:1, init:1, canGet:true, canPut:true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc }
     ] },
