@@ -31,9 +31,9 @@ import { goto } from '$app/navigation';
 
 </script>
 
-<IconButton icon={faSquare} overlay={faForward} class={cls} {size} {linear} disabled={ !$game.canAutoplay || $game.isComplete } on:click={async () => {
+<IconButton icon={faSquare} overlay={faForward} class={cls} {size} {linear} disabled={ !$game?.canAutoplay || $game?.isComplete } on:click={async () => {
   let i = 0, working = true
-  while (i < 1000 && !$game.isComplete && working) {
+  while (i < 1000 && !$game?.isComplete && working) {
     working = $game.autoplay()
     $game = $game
     i++
