@@ -6,7 +6,7 @@ export function modal(node:HTMLElement) {
     if (event.key === 'Escape') node.dispatchEvent(new CustomEvent('cancel'))
   }
 
-  document.addEventListener('click', handleClick)
+  setTimeout(() => document.addEventListener('click', handleClick), 100)
   document.addEventListener('keydown', handleEscape)
 
   return {

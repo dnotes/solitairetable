@@ -21,7 +21,6 @@ import Next from "$lib/btn/Next.svelte";
 
 let showGames = false
 function toggleGames(e:any) {
-  e.stopImmediatePropagation()
   showGames = !showGames
 }
 
