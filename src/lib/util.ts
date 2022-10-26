@@ -64,16 +64,17 @@ export const confBoolean = {
 }
 
 export const confNumber = {
-  encode: function(...values) {
+  encode: function(...values:(number|false|undefined)[]) {
     return values.map(v => {
-      if (v > 63) throw new Error('Numbers in configuration must be < 64.')
+      if (v === false || typeof v === 'undefined') return b64.encode(63)
+      if (v > 62) throw new Error('Numbers in configuration must be 62 or less.')
       return b64.encode(v)
     }).join('')
   },
-  decode: function(number) {
+  decode: function(number:string):number|undefined {
     let log = `number: "${number}" = `
     let val = b64.decode(number)
     // console.log(`${log}"${val}"`)
-    return val
+    return val === 63 ? undefined : val
   }
 }

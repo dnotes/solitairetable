@@ -46,11 +46,11 @@ export class MatchConfig {
   useFreecells: boolean = false
   blockWhenEmpty: boolean = false
   moveWhenFacedown: boolean = false
-  fromStack: StackMatch = StackMatch.Any
-  color: ColorMatch = ColorMatch.None
-  rank: RankMatch = RankMatch.None
-  count: number = 0
-  total: number = 0
+  fromStack?: StackMatch = StackMatch.Any
+  color?: ColorMatch = ColorMatch.None
+  rank?: RankMatch = RankMatch.None
+  count?: number
+  total?: number
   countGT: boolean = false
   countLT: boolean = false
   totalGT: boolean = false
@@ -116,7 +116,7 @@ export class MatchTest {
     if (!Array.isArray(cards)) cards = [cards]
     let matched = 0
 
-    if (this.conf.total) {
+    if (typeof this.conf.total !== 'undefined') {
       let total = cards.reduce((agg,card) => {
         return agg + card.value
       }, 0)
@@ -126,7 +126,7 @@ export class MatchTest {
       else return 0
     }
 
-    if (this.conf.count) {
+    if (typeof this.conf.count !== 'undefined') {
       if (this.conf.countLT && this.conf.count >= cards.length) matched++
       else if (this.conf.countGT && this.conf.count <= cards.length) matched++
       else if (this.conf.count === cards.length) matched++
