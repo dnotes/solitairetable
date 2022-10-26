@@ -3,13 +3,7 @@
   import { game, maxCardWidth, edgeHeight, edgeWidth, draggedCards } from '$lib/data/stores'
   import Card from '$lib/Card.svelte'
   import { Action, Activity } from '$lib/Game'
-  import GameControls from "./GameControls.svelte"
   import type CardInterface from '$lib/Card'
-import IconButton from "./IconButton.svelte";
-import { faShareSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
-import { faAsterisk, faBackward } from "@fortawesome/free-solid-svg-icons";
-import LinkCopied from "./LinkCopied.svelte"
-  import { goto } from "$app/navigation";
 
   export let stack:string|StackInterface|undefined
 
@@ -75,24 +69,6 @@ import LinkCopied from "./LinkCopied.svelte"
                   {#if typeof $game.canRecycle === 'number'}
                     ({$game.canRecycle})
                   {/if}
-                </div>
-              {:else}
-                <div class="flex flex-col justify-center items-center">
-                  {#if bigCards}
-                    <IconButton icon={faShareSquare} dropdownFrom="top" href="{$game.href}" class="no-link {hugeCards ? 'text-lg' : 'text-xs'} {bigCards ? '' : 'py-0'}" on:click={(e)=>{
-                      e.preventDefault()
-                      navigator.clipboard.writeText(new URL($game.href, window.location.href).toString())
-                    }}>
-                      Share
-                      <span slot="menu"><LinkCopied/></span>
-                    </IconButton>
-                    <IconButton icon={faSquare} overlay={faBackward} class="{hugeCards ? 'text-lg' : 'text-xs'} {bigCards ? '' : 'py-0'}" on:click={() => { $game.reset(); game.set($game); }}>
-                      Restart
-                    </IconButton>
-                  {/if}
-                  <IconButton icon={faSquare} overlay={faAsterisk} class="{hugeCards ? 'text-lg' : 'text-xs'} {bigCards ? '' : 'py-0'}" on:click={() => { goto($game.new().href) }}>
-                    {#if bigCards}New{/if}
-                  </IconButton>
                 </div>
               {/if}
             </Card>

@@ -4,14 +4,20 @@ import { platform } from '$lib/MediaQuery.svelte';
 import { game } from '$lib/data/stores'
 import GameLinks from '$lib/GameLinks.svelte';
 import SiteLinks from '$lib/SiteLinks.svelte';
-import GameControls from '$lib/GameControls.svelte';
 import IconButton from '$lib/IconButton.svelte';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import GameList from "$lib/GameList.svelte";
-import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
+import { faFolderOpen, faFile } from "@fortawesome/free-regular-svg-icons";
 import { modal } from "$lib/modal";
 import { fly } from "svelte/transition"
 import { quartIn, quintIn } from "svelte/easing"
+import Restart from "$lib/btn/Restart.svelte";
+import New from "$lib/btn/New.svelte";
+import Share from "$lib/btn/Share.svelte";
+import Undo from "$lib/btn/Undo.svelte";
+import Redo from "$lib/btn/Redo.svelte";
+import Prev from "$lib/btn/Prev.svelte";
+import Next from "$lib/btn/Next.svelte";
 
 let showGames = false
 function toggleGames(e:any) {
@@ -29,7 +35,13 @@ function toggleGames(e:any) {
       <GameLinks linear dropdownFrom="top" size="lg" class="no-link bg-gray-700 text-white" />
       <div class="flex-grow"/>
       {#if $game}
-        <GameControls class="text-xs text-white bg-gray-700" position="top" />
+        <div class="text-xs">
+          <Restart/>
+          <New/>
+          <Share/>
+          <Undo/>
+          <Redo/>
+        </div>
       {/if}
     </header>
 
@@ -75,7 +87,18 @@ function toggleGames(e:any) {
 
       <div class="flex-grow" />
       {#if $game}
-        <GameControls class="text-white bg-gray-900" position="bottom" />
+        <IconButton icon="{faFile}" dropdownFrom="bottom" class="bg-gray-900 text-white">
+          Deal
+          <div slot="menu">
+            <New linear />
+            <Restart linear />
+            <Prev linear />
+            <Next linear />
+          </div>
+        </IconButton>
+        <Undo/>
+        <Redo/>
+        <Share dropdownFrom="bottom"/>
         <div class="flex-grow" />
       {/if}
 
