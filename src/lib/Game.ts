@@ -231,6 +231,7 @@ export default class Game {
   }
 
   get isComplete():boolean {
+    if (!this?.completionStacks?.length) return false
     for (let i = 0; i < this.completionStacks.length; i++) {
       if (!this.stacks[this.completionStacks[i]].isComplete) return false
     }
