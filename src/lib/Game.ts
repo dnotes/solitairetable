@@ -139,6 +139,9 @@ export default class Game {
   selection: SelectedCard[] = []
   autoplayStacks: number[]
   completionStacks: number[]
+  hideComplete:boolean = false
+  startTime?:Date
+  endTime?:Date
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[]) {
     this.conf = new GameConfig(conf)
@@ -231,7 +234,29 @@ export default class Game {
     for (let i = 0; i < this.completionStacks.length; i++) {
       if (!this.stacks[this.completionStacks[i]].isComplete) return false
     }
+    if (!this.endTime) this.endTime = new Date()
     return true
+  }
+
+  get elapsedTime():string {
+    if (!this.startTime) return ""
+    let endTime = this.endTime ?? new Date()
+    var d = Math.abs(endTime.getTime() - this.startTime.getTime()) / 1000; // delta
+    var r:{hour:number,minute:number,second:number} = { hour:0, minute:0, second:0 }; // result
+    var s:{hour:number,minute:number,second:number} = {   // structure
+        hour: 3600,
+        minute: 60,
+        second: 1
+    };
+
+    Object.keys(s).forEach(function(key){
+        r[key] = Math.floor(d / s[key]);
+        d -= r[key] * s[key];
+    });
+
+    if (r.hour) return `${r.hour}:${r.minute}:${r.second}`
+    if (r.minute) return `${r.minute}:${r.second}`
+    return `${r.second} seconds`
   }
 
   get title():string {
@@ -253,6 +278,7 @@ export default class Game {
     this.undo = []
     this.redo = []
     this.selection = []
+    this.startTime = undefined
 
     let length = this.deck.length
     // continue as long as the deck changes size
@@ -323,6 +349,8 @@ export default class Game {
         this.deck.cycles += (activity.actions[0].toStack === -1) ? 1 : -1
       }
     }
+    this.hideComplete = false
+    if (!this.startTime) this.startTime = new Date()
     return this
   }
 

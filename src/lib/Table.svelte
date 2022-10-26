@@ -3,6 +3,12 @@
 import Pile from '$lib/Stack.svelte'
 import { maxCardWidth, edgeHeight } from '$lib/data/stores'
 import { game } from '$lib/data/stores'
+import { modal } from './modal';
+import { fly } from 'svelte/transition';
+import { quintOut } from 'svelte/easing';
+import New from './btn/New.svelte';
+import Share from './btn/Share.svelte';
+import Auto from './btn/Auto.svelte';
 
   let w=0,h=0
 
@@ -69,3 +75,34 @@ import { game } from '$lib/data/stores'
 
 </div>
 
+{#if $game?.isComplete && !$game?.hideComplete}
+  <div
+    class="modal top-1/3 bg-gray-100 border-gray-900 border-2 z-50 text-center shadow-2xl"
+    use:modal
+    transition:fly={{ duration:160, easing:quintOut, y:20 }}
+    on:cancel={()=>{$game.hideComplete=true}}
+  >
+    <h2 class="m-0">Finished!</h2>
+    <p>Completed in {$game.elapsedTime} with {$game.undo.length} moves.</p>
+    <div class="flex justify-center pt-4">
+      <New/>
+      <Share/>
+    </div>
+  </div>
+{/if}
+
+{#if $game?.canAutoplay && !$game.isComplete}
+  <div
+    class="modal -bottom-4 text-yellow-200"
+    use:modal
+    transition:fly={{ duration:80, easing:quintOut, y:40 }}
+  >
+    <Auto class="text-sm" size="2x">autoplay</Auto>
+  </div>
+{/if}
+
+<style lang="postcss">
+  .modal {
+    @apply fixed left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg;
+  }
+</style>
