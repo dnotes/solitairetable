@@ -255,8 +255,8 @@ export default class Game {
         d -= r[key] * s[key];
     });
 
-    if (r.hour) return `${r.hour}:${r.minute}:${r.second}`
-    if (r.minute) return `${r.minute}:${r.second}`
+    if (r.hour) return `${r.hour}:${r.minute}:${r.second}`.replace(/(?<=:)(\d:|\d$)/g, "0$1")
+    if (r.minute) return `${r.minute}:${r.second}`.replace(/(?<=:)(\d:|\d$)/g, "0$1")
     return `${r.second} seconds`
   }
 
