@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import Pile from '$lib/Stack.svelte'
-import { maxCardWidth, edgeHeight } from '$lib/data/stores'
+import { maxCardWidth, edgeHeight, showGameOver } from '$lib/data/stores'
 import { game } from '$lib/data/stores'
 import { modal } from './modal';
 import { fly } from 'svelte/transition';
@@ -9,6 +9,7 @@ import { quintOut } from 'svelte/easing';
 import New from './btn/New.svelte';
 import Share from './btn/Share.svelte';
 import Auto from './btn/Auto.svelte';
+  import Restart from './btn/Restart.svelte';
 
   let w=0,h=0
 
@@ -75,17 +76,22 @@ import Auto from './btn/Auto.svelte';
 
 </div>
 
-{#if $game?.isComplete && !$game?.hideComplete}
+{#if $showGameOver || ($game?.isComplete && !$game?.hideComplete)}
   <div
     class="modal top-1/3 bg-gray-100 border-gray-900 border-2 z-50 text-center shadow-2xl"
     use:modal
     transition:fly={{ duration:160, easing:quintOut, y:20 }}
-    on:cancel={()=>{$game.hideComplete=true}}
+    on:cancel={()=>{
+      $game.hideComplete = true
+      $showGameOver = false
+    }}
   >
-    <h2 class="m-0">Finished!</h2>
-    <p>Completed in {$game.elapsedTime} with {$game.undo.length} moves.</p>
+    <h2 class="m-0">Finished{$game.isComplete ? '!' : '?'}</h2>
+
+    <p>Time: {$game.elapsedTime} Moves: {$game.undo.length}</p>
     <div class="flex justify-center pt-4">
       <New/>
+      <Restart/>
       <Share/>
     </div>
   </div>
@@ -94,7 +100,6 @@ import Auto from './btn/Auto.svelte';
 {#if $game?.canAutoplay && !$game.isComplete}
   <div
     class="modal -bottom-4 text-yellow-200"
-    use:modal
     transition:fly={{ duration:80, easing:quintOut, y:40 }}
   >
     <Auto class="text-sm" size="2x">autoplay</Auto>

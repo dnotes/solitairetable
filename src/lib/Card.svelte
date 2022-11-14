@@ -90,7 +90,7 @@
       <img class="w-full" src="{dir}_empty.svg" alt="-">
     </div>
   {/if}
-  <div class="absolute w-full h-full text-center top-2 text-{$maxCardWidth < 100 ? 'xs' : 'sm'}"><slot></slot></div>
+  <div class="absolute w-full h-full text-center top-0 text-{$maxCardWidth < 100 ? 'xs' : 'sm'}"><slot></slot></div>
 </div>
 </div>
 

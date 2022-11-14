@@ -142,6 +142,7 @@ export default class Game {
   hideComplete:boolean = false
   startTime?:Date
   endTime?:Date
+  wasComplete: boolean = false
 
   constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[]) {
     this.conf = new GameConfig(conf)
@@ -236,6 +237,7 @@ export default class Game {
       if (!this.stacks[this.completionStacks[i]].isComplete) return false
     }
     if (!this.endTime) this.endTime = new Date()
+    this.wasComplete = true
     return true
   }
 
@@ -352,6 +354,7 @@ export default class Game {
     }
     this.hideComplete = false
     if (!this.startTime) this.startTime = new Date()
+    if (!this.wasComplete) this.endTime = undefined
     return this
   }
 

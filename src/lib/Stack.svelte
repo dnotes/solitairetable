@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { StackInterface } from "$lib/Stack"
-  import { game, maxCardWidth, edgeHeight, edgeWidth, draggedCards } from '$lib/data/stores'
+  import { game, maxCardWidth, edgeHeight, edgeWidth, draggedCards, showGameOver } from '$lib/data/stores'
   import Card from '$lib/Card.svelte'
   import { Action, Activity } from '$lib/Game'
   import type CardInterface from '$lib/Card'
+  import { faBan, faRotate } from "@fortawesome/free-solid-svg-icons";
+  import Fa from "svelte-fa";
 
   export let stack:string|StackInterface|undefined
 
@@ -22,7 +24,13 @@
 
   function clickCard(stack:string|StackInterface|undefined, card?:CardInterface) {
     if (!stack || typeof stack === 'string') return
-    if (!card) $game?.deal()
+    if (!card) { // Clicking on the deck
+      if (stack.length || $game.canRecycle) $game?.deal()
+      else {
+        $game.endTime = new Date()
+        $showGameOver = true
+      }
+    }
     else $game?.clickCard(card, stack)
     game.set($game)
   }
@@ -64,13 +72,17 @@
             <Card {card} stack={$game.deck} facedown {cardIndex} on:click={() => clickCard(stack)} />
           {:else}
             <Card on:click={() => clickCard(stack)}>
-              {#if $game.canRecycle}
-                <div class:text-gray-600={!$game.canRecycle}>Cycle
+              <div class="flex flex-col items-center justify-center h-full" class:text-gray-600={!$game.canRecycle}>
+                {#if $game.canRecycle}
+                  <Fa icon={faRotate} size="2x" />
+                  Cycle
                   {#if typeof $game.canRecycle === 'number'}
                     ({$game.canRecycle})
                   {/if}
-                </div>
-              {/if}
+                {:else}
+                  <Fa icon={faBan} size="2x" />
+                {/if}
+              </div>
             </Card>
           {/each}
         <!-- OTHER STACKS -->
