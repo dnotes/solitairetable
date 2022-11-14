@@ -389,7 +389,7 @@ export default class Game {
               stack.index
             )
           }
-        }).filter(Boolean)))
+        }).filter(Boolean).slice(0,this.deck.length)))
     }
     else if (this.canRecycle) {
       this.do(new Activity(
