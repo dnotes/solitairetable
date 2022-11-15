@@ -23,6 +23,11 @@ import Auto from './btn/Auto.svelte';
   ))
   $: cardHeight = $maxCardWidth * 1.5
 
+  function hideGameOver() {
+    $showGameOver = false
+    $game.hideComplete = true
+  }
+
 </script>
 
 <div
@@ -76,23 +81,20 @@ import Auto from './btn/Auto.svelte';
 
 </div>
 
-{#if $showGameOver || ($game?.isComplete && !$game?.hideComplete)}
+{#if $game && ($showGameOver || ($game?.isComplete && !$game?.hideComplete))}
   <div
     class="modal top-1/3 bg-gray-100 border-gray-900 border-2 z-50 text-center shadow-2xl"
     use:modal
     transition:fly={{ duration:160, easing:quintOut, y:20 }}
-    on:cancel={()=>{
-      $game.hideComplete = true
-      $showGameOver = false
-    }}
+    on:cancel={hideGameOver}
   >
     <h2 class="m-0">Finished{$game.isComplete ? '!' : '?'}</h2>
 
     <p>Time: {$game.elapsedTime} Moves: {$game.undo.length}</p>
     <div class="flex justify-center pt-4">
-      <New/>
-      <Restart/>
-      <Share/>
+      <div on:click={hideGameOver}><New/></div>
+      <div on:click={hideGameOver}><Restart/></div>
+      <div><Share/></div>
     </div>
   </div>
 {/if}
