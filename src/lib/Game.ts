@@ -31,6 +31,7 @@ export class Action {
 export class Activity {
   type: string
   actions: Action[]
+  autoflip?: Activity
   constructor(type:string, actions:Action|Action[]) {
     this.type = type
     this.actions = Array.isArray(actions) ? actions : [actions]
@@ -58,6 +59,8 @@ export interface GameConfigSetting {
   multiSelect?: boolean         // whether multiple cards are selected at once (false)
   showEmpty?: boolean           // whether an empty stack shows a placeholder (true)
   selectBlockedStacks?: boolean // whether stacks can be selected even when blocked (!conf.overlayRows)
+  thoughtful?: boolean          // "thoughtful" mode, i.e. facedown cards are still visible
+  autoflip?: boolean            // whether to flip cards over automatically as they are exposed
   limitCycles?: number          // number of times to cycle through the deck (0 / unlimited)
   limitUndo?: number            // limit to the number of undos (0 / unlimited)
   layout: string,               // layout
@@ -74,6 +77,8 @@ export class GameConfig {
   centerRows: boolean = true      // whether the stacks should be centered in the rows (true)
   overlayRows: boolean = false    // whether rows overlay each other (false)
   multiSelect: boolean = false    // whether multiple cards are selected at once (false)
+  thoughtful: boolean = false     // "thoughtful" mode, i.e. facedown cards are still visible
+  autoflip: boolean = false       // whether to flip cards over automatically as they are exposed
   selectBlockedStacks: boolean = true // whether stacks can be selected even when blocked (!conf.overlayRows)
   showEmpty: boolean = true       // whether an empty stack shows a placeholder (true)
   limitCycles: number = 0         // number of times to cycle through the deck (0 / unlimited)
@@ -99,7 +104,8 @@ export class GameConfig {
     }
     else if (typeof conf === 'string') {
       let config = conf.split('!');
-      [this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks] = confBoolean.decode(config[0]);
+      [this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks, this.thoughtful] = confBoolean.decode(config[0][0]);
+      [this.autoflip] = confBoolean.decode(config[0][1]);
       [this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode);
       this.deckConfig = new DeckConfig(config[2])
       this.stackConfig = config[3].split('|').map(c => new StackConfig(c))
@@ -116,7 +122,7 @@ export class GameConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks),
+      confBoolean.encode(this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks, this.thoughtful),
       confNumber.encode(this.limitCycles, this.limitUndo),
       this.deckConfig,
       this.stackConfig.join('|'),
@@ -319,7 +325,9 @@ export default class Game {
   doUndo() {
     if (!this.undo.length) return
     let activity = this.undo.pop()
+    if (!activity) return
     this.redo.push(activity)
+    if (activity.autoflip) this.do(activity.autoflip, true)
     this.do(activity.reverse(), true)
     this.clearSelected()
     return this
@@ -327,6 +335,7 @@ export default class Game {
   doRedo() {
     if (!this.redo.length) return
     let activity = this.redo.pop()
+    if (!activity) return
     this.undo.push(activity)
     this.do(activity, true)
     this.clearSelected()
@@ -348,6 +357,13 @@ export default class Game {
       activity.actions.forEach(action => {
         this.getStack(action.toStack).push(this.getStack(action.fromStack).pull(action.cardDepth))
       })
+      if (this.conf.autoflip) {
+        let facedownStacks = this.stacks.filter(s => !s.isDeck && s.length && s.topCard?.facedown && !s.isBlocked)
+        if (facedownStacks.length) {
+          activity.autoflip = new Activity('flip', facedownStacks.map(s => { return new Action(1, s.index) }))
+          this.do(activity.autoflip, true)
+        }
+      }
       if (activity.type === 'recycle') {
         this.deck.cycles += (activity.actions[0].toStack === -1) ? 1 : -1
       }

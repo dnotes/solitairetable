@@ -45,6 +45,12 @@ register({
     { name:"discard", deal:3, limitAvailable:1, limitVisible:3, horizontal:true, autoplay: { count:1 } }
   ],
   layout: '0000-D8,1234567',
+  autoflip: true,
+})
+
+register({...games['klondike'],
+  title: '(Thoughtful)',
+  thoughtful: true,
 })
 
 register({...games['klondike'],
@@ -53,14 +59,25 @@ register({...games['klondike'],
 })
 
 register({...games['klondike-vegas'],
-  title: 'Vegas, One Undo',
+  title: 'Vegas (Thoughtful)',
+  thoughtful: true,
+})
+
+register({...games['klondike-vegas'],
+  title: 'Vegas Strict',
   limitUndo: 1,
+  autoflip: false,
 })
 
 register({...games['klondike'],
   title: 'Draw One',
   // @ts-ignore
   stackConfig: games['klondike'].stackConfig.map(c => (typeof c !== 'string' && c.deal) ? {...c, deal:1 } : c)
+})
+
+register({...games['klondike-draw-one'],
+  title: 'Draw One (Thoughtful)',
+  thoughtful: true,
 })
 
 register({
@@ -119,6 +136,46 @@ register({
 })
 
 register({
+  title: 'TriPeaks',
+  limitCycles: 1,
+  stackConfig: [
+    { name:"pyramidDown", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false, facedown:1 },
+    { name:"pyramidUp", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
+    { name:"discard", limitVisible:1, limitAvailable:1, deal:1, init:1, canPut: true, match: [
+      { count:1, rank:RankMatch.Asc },
+      { count:1, rank:RankMatch.Desc },
+    ]},
+  ],
+  layout: '--_0  0  0_--,__00 00 00__,_000000000_,1111111111',
+  footer: 'D 2',
+  autoflip: true,
+  overlayRows: true,
+  showEmpty: false,
+})
+
+register({...games['tripeaks'],
+  title: '(Thoughtful)',
+  thoughtful: true,
+})
+
+register({...games['tripeaks'],
+  title: 'Head Start',
+  stackConfig: [
+    { name:"pyramidDown", canPut:false, init:1, limitCards:1, complete: { count:0 }, facedown:1 },
+    { name:"pyramidUp", canPut:false, init:1, limitCards:1, complete: { count:0 } },
+    { name:"discard", limitVisible:1, limitAvailable:1, deal:1, init:0, canPut: true, match: [
+      { count:1, rank:RankMatch.Asc },
+      { count:1, rank:RankMatch.Desc },
+    ]},
+  ],
+})
+
+register({...games['tripeaks-head-start'],
+  title: 'Head Start (Thoughtful)',
+  thoughtful: true,
+})
+
+register({
   title: 'Spider',
   limitCycles: 1,
   deckConfig: {
@@ -127,10 +184,16 @@ register({
   },
   stackConfig: [
     { name:"foundation", match: { suit:true, count:13, rank:RankMatch.Desc, moveWhenEmpty:true }, limitVisible:1, complete: { count:13, suit:true }, matchPriority:2 },
-    { name:"play6", deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 },
-    { name:"play5", deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, rank:RankMatch.Desc }, limitVisible:20 }
+    { name:"play6", deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { rank:RankMatch.Desc }, limitVisible:20 },
+    { name:"play5", deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { rank:RankMatch.Desc }, limitVisible:20 }
   ],
-  layout: 'D 00000000,1111222222'
+  layout: 'D 00000000,1111222222',
+  autoflip: true,
+})
+
+register({...games['spider'],
+  title: '(Thoughtful)',
+  thoughtful: true,
 })
 
 register({...games['spider'],
@@ -139,6 +202,24 @@ register({...games['spider'],
     decks: 4,
     suits:'SD',
   }
+})
+
+register({...games['spider-two-suits'],
+  title: 'Two Suits (Thoughtful)',
+  thoughtful: true,
+})
+
+register({...games['spider'],
+  title: 'Four Suits',
+  deckConfig: {
+    decks: 4,
+    suits:'SDHC',
+  }
+})
+
+register({...games['spider-four-suits'],
+  title: 'Four Suits (Thoughtful)',
+  thoughtful: true,
 })
 
 export default games

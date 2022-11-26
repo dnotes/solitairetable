@@ -42,8 +42,8 @@
   let visibleCardNumber:number, direction:string, distance:number
   $: if (stack) {
     visibleCardNumber = Math.max(cardIndex - stack.firstVisible, 0)
-    distance = stack?.isDeck ? 0 : visibleCardNumber * (stack.conf['horizontal'] ? $edgeWidth : $edgeHeight)
-    direction = stack.conf['horizontal'] ? 'left' : 'top'
+    distance = (stack?.isDeck) ? 0 : visibleCardNumber * (stack?.conf?.horizontal ? $edgeWidth : $edgeHeight)
+    direction = stack?.conf?.horizontal ? 'left' : 'top'
   }
 
   let textColor:string, alt:string
@@ -77,11 +77,14 @@
 <div class="cursor-pointer" draggable={Boolean(draggable)}>
   {#if card}
     {#if facedown || card.facedown}
-      <div transition:turn|local>
+      <div transition:turn|local={{}}>
+        {#if $game.conf.thoughtful && !stack?.isDeck}
+          <img src="{dir}{card.filename}" {alt} class="w-full absolute opacity-40">
+        {/if}
         <img class="w-full" src="{dir}_back.svg" alt="?" />
       </div>
     {:else}
-      <div transition:turn|local>
+      <div transition:turn|local={{}}>
         <img class="w-full" src="{dir}{card.filename}" {alt}>
       </div>
     {/if}

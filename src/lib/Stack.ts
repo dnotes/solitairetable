@@ -4,6 +4,7 @@ import { MatchConfig, MatchTest } from "$lib/Matchers"
 import type { MatchConfigSetting } from "$lib/Matchers"
 import { confString, confBoolean, confNumber } from "$lib/util"
 import { slugify } from 'transliteration'
+import type { DeckConfig } from "./Deck"
 
 export const ranks = "A23456789TJQK"
 const emptyRanks = "23456789TJQKA"
@@ -56,7 +57,13 @@ export class StackConfig {
       this.name = config[0]
       this.empty = confString.decode(config[1], emptyRanks);
       [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[2]);
-      [this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority] = config[3].split("").map(confNumber.decode);
+      let numbers = config[3].split("").map(confNumber.decode);
+      this.init = numbers[0] ?? 0
+      this.facedown = numbers[1] ?? 0
+      this.deal = numbers[2] ?? 0
+      this.limitCards = numbers[3] ?? 0
+      this.limitAvailable = numbers[4] ?? 0
+      this.limitVisible = numbers[5] ?? 0
       this.match = config[4].split(",").map(t => new MatchTest(t));
       this.complete = config[5].split(",").map(t => new MatchTest(t));
       this.autoplay = config[6].split(",").map(t => new MatchTest(t))
@@ -94,7 +101,7 @@ export interface StackInterface {
   stack:Card[]
   firstVisible:number
   isDeck:boolean
-  conf:StackConfig
+  conf:StackConfig|DeckConfig
   maxHeight:number
   maxWidth:number
   initialized:boolean
@@ -245,7 +252,7 @@ export default class Stack implements StackInterface {
     return this.stack.join(",")
   }
 
-  wants(cards) {
+  wants(cards:SelectedCard[]):number {
 
     // if this is not a play stack, exit now
     if (!this.conf.canPut) return 0
