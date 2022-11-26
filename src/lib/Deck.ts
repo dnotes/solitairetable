@@ -1,7 +1,7 @@
 import { default as Card, cards } from "$lib/Card"
 import { ranks } from "$lib/Stack"
 import type { StackInterface } from "$lib/Stack"
-import { confString, confNumber } from "$lib/util"
+import { confString, confNumber, confBoolean } from "$lib/util"
 
 export const suits = "chds"
 
@@ -23,8 +23,8 @@ export class DeckConfig {
       let ranksSuits = confString.decode(conf.slice(0,3), ranks + suits)
       this.ranks = ranksSuits.replace(/chds/g, '').toLowerCase()
       this.suits = ranksSuits.replace(/A23456789TJQK/g, '')
-      this.jokers = confNumber.decode(conf.slice(3,4).toString())
-      this.decks = confNumber.decode(conf.slice(4,5).toString())
+      this.jokers = confNumber.decode(conf.slice(3,4).toString()) ?? 0
+      this.decks = confNumber.decode(conf.slice(4,5).toString()) ?? 1;
     }
     else {
       Object.assign(this, conf)
@@ -35,7 +35,7 @@ export class DeckConfig {
     return [
       confString.encode(this.ranks + this.suits, ranks + suits),
       confNumber.encode(this.jokers),
-      confNumber.encode(this.decks)
+      confNumber.encode(this.decks),
     ].join('')
   }
   get description() {
@@ -117,7 +117,7 @@ export default class Deck implements StackInterface,DeckInterface {
     //   throw new Error(`Duplicate or invalid cards in deck. (duplicate: ${duplicateCards.join(' ')}, invalid: ${badCards.join(' ')})`)
     // }
 
-    this._deck = stack.map((c,i) => new Card(c,i))
+    this._deck = stack.map((c,i) => new Card(c.toString(),i))
     this.stack = [...this._deck]
 
     // Set config (for exports)
@@ -128,7 +128,7 @@ export default class Deck implements StackInterface,DeckInterface {
       let cardRankInDeck = cards?.find(c => c.char === firstCharOfDeck)?.rank
       let allSuitsInDeck = cards.filter(c => c.rank === cardRankInDeck).map(c => c.suitName[0])
       let numberOfDecks = hasRanks.length - hasRanks.replace(RegExp(firstCharOfDeck, 'g'), '').length
-      let numberOfJokers = charMap.filter(c => c.match(/\d/)).length
+      let numberOfJokers = charMap.filter(c => c.toString().match(/\d/)).length
       this.conf = new DeckConfig({
         decks: numberOfDecks,
         ranks: [...new Set(rankList)].join(''),
@@ -152,9 +152,7 @@ export default class Deck implements StackInterface,DeckInterface {
   }
 
   get isBlocked():boolean {
-    return this.stacksOverlaying.reduce((v,stack) => {
-      return v || !stack.isEmpty
-    }, false)
+    return false
   }
 
   reset() {
@@ -168,11 +166,11 @@ export default class Deck implements StackInterface,DeckInterface {
   }
 
   isOverlaying(stackIndex:number):boolean {
-    return this.stacksOverlayed.map(s => s.index).includes(stackIndex)
+    return false
   }
 
   isOverlayedBy(stackIndex:number):boolean {
-    return this.stacksOverlaying.map(s => s.index).includes(stackIndex)
+    return false
   }
 
   shuffle(): Deck {
