@@ -25,7 +25,10 @@ import Auto from './btn/Auto.svelte';
 
   function hideGameOver() {
     $showGameOver = false
-    $game.hideComplete = true
+    if ($game) {
+      $game.hideComplete = true
+      $game=$game
+    }
   }
 
 </script>
