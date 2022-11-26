@@ -2,7 +2,6 @@
 import "../app.css"
 import { platform } from '$lib/MediaQuery.svelte';
 import { game } from '$lib/data/stores'
-import GameLinks from '$lib/GameLinks.svelte';
 import SiteLinks from '$lib/SiteLinks.svelte';
 import IconButton from '$lib/IconButton.svelte';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
@@ -28,10 +27,10 @@ function toggleGames(e:any) {
 
 <div class="h-screen flex flex-col overflow-hidden">
 
-  {#if import.meta.env.SSR || $platform === 'desktop'}
+  {#if $platform === 'desktop'}
 
-    <header class="flex-grow-0 flex flex-row z-10 w-full h-14 px-2 md:px-6 lg:px-12 border-b-2 bg-gray-700 text-white">
-      <GameLinks linear dropdownFrom="top" size="lg" class="no-link bg-gray-700 text-white" />
+    <header class="flex-grow-0 flex flex-row z-10 w-full h-14 px-2 md:px-6 lg:px-12 border-b-2 bg-gray-700 text-white items-center">
+      <h1 class="h-full">Solitaire Table</h1>
       <div class="flex-grow"/>
       {#if $game}
         <div class="text-xs">
@@ -114,7 +113,7 @@ function toggleGames(e:any) {
       <div
         use:modal
         transition:fly={{ duration:240, x:-120, easing:quartIn }}
-        class="fixed left-0 w-48 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-r drop-shadow-xl"
+        class="fixed left-0 w-56 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-r drop-shadow-xl"
         style="height:720px; max-height:calc(100vh - 140px);"
         on:click={()=>{showGames=false}}
         on:cancel={()=>{showGames=false}}

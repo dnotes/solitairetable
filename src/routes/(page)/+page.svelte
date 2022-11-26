@@ -1,5 +1,5 @@
 <script>
-  import GameIcons from '$lib/GameIcons.svelte';
+  import GameList from '$lib/GameList.svelte';
 </script>
 
 <svelte:head>
@@ -11,5 +11,5 @@
 <h2 id="play-solitaire">All Games</h2>
 
 <div class="flex flex-row flex-wrap justify-center">
-  <GameIcons></GameIcons>
+  <GameList/>
 </div>

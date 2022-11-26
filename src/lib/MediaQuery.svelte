@@ -11,8 +11,8 @@ import { readable, derived } from 'svelte/store'
     }
     const breakpoints = [
           { value: "xs", mediaquery: window.matchMedia("(max-width:  479px)") },
-          { value: "s", mediaquery: window.matchMedia("(min-width:  480px) and (max-width:  719px)") },
-          { value: "m", mediaquery: window.matchMedia("(min-width:  720px) and (max-width:  959px)") },
+          { value: "s", mediaquery: window.matchMedia("(min-width:  480px) and (max-width:  799px)") },
+          { value: "m", mediaquery: window.matchMedia("(min-width:  800px) and (max-width:  959px)") },
           { value: "l", mediaquery: window.matchMedia("(min-width:  960px) and (max-width: 1439px)") },
           { value: "xl", mediaquery: window.matchMedia("(min-width: 1440px) and (max-width: 1919px)") },
           { value: "xxl", mediaquery: window.matchMedia("(min-width: 1920px)") },
@@ -36,7 +36,7 @@ import { readable, derived } from 'svelte/store'
   });
 
   export const platform = derived(breakpoint, $breakpoint => {
-      if ($breakpoint == "xs" || $breakpoint == "s" || !$breakpoint) {
+      if ($breakpoint == "xs" || $breakpoint == "s" || $breakpoint == "m" || !$breakpoint) {
           return 'mobile';
       } else {
           return 'desktop';
