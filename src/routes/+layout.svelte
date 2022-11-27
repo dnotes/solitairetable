@@ -27,7 +27,7 @@ function toggleGames(e:any) {
 
 <div class="h-screen flex flex-col overflow-hidden">
 
-  {#if $platform === 'desktop'}
+  {#if import.meta.env.SSR || $platform === 'desktop'}
 
     <header class="flex-grow-0 flex flex-row z-10 w-full h-14 px-2 md:px-6 lg:px-12 border-b-2 bg-gray-700 text-white items-center">
       <h1 class="h-full">Solitaire Table</h1>
