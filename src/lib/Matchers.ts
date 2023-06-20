@@ -24,16 +24,42 @@ export enum StackMatch {
 }
 
 export type MatchConfigSetting = {
+
+  // Matches if the suit is the same for all cards
   suit?: boolean
+
+  // Matches if the suit is the same for all cards that are being moved (not necessarily the stack)
+  suitOnlyForMovedCards?: boolean
+
+  // Matches if the moved cards include a joker
   hasJoker?: boolean
+
+  // Matches if the number of cards is less than the number of "freecell" stacks
   useFreecells?: boolean
-  moveWhenEmpty?: boolean
+
+  // Disallows moving cards to an empty pile IF a match requires suit, color, or rank
+  blockWhenEmpty?: boolean
+
+  // Allows moving cards to a pile with a facedown topcard EVEN IF a match requires suit, color, or rank
   moveWhenFacedown?: boolean
+
+  // Specifies the Stacks from which cards may be moved
   fromStack?: StackMatch
+
+  // Specifies a type of color matching to perform (none, alternate, or same)
   color?: ColorMatch
+
+  // Specifies a type of rank matching to perform (none, equal, asc, desc)
   rank?: RankMatch
+
+  // Matches the number of cards being moved or inspected
   count?: number
+
+  // Matches the total value of the cards being moved or inspected (e.g. for Pyramid games)
   total?: number
+
+  // Alters "count" or "total" matchers so that the value of the cards moved or inspected matches
+  // if it is greater than (GT) or less than (LT) the number provided for "count" or "total"
   countGT?: boolean
   countLT?: boolean
   totalGT?: boolean
@@ -42,6 +68,7 @@ export type MatchConfigSetting = {
 
 export class MatchConfig {
   suit: boolean = false
+  suitOnlyForMovedCards: boolean = false
   hasJoker: boolean = false
   useFreecells: boolean = false
   blockWhenEmpty: boolean = false
@@ -61,8 +88,8 @@ export class MatchConfig {
     }
     if (typeof conf === 'string') {
       let config = conf.split('');
-      [this.suit, this.hasJoker, this.useFreecells] = confBoolean.decode(config[0]);
-      [this.countLT, this.countGT, this.totalLT, this.totalGT] = confBoolean.decode(config[1])
+      [this.suit, this.hasJoker, this.useFreecells, this.blockWhenEmpty, this.moveWhenFacedown] = confBoolean.decode(config[0]);
+      [this.countLT, this.countGT, this.totalLT, this.totalGT, this.suitOnlyForMovedCards] = confBoolean.decode(config[1])
       this.color = confNumber.decode(config[2])
       this.rank = confNumber.decode(config[3])
       this.count = confNumber.decode(config[4])
@@ -146,7 +173,7 @@ export class MatchTest {
     if (this.conf.suit) {
       if (!cards.length) matched++ // suit, color, and rank tests pass for empty arrays (is this right?)
       else {
-        let suit = topCard ? topCard.suit : cards[0].suit
+        let suit = topCard && !this.conf.suitOnlyForMovedCards ? topCard.suit : cards[0].suit
         if (cards.filter(c => c.suit === suit).length === cards.length) matched++
         else return 0
       }
