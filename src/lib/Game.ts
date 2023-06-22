@@ -49,7 +49,6 @@ export class Activity {
 
 export type Row = {
   maxHeight:number
-  padBottom:number
   stacks:Array<string|StackInterface|undefined>
 }
 
@@ -106,7 +105,7 @@ export class GameConfig {
       let config = conf.split('!');
       [this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks, this.thoughtful] = confBoolean.decode(config[0][0]);
       [this.autoflip] = confBoolean.decode(config[0][1]);
-      [this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode);
+      [this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode).map(val => val === undefined ? 0 : val);
       this.deckConfig = new DeckConfig(config[2])
       this.stackConfig = config[3].split('|').map(c => new StackConfig(c))
       this.layout = config[4]
@@ -159,13 +158,14 @@ export default class Game {
     if (deck) this.deck.deck = deck;
 
     // Setup the stacks and the layout, at the same time
-    ['layout','footer'].forEach(k => {
-      let rows = this.conf[k].split(',').filter(Boolean).map(row => {
+    let sections = ['layout','footer'] as const
+    sections.forEach(k => {
+      let rows = (this.conf[k] || '').split(',').filter(Boolean).map(row => {
         let maxHeight = 0
         let rowStacks = row.split('').map(id => {
           let stack
           if (id.match(/\d/)) {
-            stack = new Stack(this.conf.stackConfig[id])
+            stack = new Stack(this.conf.stackConfig[parseInt(id)])
             stack.index = this.stacks.length
             this.stacks.push(stack)
             if (stack.maxHeight > maxHeight) maxHeight = stack.maxHeight
@@ -187,6 +187,7 @@ export default class Game {
 
     let freecellStacks = this.stacks.filter(s => s.conf.isFreecell)
     this.stacks.forEach(s => {
+      // @ts-ignore TODO: I don't understand this error, but everything works
       if (!s.conf.isFreecell) s.freecellStacks = freecellStacks
     })
 
@@ -209,7 +210,8 @@ export default class Game {
       let nextRow = this.layout[rowIndex + 1]
       row.stacks.forEach((stack,i) => {
         if (stack && typeof stack !== 'string' && !stack.isDeck) {
-          nextRow.stacks.filter(s => s && typeof s !== 'string' && s.rowPosition && s.rowPosition > stack.rowPosition - 2 && s.rowPosition < stack.rowPosition + 2).forEach(touchingStack => {
+          // Note: by this point, every stack should have a rowPosition
+          nextRow.stacks.filter(s => s && typeof s !== 'string' && s.rowPosition && s.rowPosition > (stack.rowPosition || 1) - 2 && s.rowPosition < (stack.rowPosition || 1) + 2).forEach(touchingStack => {
             if (touchingStack && typeof touchingStack !== 'string') {
               stack.stacksOverlaying.push(touchingStack)
               touchingStack.stacksOverlayed.push(stack)
@@ -258,7 +260,8 @@ export default class Game {
         second: 1
     };
 
-    Object.keys(s).forEach(function(key){
+    let keys = Object.keys(s) as Array<keyof typeof s>
+    keys.forEach(function(key){
         r[key] = Math.floor(d / s[key]);
         d -= r[key] * s[key];
     });
@@ -270,7 +273,7 @@ export default class Game {
 
   get title():string {
     if (this.conf.title && (this.conf.family?.toLowerCase() === this.conf.title?.toLowerCase())) return this.conf.title
-    return `${unslug(this.conf.family)} ${this.conf.title || unslug(this.conf.name)}`.trim()
+    return `${unslug(this.conf.family || 'unnamed-game')} ${this.conf.title || unslug(this.conf.name || 'unnamed-variant')}`.trim()
   }
 
   get href():string {
@@ -300,7 +303,8 @@ export default class Game {
       stack.initialized = true
       if (stack.length && stack.conf.facedown) {
         for (let i=0; i<stack.conf.facedown; i++) {
-          stack.stack[i].facedown = true
+          // @ts-ignore TODO figure out why this doesn't work, when stack.stack[i] should be a Card
+          if (stack.stack[i]) stack.stack[i].facedown = true
         }
       }
     })
@@ -355,6 +359,7 @@ export default class Game {
     // move, deal, recycle
     else {
       activity.actions.forEach(action => {
+        // @ts-ignore move, deal, and recycle will always have toStack
         this.getStack(action.toStack).push(this.getStack(action.fromStack).pull(action.cardDepth))
       })
       if (this.conf.autoflip) {
@@ -397,6 +402,7 @@ export default class Game {
     else if (!this.deck.isEmpty) {
       this.do(new Activity(
         'deal',
+        // @ts-ignore I think ts imagines this can return undefined, but I'm filtering
         this.stacks.map(stack => {
           if (!this.deck.isEmpty && stack.conf.deal) {
             return new Action(
@@ -410,6 +416,7 @@ export default class Game {
     else if (this.canRecycle) {
       this.do(new Activity(
         'recycle',
+        // @ts-ignore same as above
         this.stacks.map(stack => {
           if (stack.conf.deal) {
             return new Action(
@@ -432,6 +439,7 @@ export default class Game {
     let card = stack.getCard(cardDepth)
 
     // If the card is not available, do nothing
+    // @ts-ignore I know that DeckConfig doesn't have limitAvailable property, that's why there's an IF
     if (stack.conf.limitAvailable && cardDepth > stack.conf.limitAvailable) return
     if (!this.conf.selectBlockedStacks && stack.isBlocked) return
 
@@ -442,6 +450,7 @@ export default class Game {
     if (card.facedown) this.do(new Activity('flip', new Action(cardDepth, stack.index)))
 
     else if (this.conf.multiSelect) {
+      // @ts-ignore I know that DeckConfig doesn't have a canGet property, that's why there's an IF
       if (!stack.conf.canGet) return
       let cards = stack.look(cardDepth)
 
@@ -460,7 +469,7 @@ export default class Game {
               agg.push(new Action(arr.filter(c => c.stackIndex === card.stackIndex).length, card.stackIndex, options[0].index))
             }
             return agg
-          }, [])
+          }, [] as Action[])
           this.selection = []
           this.do(new Activity('move', actions))
         }
@@ -510,8 +519,10 @@ export default class Game {
   }
 
   autoplayStack(stack:StackInterface):boolean {
+    // @ts-ignore I know DeckConfig doesn't have isAutoplayStack, hence the IF
     if (!stack.conf.isAutoplayStack || !stack.topCard) return false
     for (let i = 0; i < this.completionStacks.length; i++) {
+      // @ts-ignore TODO: This needs to be fixed in Stack
       if (this.stacks[this.completionStacks[i]].wants([stack.topCard])) {
         let action = new Action(1, stack.index, this.completionStacks[i])
         this.do(new Activity('move', action))
@@ -523,6 +534,6 @@ export default class Game {
 
 }
 
-function unslug(text) {
+function unslug(text:string) {
   return text.replace(/(?:^|-|_)[a-z]/g, m => { return (m.length === 2 ? ' ' : '') + m.slice(m.length-1,1).toUpperCase() })
 }
