@@ -17,6 +17,7 @@ import Undo from "$lib/btn/Undo.svelte";
 import Redo from "$lib/btn/Redo.svelte";
 import Prev from "$lib/btn/Prev.svelte";
 import Next from "$lib/btn/Next.svelte";
+import Replay from "$lib/btn/Replay.svelte";
 
 let showGames = false
 function toggleGames(e:any) {
@@ -37,6 +38,7 @@ function toggleGames(e:any) {
           <Restart/>
           <New/>
           <Share/>
+          <Replay/>
           <Undo/>
           <Redo/>
         </div>
@@ -94,6 +96,7 @@ function toggleGames(e:any) {
             <Next linear />
           </div>
         </IconButton>
+        <Replay/>
         <Undo/>
         <Redo/>
         <Share dropdownFrom="bottom"/>

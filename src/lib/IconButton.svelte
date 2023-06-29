@@ -36,7 +36,7 @@ import Fa from 'svelte-fa'
 
   let open = false
   let menu:HTMLElement
-  let btn:HTMLButtonElement
+  let btn:HTMLButtonElement|HTMLAnchorElement
 
   let cls = ''
   export { cls as class }

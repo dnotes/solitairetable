@@ -1,1 +1,1 @@
-<span class="p-1 m-1 bg-yellow-200 text-black border-black border-2 absolute z-10 leading-tight text-sm">Link&nbsp;copied!</span>
+<span class="p-1 m-1 bg-yellow-200 text-black border-black border-2 absolute z-10 leading-tight text-sm"><slot/>&nbsp;link&nbsp;copied!</span>

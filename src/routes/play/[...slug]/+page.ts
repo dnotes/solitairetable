@@ -5,7 +5,7 @@ export const prerender = false
 
 export async function load({ url, params }:{ url:URL, params:any }) {
 
-  let [game,deck] = params?.slug?.split('/')
+  let [game,deck,replay] = params?.slug?.split('/')
   let title:string
   try {
     let loadedGame = new Game(game, deck)
@@ -24,6 +24,7 @@ export async function load({ url, params }:{ url:URL, params:any }) {
     title,
     image,
     link,
+    replay,
   }
 
   return data

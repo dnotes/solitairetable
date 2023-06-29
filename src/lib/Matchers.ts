@@ -213,6 +213,7 @@ export class MatchTest {
       }
     }
 
+    // @ts-ignore matchPriority is not in DeckConfig... that's why it has "?."
     return isMoveTest ? (stack?.conf?.matchPriority || 0) : 1
 
   }

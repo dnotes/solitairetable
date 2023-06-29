@@ -1,12 +1,9 @@
 <script lang="ts">
 import IconButton from '../IconButton.svelte'
-import { faArrowRotateLeft, faArrowRotateRight, faAsterisk, faBackward, faBackwardStep, faForward, faForwardStep } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faShareSquare, faSquare } from '@fortawesome/free-regular-svg-icons'
+import { faShareSquare, faCaretSquareRight } from '@fortawesome/free-regular-svg-icons'
 import { game } from '../data/stores'
-import { breakpoint } from '../MediaQuery.svelte';
 import LinkCopied from '../LinkCopied.svelte';
-import { goto } from '$app/navigation';
-  import type { DropdownDirection } from 'src/global';
+import type { DropdownDirection } from 'src/global';
 
   export let linear = false
   export let dropdownFrom:DropdownDirection = "top"
@@ -37,5 +34,14 @@ import { goto } from '$app/navigation';
 
 <IconButton icon={faShareSquare} class={cls} {size} {linear} {dropdownFrom} on:click={share}>
   Share
-  <span slot="menu"><LinkCopied /></span>
+  <div slot="menu" class="bg-gray-100 border-gray-300 border text-black">
+    <IconButton icon={faShareSquare} size="lg" linear on:click={() => { navigator.clipboard.writeText(new URL($game.href, window.location.href).toString()) }}>
+      share game
+      <span slot="menu"><LinkCopied>game</LinkCopied></span>
+    </IconButton>
+    <IconButton icon={faCaretSquareRight} size="lg" linear on:click={() => { navigator.clipboard.writeText(new URL(`${$game.href}/${$game.history}`, window.location.href).toString()) }}>
+      share replay
+      <span slot="menu"><LinkCopied>replay</LinkCopied></span>
+    </IconButton>
+  </div>
 </IconButton>

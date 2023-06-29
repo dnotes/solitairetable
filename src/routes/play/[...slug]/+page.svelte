@@ -27,7 +27,7 @@ import Table from '$lib/Table.svelte'
   })
 
   afterNavigate((nav:any) => {
-    game.set(new Game(data.game, data.deck))
+    game.set(new Game(data.game, data.deck, data.replay))
   })
 
 </script>

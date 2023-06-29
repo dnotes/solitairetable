@@ -18,9 +18,12 @@ export class Action {
     this.toStack = toStack
     return this
   }
-  toString() {
+  get debug() {
     if (this.toStack) return `${this.fromStack}->${this.toStack}${this.cardDepth > 1 ? `(${this.cardDepth})` : ''}`
     else return `${this.fromStack}[#${this.cardDepth}]`
+  }
+  toString() {
+    return `${confNumber.encode(this.fromStack)}${confNumber.encode(this.cardDepth)}${this.toStack === undefined ? '' : confNumber.encode(this.toStack)}`
   }
   reverse() {
     if (this.toStack || this.toStack === 0) return new Action(this.cardDepth, this.toStack, this.fromStack)
@@ -37,8 +40,13 @@ export class Activity {
     this.actions = Array.isArray(actions) ? actions : [actions]
     return this
   }
-  toString() {
+  get debug() {
     return `${this.type} (${this.actions.join(',')})`
+  }
+  toString() {
+    if (this.type === 'deal' || this.type === 'recycle') return ''
+    if (this.type === 'flip') return `~${this.actions.join(',')}`
+    return this.actions.join('')
   }
   reverse() {
     let a = new Activity(this.type, this.actions.map(a => a.reverse()))
@@ -147,15 +155,24 @@ export default class Game {
   hideComplete:boolean = false
   startTime?:Date
   endTime?:Date
-  wasComplete: boolean = false
+  wasComplete:boolean = false
 
-  constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[]) {
+  _sharedReplay?:string
+  _userReplay?:string
+  replayMoves?:string[]
+  isReplaying:number = 0
+  isReplayingFrom?:'shared'|'user'
+
+  constructor(conf?:string|GameConfig|GameConfigSetting, deck?:string|string[]|Card[], sharedReplay?:string) {
     this.conf = new GameConfig(conf)
     this.name = this.conf.name || ''
 
     // Setup the deck
     this.deck = new Deck(this.conf.deckConfig);
     if (deck) this.deck.deck = deck;
+
+    // Setup the replay
+    if (sharedReplay) this._sharedReplay = sharedReplay
 
     // Setup the stacks and the layout, at the same time
     let sections = ['layout','footer'] as const
@@ -282,6 +299,10 @@ export default class Game {
 
   get isOfficial() { return this.conf.isOfficial }
 
+  get snapshot() { return this.stacks.map(stack => stack.stack.map(card => card.char).join('')).join(';') }
+
+  get history() { return this.undo.join(';') }
+
   initialize() {
 
     // first make sure everything is set empty
@@ -291,6 +312,7 @@ export default class Game {
     this.redo = []
     this.selection = []
     this.startTime = undefined
+    this.isReplaying = 0
 
     let length = this.deck.length
     // continue as long as the deck changes size
@@ -311,9 +333,69 @@ export default class Game {
   }
 
   reset() {
+    // console.log('reset')
     this.deck.reset()
     this.initialize()
     return this
+  }
+
+  setReplay(str?:string) {
+    // console.log(`setReplay(${str})`)
+    this.isReplayingFrom = str === 'shared' ? 'shared' : 'user'
+
+    if (str === 'shared') {
+      str = this._sharedReplay ? this._sharedReplay : this.history
+      this._sharedReplay = str
+    }
+
+    else {
+      if (str === 'user') str = this._userReplay ? this._userReplay : this.history
+      if (!str) str = this.history
+      this._userReplay = str
+    }
+
+    this.replayMoves = str.length ? str.replace(/[^-_a-zA-Z0-9,;]/g,'').split(';') : undefined
+    this.isReplaying = 0
+    return this.doReplay()
+  }
+
+  doReplay() {
+    // console.log(`doReplay()`)
+    if (!this.replayMoves || this.isReplaying === this.replayMoves.length) return
+    if (!this.isReplaying || this.isReplaying !== this.undo.length) this.reset()
+    return this.doReplayMove(this.replayMoves[this.isReplaying] || '')
+  }
+
+  doReplayMove(move:string) {
+
+    // console.log(`doReplayMove(${move})`)
+
+    // deal, recycle
+    if (move === '' || move === ',') {
+      this.deal()
+    }
+
+    // flip
+    else if (move.startsWith('~')) {
+      let actions:Action[] = (move.replace(/^~/,'').match(/.{2}/) || []).map(m => {
+        let nums = m.split('').map(confNumber.decode)
+        return new Action(nums[1] || 0, nums[0] || 0)
+      })
+      this.do(new Activity('flip', actions))
+    }
+
+    // move
+    else {
+      let actions:Action[] = (move.replace(/^~/,'').match(/.{3}/) || []).map(m => {
+        let nums = m.split('').map(confNumber.decode)
+        return new Action(nums[1] || 0, nums[0] || 0, nums[2] || 0)
+      })
+      this.do(new Activity('move', actions))
+    }
+
+    this.isReplaying++
+    return this
+
   }
 
   new() {
@@ -334,6 +416,7 @@ export default class Game {
     if (activity.autoflip) this.do(activity.autoflip, true)
     this.do(activity.reverse(), true)
     this.clearSelected()
+    if (this.isReplaying) this.isReplaying--
     return this
   }
   doRedo() {
@@ -343,6 +426,7 @@ export default class Game {
     this.undo.push(activity)
     this.do(activity, true)
     this.clearSelected()
+    if (this.isReplaying) this.isReplaying++
     return this
   }
 

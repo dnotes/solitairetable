@@ -128,14 +128,14 @@ export interface StackInterface {
 }
 
 export default class Stack implements StackInterface {
-  _stack = []
+  _stack:Card[] = []
   _facedown = 0
   index = 0
   isDeck = false
   initialized = false
-  stacksOverlayed = []
-  stacksOverlaying = []
-  freecellStacks = []
+  stacksOverlayed:StackInterface[] = []
+  stacksOverlaying:StackInterface[] = []
+  freecellStacks:StackInterface[] = []
   conf:StackConfig = new StackConfig()
 
   constructor(conf?:string|StackConfig|StackConfigSetting, index=0) {
@@ -274,6 +274,7 @@ export default class Stack implements StackInterface {
 
     // iterate over array
     return Math.max(...this.conf.match.map(matcher => {
+      // @ts-ignore it complains because this is passing SelectedCard[], but the final requires Card[]... @TODO fix
       return matcher.test(cards, this)
     }))
 

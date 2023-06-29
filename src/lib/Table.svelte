@@ -9,7 +9,9 @@ import { quintOut } from 'svelte/easing';
 import New from './btn/New.svelte';
 import Share from './btn/Share.svelte';
 import Auto from './btn/Auto.svelte';
-  import Restart from './btn/Restart.svelte';
+import Restart from './btn/Restart.svelte';
+import Replay from './btn/Replay.svelte';
+import ReplayControls from './btn/ReplayControls.svelte';
 
   let w=0,h=0
 
@@ -82,6 +84,16 @@ import Auto from './btn/Auto.svelte';
 
   <slot></slot>
 
+  {#if $game?.isReplaying}
+    <div
+      class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-lg border bg-gray-400 bg-opacity-40 z-10 text-center shadow-2xl h-16 text-sm px-2 pt-1 pb-4"
+      transition:fly={{ duration:160, easing:quintOut, y:20 }}
+    >
+      <ReplayControls />
+    </div>
+  {/if}
+
+
 </div>
 
 {#if $game && ($showGameOver || ($game?.isComplete && !$game?.hideComplete))}
@@ -98,6 +110,7 @@ import Auto from './btn/Auto.svelte';
       <div on:click={hideGameOver}><New/></div>
       <div on:click={hideGameOver}><Restart/></div>
       <div><Share/></div>
+      <div><Replay/></div>
     </div>
   </div>
 {/if}
