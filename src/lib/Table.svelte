@@ -49,7 +49,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
     <!-- ROWS -->
     {#each $game.layout as row, rowIndex}
       <div
-        class="flex flex-row w-full relative md:p-4 pointer-events-none select-none"
+        class="row flex flex-row w-full relative pointer-events-none select-none"
         class:justify-center={$game.conf.centerRows}
         style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight) + $edgeHeight}px;"
       >
@@ -60,13 +60,13 @@ import ReplayControls from './btn/ReplayControls.svelte';
       </div>
     {:else}
       <div
-        class="w-full relative md:p-4 pointer-events-none"
+        class="row w-full relative pointer-events-none"
       />
     {/each}
 
     {#each $game.footer as row}
       <div
-        class="flex flex-row w-full relative md:p-4 pointer-events-none"
+        class="row flex flex-row w-full relative pointer-events-none"
         class:justify-center={$game.conf.centerRows}
         style="height:{cardHeight}px;"
       >
@@ -76,7 +76,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
       </div>
     {:else}
       <div
-        class="w-full relative md:p-4 pointer-events-none"
+        class="row w-full relative pointer-events-none"
       />
     {/each}
 
@@ -127,5 +127,13 @@ import ReplayControls from './btn/ReplayControls.svelte';
 <style lang="postcss">
   .modal {
     @apply fixed left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg;
+  }
+  .row {
+    @apply md:p-4;
+  }
+  @media all and (orientation:landscape) and (max-height:500px) {
+    .row {
+      @apply p-0;
+    }
   }
 </style>
