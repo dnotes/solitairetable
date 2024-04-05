@@ -88,7 +88,7 @@ import Fa from 'svelte-fa'
     bind:this={btn}
     on:click
     on:click={btnClick}
-    class="px-2 py-1 text-center leading-none h-full flex flex-{linear ? 'row' : 'col'} items-center justify-center {cls} {linear ? 'whitespace-nowrap' : ''}"
+    class="px-2 py-1 text-center leading-none h-full w-full flex flex-{linear ? 'row' : 'col'} items-center justify-center {cls} {linear ? 'whitespace-nowrap' : ''}"
   >
     {#if icon}
       <span class="relative px-1 mb-1 inline-block {cls}">
@@ -105,7 +105,7 @@ import Fa from 'svelte-fa'
   {#if open}
     <div
       on:click={(e) => {open=false}}
-      class="{dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder} ${dropdownFrom.match(/(right|left)/) && 'top-0'}` : ''} {cls}"
+      class="{dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder} ${dropdownFrom.match(/^(right|left)/) && 'top-0'}` : ''} {cls}"
     >
       <slot name="menu"></slot>
     </div>

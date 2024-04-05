@@ -79,7 +79,7 @@ function toggleGames(e:any) {
       <slot></slot>
     </div>
 
-    <footer class="flex-grow-0 flex flex-row justify-center h-12 w-full leading-10 px-2 md:px-6 lg:px-12 text-xs bg-gray-900 text-white">
+    <footer class="flex-grow-0 flex flex-row justify-center h-20 w-full leading-10 px-2 pb-3 md:px-6 lg:px-12 text-xs bg-gray-900 text-white">
 
       <IconButton icon="{faFolderOpen}" on:click={toggleGames}>
         Games
@@ -99,16 +99,31 @@ function toggleGames(e:any) {
         <Replay/>
         <Undo/>
         <Redo/>
-        <Share dropdownFrom="bottom"/>
+        <div class="bottom-only">
+          <Share dropdownFrom="bottom"/>
+        </div>
+        <div class="right-only">
+          <Share dropdownFrom="bottom-0 right"/>
+        </div>
         <div class="flex-grow" />
       {/if}
 
-      <IconButton icon={faEllipsis} dropdownFrom="bottom" class="bg-gray-900 text-white right-0 text-right">
-        Menu
-        <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full right-0">
-          <SiteLinks class="no-link bg-gray-900 text-white" />
-        </div>
-      </IconButton>
+      <div class="bottom-only">
+        <IconButton icon={faEllipsis} dropdownFrom="bottom" class="bg-gray-900 text-white right-0 text-right">
+          Menu
+          <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full right-0">
+            <SiteLinks class="no-link bg-gray-900 text-white" />
+          </div>
+        </IconButton>
+      </div>
+      <div class="right-only">
+        <IconButton icon={faEllipsis} dropdownFrom="bottom-0 right" class="bg-gray-900 text-white text-right">
+          Menu
+          <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full top-auto">
+            <SiteLinks class="no-link bg-gray-900 text-white" />
+          </div>
+        </IconButton>
+      </div>
 
     </footer>
 
@@ -116,8 +131,8 @@ function toggleGames(e:any) {
       <div
         use:modal
         transition:fly={{ duration:240, x:-120, easing:quartIn }}
+        id="show-games"
         class="fixed left-0 w-56 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-r drop-shadow-xl"
-        style="height:720px; max-height:calc(100vh - 140px);"
         on:click={()=>{showGames=false}}
         on:cancel={()=>{showGames=false}}
       >
@@ -129,3 +144,20 @@ function toggleGames(e:any) {
 
 </div>
 
+<style lang="postcss">
+  #show-games {
+    height:720px;
+    max-height:calc(100vh - 140px);
+  }
+  .right-only { display:none; }
+  @media all and (orientation:landscape) and (max-height:500px) {
+    .bottom-only { display:none; }
+    .right-only { display:block; }
+    #main { @apply pr-14; }
+    #show-games {
+      @apply left-0 bottom-0;
+      max-height:100vh;
+    }
+    footer { @apply fixed right-0 top-0 bottom-0 h-auto p-1 flex-col w-14 content-center; }
+  }
+</style>

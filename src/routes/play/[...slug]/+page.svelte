@@ -45,3 +45,9 @@ import Table from '$lib/Table.svelte'
 <div class="w-full h-full bg-green-800 overflow-x-auto pt-4 md:pt-8">
   <Table />
 </div>
+
+<style lang="postcss">
+  @media all and (orientation:landscape) and (max-height:500px) {
+    div { @apply pt-2 md:pt-2; }
+  }
+</style>
