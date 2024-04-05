@@ -34,7 +34,7 @@ function register(config:NamedGameConfigSetting):void {
 register({
   title: 'Klondike',
   stackConfig: [
-    { name:"foundation", empty:"A", limitVisible:1, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
+    { name:"foundation", empty:"A", limitVisible:1, matchPriority:2, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
     { name:"play1", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
     { name:"play2", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:2, facedown:1, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
     { name:"play3", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:3, facedown:2, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
