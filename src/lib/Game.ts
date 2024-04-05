@@ -472,9 +472,14 @@ export default class Game {
   }
 
   stacksWant(cards:SelectedCard[]):Stack[] {
+    let currentStack = cards[0].stackIndex
     return this.stacks
       .filter(stack => stack.wants(cards))
-      .sort((a,b) => b.conf.matchPriority - a.conf.matchPriority)
+      .sort((a,b) => {
+        let aCycle = a.index > currentStack ? .1 : 0
+        let bCycle = b.index > currentStack ? .1 : 0
+        return (b.conf.matchPriority + bCycle) > (a.conf.matchPriority + aCycle) ? 1 : -1
+      })
   }
 
   deal(setUndo:boolean = true) {
