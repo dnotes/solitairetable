@@ -44,6 +44,17 @@
   $: hugeCards = $maxCardWidth > 150
   $: buttonSize = bigCards ? '2x' : 'lg'
 
+  let positions:number[] = []
+  $: if (stack && typeof stack !== 'string' && !stack.isDeck) positions = stack.stack.reduce(positionsReducer, [])
+
+  function positionsReducer(agg:number[], card:CardInterface, cardIndex:number) {
+    if (!stack || typeof stack === 'string') return [...agg, 0]
+    if (cardIndex <= stack.firstVisible || cardIndex <= stack.stack.length - Math.max(stack.maxHeight, stack.maxWidth)) return [...agg, 0]
+    let prev = agg[agg.length-1] ?? 0
+    if (card?.facedown || stack.stack[cardIndex - 1]?.facedown) return [...agg, prev + 4]
+    return [...agg, prev + (stack?.conf?.horizontal ? $edgeWidth : $edgeHeight)]
+  }
+
 </script>
 
 {#if $game && typeof stack !== 'string'}
@@ -90,6 +101,8 @@
           <!-- CARDS -->
           {#each stack.stack as card, cardIndex (card.id)}
             <Card {card} {stack} {cardIndex}
+              distance={positions[cardIndex]}
+              direction={stack?.conf?.horizontal ? 'left' : 'top'}
               on:click={() => clickCard(stack, card)}
             >
             {#if wanted && cardIndex === stack.length - 1}

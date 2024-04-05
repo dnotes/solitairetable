@@ -184,8 +184,8 @@ register({
   },
   stackConfig: [
     { name:"foundation", match: { suit:true, count:13, rank:RankMatch.Desc }, limitVisible:1, complete: { count:13, suit:true }, matchPriority:2 },
-    { name:"play6", deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, suitOnlyForMovedCards:true, rank:RankMatch.Desc }, limitVisible:20 },
-    { name:"play5", deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, suitOnlyForMovedCards:true, rank:RankMatch.Desc }, limitVisible:20 }
+    { name:"play6", deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, suitOnlyForMovedCards:true, rank:RankMatch.Desc }},
+    { name:"play5", deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, suitOnlyForMovedCards:true, rank:RankMatch.Desc }}
   ],
   layout: 'D 00000000,1111222222',
   autoflip: true,

@@ -39,12 +39,8 @@
   }
 
   // Set up card overlays
-  let visibleCardNumber:number, direction:string, distance:number
-  $: if (stack) {
-    visibleCardNumber = Math.max(cardIndex - stack.firstVisible, 0)
-    distance = (stack?.isDeck) ? 0 : visibleCardNumber * (stack?.conf?.horizontal ? $edgeWidth : $edgeHeight)
-    direction = stack?.conf?.horizontal ? 'left' : 'top'
-  }
+  export let direction:string = 'top'
+  export let distance:number = 0
 
   let textColor:string, alt:string
   if (card) {
