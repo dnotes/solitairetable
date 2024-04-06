@@ -33,7 +33,7 @@ import type { DropdownDirection } from 'src/global';
   <IconButton icon={faCaretSquareRight} class={cls} {size} {linear} {dropdownFrom}>
     Replay
 
-    <div slot="menu" class="bg-gray-100 border-gray-300 border text-black">
+    <div slot="menu" class="{cls}">
 
       {#if $game?._sharedReplay}
         <IconButton icon={faCaretSquareRight} {size} linear on:click={() => { $game.setReplay('shared'); $game = $game; }}>

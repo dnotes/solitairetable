@@ -10,13 +10,13 @@ import { readable, derived } from 'svelte/store'
         return
     }
     const breakpoints = [
-          { value: "xs", mediaquery: window.matchMedia("(max-width:  479px)") },
-          { value: "s", mediaquery: window.matchMedia("(min-width:  480px) and (max-width:  799px)") },
-          { value: "m", mediaquery: window.matchMedia("(min-width:  800px) and (max-width:  959px)") },
-          { value: "l", mediaquery: window.matchMedia("(min-width:  960px) and (max-width: 1439px)") },
-          { value: "xl", mediaquery: window.matchMedia("(min-width: 1440px) and (max-width: 1919px)") },
-          { value: "xxl", mediaquery: window.matchMedia("(min-width: 1920px)") },
-      ];
+        { value: "xs", mediaquery: window.matchMedia("(orientation: portrait) and (max-width: 499px), (orientation: landscape) and (max-height: 499px)") },
+        { value: "s", mediaquery: window.matchMedia("(orientation: portrait) and (min-width: 500px) and (max-width: 799px), (orientation: landscape) and (min-height: 500px) and (max-height: 799px)") },
+        { value: "m", mediaquery: window.matchMedia("(orientation: portrait) and (min-width: 800px) and (max-width: 959px), (orientation: landscape) and (min-height: 800px) and (max-height: 959px)") },
+        { value: "l", mediaquery: window.matchMedia("(orientation: portrait) and (min-width:  960px) and (max-width: 1439px), (orientation: landscape) and (min-height: 960px) and (max-height: 1439px)") },
+        { value: "xl", mediaquery: window.matchMedia("(orientation: portrait) and (min-width: 1440px) and (max-width: 1919px), (orientation: landscape) and (min-height: 1440px) and (max-height: 1919px)") },
+        { value: "xxl", mediaquery: window.matchMedia("(orientation: portrait) and (min-width: 1920px), (orientation: landscape) and (min-height: 1920px)") },
+    ];
 
       for (let key in breakpoints) {
           let breakpoint = breakpoints[key];
@@ -36,7 +36,7 @@ import { readable, derived } from 'svelte/store'
   });
 
   export const platform = derived(breakpoint, $breakpoint => {
-      if ($breakpoint == "xs" || $breakpoint == "s" || $breakpoint == "m" || !$breakpoint) {
+      if ($breakpoint == "xs" || $breakpoint == "s" || !$breakpoint) {
           return 'mobile';
       } else {
           return 'desktop';
@@ -69,5 +69,8 @@ import { readable, derived } from 'svelte/store'
       }
   });
 
+  export const isMobileLandscape = derived([platform,orientation], ([$platform, $orientation]) => {
+    return $platform === "mobile" && $orientation === "landscape";
+  })
 
 </script>

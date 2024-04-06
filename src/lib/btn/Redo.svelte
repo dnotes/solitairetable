@@ -1,11 +1,7 @@
 <script lang="ts">
 import IconButton from '../IconButton.svelte'
-import { faArrowRotateLeft, faArrowRotateRight, faAsterisk, faBackward, faBackwardStep, faForward, faForwardStep } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faShareSquare, faSquare } from '@fortawesome/free-regular-svg-icons'
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { game } from '../data/stores'
-import { breakpoint } from '../MediaQuery.svelte';
-import LinkCopied from '../LinkCopied.svelte';
-import { goto } from '$app/navigation';
 
   export let linear = false
   export let size:

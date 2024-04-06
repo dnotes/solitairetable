@@ -32,9 +32,9 @@ import type { DropdownDirection } from 'src/global';
 
 </script>
 
-<IconButton icon={faShareSquare} class={cls} {size} {linear} {dropdownFrom} on:click={share}>
+<IconButton icon={faShareSquare} class="{cls}" {size} {linear} {dropdownFrom} on:click={share}>
   Share
-  <div slot="menu" class="bg-gray-100 border-gray-300 border text-black">
+  <div slot="menu" class="{cls}">
     <IconButton icon={faShareSquare} size="lg" linear on:click={() => { navigator.clipboard.writeText(new URL($game.href, window.location.href).toString()) }}>
       share game
       <span slot="menu"><LinkCopied>game</LinkCopied></span>

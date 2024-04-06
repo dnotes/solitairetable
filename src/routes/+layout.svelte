@@ -1,6 +1,6 @@
 <script lang="ts">
 import "../app.css"
-import { platform } from '$lib/MediaQuery.svelte';
+import { platform, isMobileLandscape } from '$lib/MediaQuery.svelte';
 import { game } from '$lib/data/stores'
 import SiteLinks from '$lib/SiteLinks.svelte';
 import IconButton from '$lib/IconButton.svelte';
@@ -87,7 +87,7 @@ function toggleGames(e:any) {
 
       <div class="flex-grow" />
       {#if $game}
-        <IconButton icon="{faFile}" dropdownFrom="bottom" class="bg-gray-900 text-white">
+        <IconButton icon="{faFile}" dropdownFrom={$isMobileLandscape ? "right" : "bottom"} class="bg-gray-900 text-white">
           Deal
           <div slot="menu">
             <New linear />
@@ -96,34 +96,19 @@ function toggleGames(e:any) {
             <Next linear />
           </div>
         </IconButton>
-        <Replay/>
+        <Replay dropdownFrom={$isMobileLandscape ? "right" : "bottom"} class="bg-gray-900 text-white {$isMobileLandscape || "text-right right-0"}"/>
         <Undo/>
         <Redo/>
-        <div class="bottom-only">
-          <Share dropdownFrom="bottom"/>
-        </div>
-        <div class="right-only">
-          <Share dropdownFrom="bottom-0 right"/>
-        </div>
+        <Share dropdownFrom={$isMobileLandscape ? "right" : "bottom"} class="bg-gray-900 text-white {$isMobileLandscape || "text-right right-0"}"/>
         <div class="flex-grow" />
       {/if}
 
-      <div class="bottom-only">
-        <IconButton icon={faEllipsis} dropdownFrom="bottom" class="bg-gray-900 text-white right-0 text-right">
-          Menu
-          <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full right-0">
-            <SiteLinks class="no-link bg-gray-900 text-white" />
-          </div>
-        </IconButton>
-      </div>
-      <div class="right-only">
-        <IconButton icon={faEllipsis} dropdownFrom="bottom-0 right" class="bg-gray-900 text-white text-right">
-          Menu
-          <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full top-auto">
-            <SiteLinks class="no-link bg-gray-900 text-white" />
-          </div>
-        </IconButton>
-      </div>
+      <IconButton icon={faEllipsis} dropdownFrom={$isMobileLandscape ? "bottom-0 right" : "bottom"} class="bg-gray-900 text-white {$isMobileLandscape || "text-right right-0"}">
+        Menu
+        <div slot="menu" class="bg-gray-900 text-white rounded-t min-w-full {$isMobileLandscape || "text-right right-0"}">
+          <SiteLinks class="no-link bg-gray-900 text-white" />
+        </div>
+      </IconButton>
 
     </footer>
 

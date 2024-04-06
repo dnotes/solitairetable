@@ -105,7 +105,7 @@ import Fa from 'svelte-fa'
   {#if open}
     <div
       on:click={(e) => {open=false}}
-      class="{dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder} ${dropdownFrom.match(/^(right|left)/) && 'top-0'}` : ''} {cls}"
+      class="pt-2 {dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder} ${dropdownFrom.match(/^(right|left)/) && 'top-0'}` : ''} {cls}"
     >
       <slot name="menu"></slot>
     </div>
