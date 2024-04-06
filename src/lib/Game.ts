@@ -476,9 +476,11 @@ export default class Game {
     return this.stacks
       .filter(stack => stack.wants(cards))
       .sort((a,b) => {
-        let aCycle = a.index > currentStack ? .1 : 0
-        let bCycle = b.index > currentStack ? .1 : 0
-        return (b.conf.matchPriority + bCycle) > (a.conf.matchPriority + aCycle) ? 1 : -1
+        let aCycle = a.index < currentStack ? .1 : 0
+        let bCycle = b.index < currentStack ? .1 : 0
+        if ((b.conf.matchPriority + bCycle) > (a.conf.matchPriority + aCycle)) return 1
+        if ((b.conf.matchPriority + bCycle) < (a.conf.matchPriority + aCycle)) return -1
+        return a.index < b.index ? 1 : -1
       })
   }
 
