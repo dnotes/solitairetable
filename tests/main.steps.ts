@@ -36,3 +36,7 @@ Given('I am playing {word} with deal {int}', async (world:PlaywrightWorld, game:
 Given('I am playing {word} with the deal {string}', async (world:PlaywrightWorld, game:string, deal:string) => {
   await gotoGame(world, game, deal)
 })
+
+Given('all cards are playable', async (world:PlaywrightWorld) => {
+  await gotoGame(world, 'freecell', 'MmZzFfSslLyYeErRKkXxDdQqjJwWcCpPIiVvBbOohHuUaAnNGgTt')
+})

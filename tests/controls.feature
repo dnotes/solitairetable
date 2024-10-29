@@ -5,7 +5,7 @@ Feature: Game controls
   I want to control the game with appropriate buttons on the page
 
   @mobile @tablet @desktop @widescreen
-  Scenario: Take a screenshot
+  Scenario: Visual: Game screen
     Given I am playing
     Then the screenshot should match
     And the url should contain "5173/play/klondike/"
@@ -32,3 +32,19 @@ Feature: Game controls
       And I should see a "Share" button
       And I should NOT see a "Menu" button
       And I should NOT see a "Deal" button
+
+  Rule: The game should allow autoplay when all cards are playable
+
+    @mobile @tablet @desktop @widescreen
+    Scenario: The autoplay button shows
+      Given all cards are playable
+      When I click the "autoplay" button
+      And I wait for 1500ms
+      Then I should see "Finished!"
+      And I should see "Time:"
+      And I should see "Moves:"
+      And I should see the "New" button
+      And I should see the "Restart" button
+      And I should see the "Share" button
+
+
