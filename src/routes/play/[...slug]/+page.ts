@@ -12,7 +12,7 @@ export async function load({ url, params }:{ url:URL, params:any }) {
     title = loadedGame.title
   }
   catch(e) {
-    throw error(400, "Invalid game configuration.")
+    error(400, "Invalid game configuration.");
   }
   let image = `${url.origin}/img/${game}` + (deck ? `/${deck}.png` : '.png')
   let link = `${url.origin}/play/${game}`

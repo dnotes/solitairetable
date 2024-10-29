@@ -87,7 +87,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
   {#if $game?.isReplaying}
     <div
       class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-lg border bg-gray-400 bg-opacity-40 z-10 text-center shadow-2xl h-16 text-sm px-2 pt-1 pb-4"
-      transition:fly={{ duration:160, easing:quintOut, y:20 }}
+      transition:fly|global={{ duration:160, easing:quintOut, y:20 }}
     >
       <ReplayControls />
     </div>
@@ -100,7 +100,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
   <div
     class="modal top-1/3 bg-gray-100 border-gray-900 border-2 z-50 text-center shadow-2xl"
     use:modal
-    transition:fly={{ duration:160, easing:quintOut, y:20 }}
+    transition:fly|global={{ duration:160, easing:quintOut, y:20 }}
     on:cancel={hideGameOver}
   >
     <h2 class="m-0">Finished{$game.isComplete ? '!' : '?'}</h2>
@@ -118,7 +118,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
 {#if $game?.canAutoplay && !$game.isComplete}
   <div
     class="modal -bottom-4 text-yellow-200"
-    transition:fly={{ duration:80, easing:quintOut, y:40 }}
+    transition:fly|global={{ duration:80, easing:quintOut, y:40 }}
   >
     <Auto class="text-sm" size="2x">autoplay</Auto>
   </div>

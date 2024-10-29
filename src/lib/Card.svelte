@@ -73,14 +73,14 @@
 <div class="cursor-pointer" draggable={Boolean(draggable)}>
   {#if card}
     {#if facedown || card.facedown}
-      <div transition:turn|local={{}}>
+      <div transition:turn={{}}>
         {#if $game.conf.thoughtful && !stack?.isDeck}
           <img src="{dir}{card.filename}" {alt} class="w-full absolute opacity-40">
         {/if}
         <img class="w-full" src="{dir}_back.svg" alt="?" />
       </div>
     {:else}
-      <div transition:turn|local={{}}>
+      <div transition:turn={{}}>
         <img class="w-full" src="{dir}{card.filename}" {alt}>
       </div>
     {/if}

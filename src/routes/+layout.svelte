@@ -63,7 +63,7 @@ function toggleGames(e:any) {
     {#if showGames}
       <div
         use:modal
-        transition:fly={{ duration:320, x:120, easing:quintIn }}
+        transition:fly|global={{ duration:320, x:120, easing:quintIn }}
         class="fixed right-0 w-96 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-l drop-shadow-xl"
         style="height:720px; max-height:calc(100vh - 140px);"
         on:click={()=>{showGames=false}}
@@ -115,7 +115,7 @@ function toggleGames(e:any) {
     {#if showGames}
       <div
         use:modal
-        transition:fly={{ duration:240, x:-120, easing:quartIn }}
+        transition:fly|global={{ duration:240, x:-120, easing:quartIn }}
         id="show-games"
         class="fixed left-0 w-56 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-r drop-shadow-xl"
         on:click={()=>{showGames=false}}

@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import type { PageLoad } from './$types'
+import type { PageServerLoad } from './$types'
 export const prerender = true
 
 export type Value = string|number|Date|undefined|Array<Value>|{[key:string]:Value}
@@ -13,7 +13,7 @@ export type Content = {
   html: string
 }
 
-export const load:PageLoad = async (req) => {
+export const load:PageServerLoad = async (req) => {
   try {
     let allContent = import.meta.glob('/*.md')
     let slug = '/' + req.params.slug.toLowerCase().replace(/^about$/, 'README') + '.md'
@@ -28,7 +28,7 @@ export const load:PageLoad = async (req) => {
     }
   }
   catch(e:any) {
-    throw error(500, e.message)
+    error(500, e.message);
   }
-  throw error(404, "not found")
+  error(404, "not found");
 }
