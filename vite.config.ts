@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import { Mode, plugin as mdPlugin } from "vite-plugin-markdown"
 import mdAttrs from "markdown-it-attrs"
 import mdit from "markdown-it"
+import { quickpickle } from 'quickpickle'
 
 const markdownIt = mdit({
     xhtmlOut:true,
@@ -15,6 +16,17 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			md,
 			sveltekit(),
+			quickpickle({
+				explodeTags: [
+					['nojs','js'],
+					['mobile','tablet','desktop','widescreen'],
+					['firefox','chromium','webkit'],
+				],
+				worldConfig: {
+					port:5173,
+					slowMoMs:1000,
+				}
+			})
 		],
 		define: {
 			'process.env.NODE_ENV': mode === 'production' ? '"production"' : '"development"',
