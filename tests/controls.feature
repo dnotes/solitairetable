@@ -1,7 +1,7 @@
 @concurrent
 Feature: Game controls
 
-  As a user
+  As a player
   I want to control the game with appropriate buttons on the page
 
   Rule: The game controls should be shown correctly on the page
