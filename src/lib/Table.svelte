@@ -110,7 +110,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
       <div on:click={hideGameOver}><New/></div>
       <div on:click={hideGameOver}><Restart/></div>
       <div><Share class="bg-gray-100 border-gray-300 text-black"/></div>
-      <div><Replay class="bg-gray-100 border-gray-300 text-black right-0"/></div>
+      <!-- <div><Replay class="bg-gray-100 border-gray-300 text-black right-0"/></div> -->
     </div>
   </div>
 {/if}

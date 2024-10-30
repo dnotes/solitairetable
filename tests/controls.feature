@@ -47,4 +47,22 @@ Feature: Game controls
       And I should see the "Restart" button
       And I should see the "Share" button
 
+  Rule: Remove the Replay button until it is ready
+
+    @mobile @tablet @desktop @widescreen
+    Scenario: remove the button from the main screen
+      Given I am playing
+      Then I should NOT see a "Replay" button
+
+    @mobile @tablet @desktop @widescreen
+    Scenario: remove the button from the "Finished!" screen
+      Given I have just won a game
+      And I take a screenshot
+      Then I should NOT see a "Replay" button
+
+    @mobile @tablet
+    Scenario: remove the button from the "Deal" Menu
+      Given I am playing
+      When I click the "Deal" button
+      Then I should NOT see a "Replay" button
 

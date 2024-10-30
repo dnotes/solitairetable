@@ -40,3 +40,8 @@ Given('I am playing {word} with the deal {string}', async (world:PlaywrightWorld
 Given('all cards are playable', async (world:PlaywrightWorld) => {
   await gotoGame(world, 'freecell', 'MmZzFfSslLyYeErRKkXxDdQqjJwWcCpPIiVvBbOohHuUaAnNGgTt')
 })
+Given('I have just won a game', async (world:PlaywrightWorld) => {
+  await gotoGame(world, 'freecell', 'MmZzFfSslLyYeErRKkXxDdQqjJwWcCpPIiVvBbOohHuUaAnNGgTt')
+  await world.page.getByRole('button', { name:'autoplay' }).click({ timeout:500 })
+  await world.page.waitForTimeout(1500)
+})

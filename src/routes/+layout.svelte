@@ -38,7 +38,7 @@ function toggleGames(e:any) {
           <Restart/>
           <New/>
           <Share/>
-          <Replay/>
+          <!-- <Replay/> -->
           <Undo/>
           <Redo/>
         </div>
@@ -96,7 +96,7 @@ function toggleGames(e:any) {
             <Next linear />
           </div>
         </IconButton>
-        <Replay dropdownFrom={$isMobileLandscape ? "right" : "bottom"} class="bg-gray-900 text-white {$isMobileLandscape || "text-right right-0"}"/>
+        <!-- <Replay dropdownFrom={$isMobileLandscape ? "right" : "bottom"} class="bg-gray-900 text-white {$isMobileLandscape || "text-right right-0"}"/> -->
         <Undo/>
         <Redo/>
         <Share dropdownFrom={$isMobileLandscape ? "right" : "bottom"} class="bg-gray-900 text-white {$isMobileLandscape || "text-right right-0"}"/>
