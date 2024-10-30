@@ -156,6 +156,8 @@ export default class Game {
   startTime?:Date
   endTime?:Date
   wasComplete:boolean = false
+  undoCount: number = 0
+  restartCount: number = 0
 
   _sharedReplay?:string
   _userReplay?:string
@@ -336,6 +338,7 @@ export default class Game {
     // console.log('reset')
     this.deck.reset()
     this.initialize()
+    this.restartCount++
     return this
   }
 
@@ -417,6 +420,7 @@ export default class Game {
     this.do(activity.reverse(), true)
     this.clearSelected()
     if (this.isReplaying) this.isReplaying--
+    this.undoCount++
     return this
   }
   doRedo() {

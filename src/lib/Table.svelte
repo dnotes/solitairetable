@@ -105,7 +105,12 @@ import ReplayControls from './btn/ReplayControls.svelte';
   >
     <h2 class="m-0">Finished{$game.isComplete ? '!' : '?'}</h2>
 
-    <p>Time: {$game.elapsedTime} Moves: {$game.undo.length}</p>
+    <p>
+      Time: {$game.elapsedTime}<br>
+      Moves: {$game.undo.length}<br>
+      Undo: {$game.undoCount}<br>
+      Restart: {$game.restartCount}
+    </p>
     <div class="flex justify-center pt-4">
       <div on:click={hideGameOver}><New/></div>
       <div on:click={hideGameOver}><Restart/></div>
