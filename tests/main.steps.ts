@@ -8,13 +8,9 @@ let deals = [
   'OwkrbDZdvVUcTspxHLEgmXNiyGulAfoIWMKFneaBSJPjRhqYCQtz'
 ]
 
-function host(world:PlaywrightWorld) {
-  return `${world.playwrightConfig.host}:${world.playwrightConfig.port}`
-}
-
 async function gotoGame(world:PlaywrightWorld, game:string, deal?:string) {
   if (!deal) deal = deals[0]
-  await world.page.goto(`${host(world)}/play/${game}/${deal}`)
+  await world.page.goto(`http://${world.baseUrl.host}/play/${game}/${deal}`)
   await world.page.waitForTimeout(200)
 }
 

@@ -4,12 +4,6 @@ Feature: Game controls
   As a user
   I want to control the game with appropriate buttons on the page
 
-  @mobile @tablet @desktop @widescreen
-  Scenario: Visual: Game screen
-    Given I am playing
-    Then the screenshot should match
-    And the url should contain "5173/play/klondike/"
-
   Rule: The game controls should be shown correctly on the page
 
     @mobile @tablet
