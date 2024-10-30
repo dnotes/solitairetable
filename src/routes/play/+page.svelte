@@ -15,8 +15,8 @@ import { page } from '$app/stores'
 <svelte:head>
   <title>Random Solitaire Game | Solitaire Table</title>
   <meta property="og:title" content="Random Solitaire Game" />
-  <meta property="og:image" content="{$page.url.origin}/img/klondike.jpg" />
-  <meta property="twitter:image" content="{$page.url.origin}/img/klondike.jpg" />
+  <meta property="og:image" content="{$page.url.origin}/img/klondike.png" />
+  <meta property="twitter:image" content="{$page.url.origin}/img/klondike.png" />
   <meta property="og:url" content="{$page.url.origin}/play" />
   <meta property="og:site_name" content="Solitaire Table" />
 </svelte:head>
