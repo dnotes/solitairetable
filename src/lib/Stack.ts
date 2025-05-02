@@ -1,4 +1,4 @@
-import type Card from "$lib/Card"
+import Card from "$lib/Card"
 import type { SelectedCard } from "$lib/Card"
 import { MatchConfig, MatchTest } from "$lib/Matchers"
 import type { MatchConfigSetting } from "$lib/Matchers"
@@ -123,6 +123,7 @@ export interface StackInterface {
   truncate(index:number):Card[]
   getCardDepth(card:number|Card|Card[]):number
   getCard(cardDepth:number):Card
+  position:string
   // pick(index:number):Card
   // put(card:Card):void
 }
@@ -147,6 +148,13 @@ export default class Stack implements StackInterface {
 
   get stack() { return this._stack }
   set stack(stack) { this._stack = stack }
+
+  get position() {
+    return this._stack.map(c => c.char).join("")
+  }
+  set position(stack:string) {
+    this._stack = stack.split("").map(c => new Card(c))
+  }
 
   get isEmpty() { return this._stack.length === 0 }
 

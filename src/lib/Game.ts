@@ -627,6 +627,37 @@ export default class Game {
     return false
   }
 
+  get position() {
+    let rows = [ ...this.layout, ...this.footer ]
+    return rows.map(row => {
+      return row.stacks.map((stack) => {
+        if (typeof stack === 'string' || !stack) return '_'
+        return stack.position
+      }).join(',')
+    }).join('|')
+  }
+
+  set position(pos:string) {
+    let grid = pos.split('|').map(row => row.split(','))
+    let idx = 0
+    let onFooter = false
+    for (let row of grid) {
+      let gameRow:Row
+      if (!onFooter && this.layout.length > idx) {
+        gameRow = this.layout[idx]
+      }
+      else {
+        onFooter = true
+        gameRow = this.footer[idx - this.layout.length]
+      }
+      for (let i=0;i<row.length;i++) {
+        let stack = gameRow.stacks[i]
+        if (stack && typeof stack !== 'string') stack.position = row[i]
+      }
+      idx++
+    }
+  }
+
 }
 
 function unslug(text:string) {

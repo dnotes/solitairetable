@@ -139,7 +139,14 @@ export default class Deck implements StackInterface,DeckInterface {
 
   }
 
-  get decks() { return this.conf.decks }
+  get position() {
+    return '_' + this.stack.map(c => c.char).join('') + '_'
+  }
+  set position(value) {
+    this.stack = value.replace(/_/g,'').split('').map(c => new Card(c))
+  }
+
+get decks() { return this.conf.decks }
 
   get suits() { return this.conf.suits }
 
