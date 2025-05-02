@@ -6,7 +6,12 @@ export default defineWorkspace([
     test: {
       name: 'unit',
       include: ['**/*.{test,spec}.{js,ts}'],
-      environment: 'node'
+      environment: 'node',
+      server: {
+        deps: {
+          inline: ['transliteration'],
+        }
+      }
     },
   },
   {
