@@ -4,6 +4,7 @@ import { Mode, plugin as mdPlugin } from "vite-plugin-markdown"
 import mdAttrs from "markdown-it-attrs"
 import mdit from "markdown-it"
 import { quickpickle } from 'quickpickle'
+import tailwindcss from '@tailwindcss/vite'
 
 const markdownIt = mdit({
     xhtmlOut:true,
@@ -15,6 +16,7 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [
 			md,
+      tailwindcss(),
 			sveltekit(),
 			quickpickle({
 				explodeTags: [

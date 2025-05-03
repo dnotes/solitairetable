@@ -9,4 +9,6 @@
   <title>{`${data?.content?.attributes?.title} | Solitaire Table`}</title>
 </svelte:head>
 
-{@html data?.content?.html}
+<div class="prose">
+  {@html data?.content?.html}
+</div>

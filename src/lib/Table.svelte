@@ -44,12 +44,12 @@ import ReplayControls from './btn/ReplayControls.svelte';
 
   {#if $game}
 
-    <h1 class="absolute left-2 bottom-0 m-0 leading-tight text-lg">{$game.title}</h1>
+    <h1 class="absolute left-2 bottom-2 m-0 leading-tight text-lg md:text-2xl text-emerald-400 grayscale-80">{$game.title}</h1>
 
     <!-- ROWS -->
     {#each $game.layout as row, rowIndex}
       <div
-        class="row flex flex-row w-full relative pointer-events-none select-none"
+        class="row flex flex-row w-full relative pointer-events-none select-none md:p-4"
         class:justify-center={$game.conf.centerRows}
         style="height:{$game.conf.overlayRows && (rowIndex !== $game.layout.length - 1) ? cardHeight * .4 : cardHeight + (row.maxHeight * $edgeHeight) + $edgeHeight}px;"
       >
@@ -66,7 +66,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
 
     {#each $game.footer as row}
       <div
-        class="row flex flex-row w-full relative pointer-events-none"
+        class="row flex flex-row w-full relative pointer-events-none md:p-4"
         class:justify-center={$game.conf.centerRows}
         style="height:{cardHeight}px;"
       >
@@ -76,7 +76,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
       </div>
     {:else}
       <div
-        class="row w-full relative pointer-events-none"
+        class="row w-full relative pointer-events-none md:p-4"
       />
     {/each}
 
@@ -103,7 +103,7 @@ import ReplayControls from './btn/ReplayControls.svelte';
     transition:fly|global={{ duration:160, easing:quintOut, y:20 }}
     on:cancel={hideGameOver}
   >
-    <h2 class="m-0">Finished{$game.isComplete ? '!' : '?'}</h2>
+    <h2 class="m-0 text-2xl">Finished{$game.isComplete ? '!' : '?'}</h2>
 
     <div class="flex flex-col">
       {#each $game.statsArray as item}
@@ -134,15 +134,13 @@ import ReplayControls from './btn/ReplayControls.svelte';
 {/if}
 
 <style lang="postcss">
+  @reference 'tailwindcss';
   .modal {
     @apply fixed left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg;
   }
-  .row {
-    @apply md:p-4;
-  }
   @media all and (orientation:landscape) and (max-height:500px) {
     .row {
-      @apply p-0;
+      padding:0 !important;
     }
   }
 </style>

@@ -19,11 +19,11 @@ import Prev from "$lib/btn/Prev.svelte";
 import Next from "$lib/btn/Next.svelte";
 import Replay from "$lib/btn/Replay.svelte";
 
-let showGames = false
-function toggleGames(e:any) {
-  showGames = !showGames
-}
+  let showGames = false;
 
+  function toggleGames(e: any) {
+    showGames = !showGames;
+  }
 </script>
 
 <div class="h-screen flex flex-col overflow-hidden">
@@ -31,7 +31,7 @@ function toggleGames(e:any) {
   {#if import.meta.env.SSR || $platform === 'desktop'}
 
     <header class="flex-grow-0 flex flex-row z-10 w-full h-14 px-2 md:px-6 lg:px-12 border-b-2 bg-gray-700 text-white items-center">
-      <h1 class="h-full">Solitaire Table</h1>
+      <h1 class="h-full text-4xl flex items-center">Solitaire Table</h1>
       <div class="flex-grow"/>
       {#if $game}
         <div class="text-xs">
@@ -53,7 +53,7 @@ function toggleGames(e:any) {
 
       <div class="caps-small">© 2021 DNotes Media Productions</div>
       <div class="flex-grow" />
-      <IconButton linear size="sm" icon="{faFolderOpen}" on:click={toggleGames}>
+      <IconButton class="cursor-pointer" linear size="sm" icon="{faFolderOpen}" on:click={toggleGames}>
         Games
       </IconButton>
       <SiteLinks size="sm" class="no-link bg-gray-900 text-white rounded-t" />
@@ -62,10 +62,8 @@ function toggleGames(e:any) {
 
     {#if showGames}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
-        role="button"
-        aria-label="Show games"
-        tabindex="0"
         use:modal
         transition:fly|global={{ duration:320, x:120, easing:quintIn }}
         class="fixed right-0 w-96 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-l drop-shadow-xl"
@@ -118,10 +116,8 @@ function toggleGames(e:any) {
 
     {#if showGames}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
-        role="button"
-        aria-label="Show games"
-        tabindex="0"
         use:modal
         transition:fly|global={{ duration:240, x:-120, easing:quartIn }}
         id="show-games"
@@ -146,11 +142,22 @@ function toggleGames(e:any) {
   @media all and (orientation:landscape) and (max-height:500px) {
     .bottom-only { display:none; }
     .right-only { display:block; }
-    #main { @apply pr-14; }
+    #main { padding-right:3.5rem; }
     #show-games {
-      @apply left-0 bottom-0;
+      left:0;
+      bottom:0;
       max-height:100vh;
     }
-    footer { @apply fixed right-0 top-0 bottom-0 h-auto p-1 flex-col w-14 content-center; }
+    footer {
+      position:fixed;
+      right:0;
+      top:0;
+      bottom:0;
+      height:auto;
+      padding:.25rem;
+      flex-direction: column;
+      width:3.5rem;
+      justify-content: center;
+    }
   }
 </style>
