@@ -61,7 +61,11 @@ function toggleGames(e:any) {
     </footer>
 
     {#if showGames}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
+        role="button"
+        aria-label="Show games"
+        tabindex="0"
         use:modal
         transition:fly|global={{ duration:320, x:120, easing:quintIn }}
         class="fixed right-0 w-96 bottom-16 p-4 overflow-y-auto overflow-x-hidden bg-gray-800 text-white z-10 rounded-l drop-shadow-xl"
@@ -113,7 +117,11 @@ function toggleGames(e:any) {
     </footer>
 
     {#if showGames}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
+        role="button"
+        aria-label="Show games"
+        tabindex="0"
         use:modal
         transition:fly|global={{ duration:240, x:-120, easing:quartIn }}
         id="show-games"
