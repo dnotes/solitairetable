@@ -11,3 +11,6 @@ Feature: The site must work
     Then the screenshot "game" should match
     And the url should contain "5173/play/klondike/"
 
+  Scenario: The images should work
+    Given I navigate to "/img/klondike/OwkrbDZdvVUcTspxHLEgmXNiyGulAfoIWMKFneaBSJPjRhqYCQtz.png"
+    Then the screenshot should match
