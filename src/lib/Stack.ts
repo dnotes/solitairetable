@@ -111,7 +111,7 @@ export interface StackInterface {
   stack:Card[]
   firstVisible:number
   isDeck:boolean
-  conf:StackConfig|DeckConfig
+  conf:StackConfig|Partial<StackConfig>&DeckConfig
   maxHeight:number
   maxWidth:number
   initialized:boolean
