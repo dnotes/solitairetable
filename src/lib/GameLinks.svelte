@@ -1,8 +1,8 @@
 <script lang="ts">
 import games from '$lib/data/games'
+import type { DropdownDirection } from '../global';
 import IconButton from './IconButton.svelte'
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
-  import type { DropdownDirection } from 'src/global';
 
   export let family = ''
   export let linear:boolean = false

@@ -3,7 +3,7 @@ import IconButton from '../IconButton.svelte'
 import { faShareSquare, faCaretSquareRight } from '@fortawesome/free-regular-svg-icons'
 import { game } from '../data/stores'
 import LinkCopied from '../LinkCopied.svelte';
-import type { DropdownDirection } from 'src/global';
+import type { DropdownDirection } from '../../global';
 
   export let linear = false
   export let dropdownFrom:DropdownDirection = "top"
@@ -26,22 +26,15 @@ import type { DropdownDirection } from 'src/global';
   let cls=''
   export { cls as class }
 
+  let open = false
   function share() {
-    navigator.clipboard.writeText(new URL($game.href, window.location.href).toString())
+    navigator.clipboard.writeText($game.shareLink)
+    setTimeout(()=>{ open=false }, 1400)
   }
 
 </script>
 
-<IconButton icon={faShareSquare} class="{cls}" {size} {linear} {dropdownFrom} on:click={share}>
+<IconButton icon={faShareSquare} class="{cls}" {size} {linear} {dropdownFrom} on:click={share} bind:open>
   Share
-  <div slot="menu" class="{cls}">
-    <IconButton icon={faShareSquare} size="lg" linear on:click={() => { navigator.clipboard.writeText(new URL($game.href, window.location.href).toString()) }}>
-      share game
-      <span slot="menu"><LinkCopied>game</LinkCopied></span>
-    </IconButton>
-    <IconButton icon={faCaretSquareRight} size="lg" linear on:click={() => { navigator.clipboard.writeText(new URL(`${$game.href}/${$game.history}`, window.location.href).toString()) }}>
-      share replay
-      <span slot="menu"><LinkCopied>replay</LinkCopied></span>
-    </IconButton>
-  </div>
+  <div slot="menu"><LinkCopied>game</LinkCopied></div>
 </IconButton>

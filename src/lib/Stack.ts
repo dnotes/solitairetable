@@ -23,6 +23,9 @@ export type StackConfigSetting = {
   horizontal?: boolean    // whether the stack is horizontal (false)
   isFreecell?: boolean    // whether this stack should be part of a freecell group (false)
   showEmpty?: boolean     // whether a placeholder for the stack is shown when empty (true)
+  score?: number      // the score for each card in the stack (0)
+  stackScore?: boolean    // whether the score is a stack score (false)
+  negativeScore?: boolean // whether the score is negative (false)
   matchPriority?: number  // the priority of the row for matches (1)
   match?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the match configuration for the top card (undefined)
   complete?: string|boolean|MatchConfigSetting|MatchConfigSetting[]|MatchConfig|MatchConfig[]|MatchTest[] // the completion conditions for the stack (undefined)
@@ -43,6 +46,9 @@ export class StackConfig {
   horizontal = false
   isFreecell = false
   showEmpty = true
+  score = 0
+  stackScore = false
+  negativeScore = false
   matchPriority = 1
   match:MatchTest[] = []
   complete:MatchTest[] = []
@@ -56,7 +62,8 @@ export class StackConfig {
       let config = conf.split(";")
       this.name = config[0]
       this.empty = confString.decode(config[1], emptyRanks);
-      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[2]);
+      [this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty] = confBoolean.decode(config[2][0]);
+      [this.stackScore, this.negativeScore] = confBoolean.decode(config[2][1]);
       let numbers = config[3].split("").map(confNumber.decode);
       this.init = numbers[0] ?? 0
       this.facedown = numbers[1] ?? 0
@@ -64,6 +71,8 @@ export class StackConfig {
       this.limitCards = numbers[3] ?? 0
       this.limitAvailable = numbers[4] ?? 0
       this.limitVisible = numbers[5] ?? 0
+      this.matchPriority = numbers[6] ?? 0
+      this.score = numbers[7] ?? 0
       this.match = config[4].split(",").map(t => new MatchTest(t));
       this.complete = config[5].split(",").map(t => new MatchTest(t));
       this.autoplay = config[6].split(",").map(t => new MatchTest(t))
@@ -83,8 +92,9 @@ export class StackConfig {
     return [
       slugify(this.name, { allowedChars:'-_a-zA-Z0-9', fixChineseSpacing:false, trim:true }),
       confString.encode(this.empty, emptyRanks),
-      confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty),
-      confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority),
+      confBoolean.encode(this.canPut, this.canGet, this.horizontal, this.isFreecell, this.showEmpty)
+        + confBoolean.encode(this.stackScore, this.negativeScore),
+      confNumber.encode(this.init, this.facedown, this.deal, this.limitCards, this.limitAvailable, this.limitVisible, this.matchPriority, this.score),
       this.match.join(","),
       this.complete.join(","),
       this.autoplay.join(","),
@@ -154,6 +164,11 @@ export default class Stack implements StackInterface {
   }
   set position(stack:string) {
     this._stack = stack.split("").map(c => new Card(c))
+  }
+
+  get score():number {
+    if (this.conf.stackScore) return this.stack.length ? this.conf.score : 0;
+    return this.stack.length * this.conf.score * (this.conf.negativeScore ? -1 : 1)
   }
 
   get isEmpty() { return this._stack.length === 0 }

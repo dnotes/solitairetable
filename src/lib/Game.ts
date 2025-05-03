@@ -61,6 +61,8 @@ export type Row = {
 }
 
 export interface GameConfigSetting {
+  startingScore?: number        // the starting score for the game (0)
+  negativeScore?: boolean       // whether the starting score is negative (false)
   centerRows?: boolean          // whether the stacks should be centered in the rows (true)
   overlayRows?: boolean         // whether rows overlay each other (false)
   multiSelect?: boolean         // whether multiple cards are selected at once (false)
@@ -81,6 +83,8 @@ export class GameConfig {
   title?: string                  // the title of the game, if it has one
   family?: string = ''            // the family to which the game belongs, if it has one
   variants?: GameConfig[]         // the variants of the current game
+  startingScore: number = 0       // the starting score for the game (0)
+  negativeScore: boolean = false  // whether the score should be negative (false)
   centerRows: boolean = true      // whether the stacks should be centered in the rows (true)
   overlayRows: boolean = false    // whether rows overlay each other (false)
   multiSelect: boolean = false    // whether multiple cards are selected at once (false)
@@ -112,8 +116,8 @@ export class GameConfig {
     else if (typeof conf === 'string') {
       let config = conf.split('!');
       [this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks, this.thoughtful] = confBoolean.decode(config[0][0]);
-      [this.autoflip] = confBoolean.decode(config[0][1]);
-      [this.limitCycles, this.limitUndo] = config[1].split('').map(confNumber.decode).map(val => val === undefined ? 0 : val);
+      [this.autoflip, this.negativeScore] = confBoolean.decode(config[0][1]);
+      [this.limitCycles, this.limitUndo, this.startingScore] = config[1].split('').map(confNumber.decode).map(val => val === undefined ? 0 : val);
       this.deckConfig = new DeckConfig(config[2])
       this.stackConfig = config[3].split('|').map(c => new StackConfig(c))
       this.layout = config[4]
@@ -129,8 +133,9 @@ export class GameConfig {
   }
   toString() {
     return [
-      confBoolean.encode(this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks, this.thoughtful),
-      confNumber.encode(this.limitCycles, this.limitUndo),
+      confBoolean.encode(this.centerRows, this.overlayRows, this.multiSelect, this.showEmpty, this.selectBlockedStacks, this.thoughtful)
+        + confBoolean.encode(this.autoflip, this.negativeScore),
+      confNumber.encode(this.limitCycles, this.limitUndo, this.startingScore),
       this.deckConfig,
       this.stackConfig.join('|'),
       this.layout,
@@ -158,6 +163,7 @@ export default class Game {
   wasComplete:boolean = false
   undoCount: number = 0
   restartCount: number = 0
+  initialPosition:string = ''
 
   _sharedReplay?:string
   _userReplay?:string
@@ -286,8 +292,7 @@ export default class Game {
     });
 
     if (r.hour) return `${r.hour}:${r.minute}:${r.second}`.replace(/(?<=:)(\d:|\d$)/g, "0$1")
-    if (r.minute) return `${r.minute}:${r.second}`.replace(/(?<=:)(\d:|\d$)/g, "0$1")
-    return `${r.second} seconds`
+    return `${r.minute}:${r.second}`.replace(/(?<=:)(\d:|\d$)/g, "0$1")
   }
 
   get title():string {
@@ -304,6 +309,10 @@ export default class Game {
   get snapshot() { return this.stacks.map(stack => stack.stack.map(card => card.char).join('')).join(';') }
 
   get history() { return this.undo.join(';') }
+
+  get score() {
+    return this.stacks.reduce((r,v) => r + v.score, this.conf.startingScore * (this.conf.negativeScore ? -1 : 1)) + 0
+  }
 
   initialize() {
 
@@ -332,6 +341,7 @@ export default class Game {
         }
       }
     })
+    this.initialPosition = this.position
   }
 
   reset() {
@@ -656,6 +666,22 @@ export default class Game {
       }
       idx++
     }
+  }
+
+  get statsArray() {
+    return [
+      { name:'score', value:(this.isComplete ? 'win' : this.score) },
+      { name:'time', value:this.elapsedTime },
+      { name:'moves', value:this.undo.length },
+      { name:'restart', value:this.restartCount },
+      { name:'undo', value:this.undoCount },
+    ]
+  }
+
+  get shareLink() {
+    let link = new URL(this.href, (window?.location?.href ?? 'https://solitairetable.com/')).toString()
+    if (this.position === this.initialPosition) return link
+    else return `${this.statsArray.map(v => `${v.name}: ${v.value}`).join('\n')}\n\n${link}`
   }
 
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
-  import type { DropdownDirection } from 'src/global';
+  import type { DropdownDirection } from '../global';
 
 import { onMount } from 'svelte'
 import Fa from 'svelte-fa'
@@ -34,7 +34,7 @@ import Fa from 'svelte-fa'
   // @ts-ignore Get the overlayed icon's size automatically
   $: overlaySize = size.match(/[gx]$/) ? sizes[Math.round(sizes.indexOf(size)/2.8)] : undefined
 
-  let open = false
+  export let open = false
   let menu:HTMLElement
   let btn:HTMLButtonElement|HTMLAnchorElement
 
@@ -78,6 +78,8 @@ import Fa from 'svelte-fa'
 <div class="relative inline-block max-h-full h-full {cls}" bind:this={menu}>
 
   <svelte:element
+    role="button"
+    tabindex="0"
     this={href ? 'a' : 'button'}
     type="button"
     {href}
@@ -103,7 +105,9 @@ import Fa from 'svelte-fa'
     </span>
   </svelte:element>
   {#if open}
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
+      on:keypress = {(e) => {open=false}}
       on:click={(e) => {open=false}}
       class="pt-2 {dropdownFrom ? `absolute ${dropdownFrom}-full ${dropdownBorder} ${dropdownFrom.match(/^(right|left)/) && 'top-0'}` : ''} {cls}"
     >

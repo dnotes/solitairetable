@@ -34,7 +34,7 @@ function register(config:NamedGameConfigSetting):void {
 register({
   title: 'Klondike',
   stackConfig: [
-    { name:"foundation", empty:"A", limitVisible:1, matchPriority:2, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true } },
+    { name:"foundation", empty:"A", limitVisible:1, matchPriority:2, match: { suit:true, rank:RankMatch.Asc, count:1 }, complete: { count: 13, suit:true }, score: 5 },
     { name:"play1", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:1, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
     { name:"play2", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:2, facedown:1, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
     { name:"play3", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:3, facedown:2, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
@@ -44,6 +44,8 @@ register({
     { name:"play7", empty:"K", match: { color:ColorMatch.Alternate, rank:RankMatch.Desc }, limitAvailable:0, init:7, facedown:6, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
     { name:"discard", deal:3, limitAvailable:1, limitVisible:3, horizontal:true, autoplay: { count:1 } }
   ],
+  startingScore: 52,
+  negativeScore: true,
   layout: '0000-D8,1234567',
   autoflip: true,
 })
@@ -84,7 +86,7 @@ register({
   title: 'Freecell',
   stackConfig: [
     { name:"free", limitCards:1, isFreecell:true, autoplay: {} },
-    { name:"foundation", empty:"A", limitVisible:1, matchPriority:3, match: { count:1, suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true } },
+    { name:"foundation", empty:"A", limitVisible:1, matchPriority:3, match: { count:1, suit:true, rank:RankMatch.Asc }, complete: { count:13, suit:true }, score: 1 },
     { name:"play", init:50, matchPriority:2, limitAvailable:0, match: { color:ColorMatch.Alternate, rank:RankMatch.Desc, useFreecells:true }, autoplay: { color:ColorMatch.Alternate, rank:RankMatch.Desc } },
   ],
   layout: '0000 1111,22222222',
@@ -98,7 +100,7 @@ register({
   limitCycles: 1,
   deckConfig: { jokers:2 },
   stackConfig: [
-    { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
+    { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false, score: 1 },
     { name:"play", empty:'', deal:1, canPut:false, limitAvailable:5, limitVisible:5, horizontal:true },
     { name:"discard", canGet:false, limitVisible:1, match: [{ total: 13 }, { total: 13, totalLT: true, hasJoker:true }] }
   ],
@@ -114,7 +116,7 @@ register({...games['pyramid'],
 register({...games['pyramid'],
   title: 'Pairs, Draw Three',
   stackConfig: [
-    { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false},
+    { name:"pyramid", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false, score: 1},
     { name:"play", deal:1, limitAvailable:1, limitVisible:5, horizontal:true },
     { name:"discard", canGet:false, limitVisible:1, match: [{ count:2, countLT:true, total:13 }, { count:2, countLT:true, hasJoker:true }] }
   ],
@@ -124,7 +126,7 @@ register({...games['pyramid'],
 register({
   title: 'Golf',
   stackConfig: [
-    { name:"play", init:5, canPut:false, complete: { count:0 } },
+    { name:"play", init:5, canPut:false, complete: { count:0 }, score: 1 },
     { name:"discard",limitVisible:1, limitAvailable:1, deal:1, init:1, canGet:true, canPut:true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc }
@@ -139,8 +141,8 @@ register({
   title: 'TriPeaks',
   limitCycles: 1,
   stackConfig: [
-    { name:"pyramidDown", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false, facedown:1 },
-    { name:"pyramidUp", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false },
+    { name:"pyramidDown", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false, facedown:1, score:1 },
+    { name:"pyramidUp", empty:'', canPut:false, init:1, limitCards:1, complete: { count:0 }, showEmpty:false, score:1 },
     { name:"discard", limitVisible:1, limitAvailable:1, deal:1, init:1, canPut: true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc },
@@ -161,8 +163,8 @@ register({...games['tripeaks'],
 register({...games['tripeaks'],
   title: 'Head Start',
   stackConfig: [
-    { name:"pyramidDown", canPut:false, init:1, limitCards:1, complete: { count:0 }, facedown:1 },
-    { name:"pyramidUp", canPut:false, init:1, limitCards:1, complete: { count:0 } },
+    { name:"pyramidDown", canPut:false, init:1, limitCards:1, complete: { count:0 }, facedown:1, score:1 },
+    { name:"pyramidUp", canPut:false, init:1, limitCards:1, complete: { count:0 }, score:1 },
     { name:"discard", limitVisible:1, limitAvailable:1, deal:1, init:0, canPut: true, match: [
       { count:1, rank:RankMatch.Asc },
       { count:1, rank:RankMatch.Desc },
@@ -183,7 +185,7 @@ register({
     suits:'S',
   },
   stackConfig: [
-    { name:"foundation", match: { suit:true, count:13, rank:RankMatch.Desc }, limitVisible:1, complete: { count:13, suit:true }, matchPriority:2 },
+    { name:"foundation", match: { suit:true, count:13, rank:RankMatch.Desc }, limitVisible:1, complete: { count:13, suit:true }, matchPriority:2, score:1, stackScore:true },
     { name:"play6", deal:1, canPut:true, init:6, facedown:5, limitAvailable:0, match: { suit:true, suitOnlyForMovedCards:true, rank:RankMatch.Desc }},
     { name:"play5", deal:1, canPut:true, init:5, facedown:4, limitAvailable:0, match: { suit:true, suitOnlyForMovedCards:true, rank:RankMatch.Desc }}
   ],

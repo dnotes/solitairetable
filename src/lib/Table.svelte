@@ -98,23 +98,27 @@ import ReplayControls from './btn/ReplayControls.svelte';
 
 {#if $game && ($showGameOver || ($game?.isComplete && !$game?.hideComplete))}
   <div
-    class="modal top-1/3 bg-gray-100 border-gray-900 border-2 z-50 text-center shadow-2xl"
+    class="modal top-1/3 bg-gray-100 border-gray-900 border-2 z-50 shadow-2xl flex flex-col items-center"
     use:modal
     transition:fly|global={{ duration:160, easing:quintOut, y:20 }}
     on:cancel={hideGameOver}
   >
     <h2 class="m-0">Finished{$game.isComplete ? '!' : '?'}</h2>
 
-    <p>
-      Time: {$game.elapsedTime}<br>
-      Moves: {$game.undo.length}<br>
-      Undo: {$game.undoCount}<br>
-      Restart: {$game.restartCount}
-    </p>
+    <div class="flex flex-col">
+      {#each $game.statsArray as item}
+        <div class="flex justify-between gap-5">
+          <div>{item.name}:</div>
+          <div>{item.value}</div>
+        </div>
+      {/each}
+    </div>
     <div class="flex justify-center pt-4">
-      <div on:click={hideGameOver}><New/></div>
-      <div on:click={hideGameOver}><Restart/></div>
-      <div><Share class="bg-gray-100 border-gray-300 text-black"/></div>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div tabindex="0" role="button" on:click={hideGameOver}><New/></div>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div tabindex="0" role="button" on:click={hideGameOver}><Restart/></div>
+      <div><Share /></div>
       <!-- <div><Replay class="bg-gray-100 border-gray-300 text-black right-0"/></div> -->
     </div>
   </div>

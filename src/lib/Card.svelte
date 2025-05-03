@@ -42,7 +42,7 @@
   export let direction:string = 'top'
   export let distance:number = 0
 
-  let textColor:string, alt:string
+  let textColor:string, alt:string = '-'
   if (card) {
     textColor = ['hearts','diamonds'].includes(card.suitName) ? 'text-red-600' : 'text-black'
     alt = card.isJoker ? 'joker' : `${card.rank}${card.suit}`
@@ -52,7 +52,17 @@
 
 </script>
 
-<div class:selected={$game?.selection?.filter(c => c?.id === card?.id).length} class="card container {textColor} rounded-xl absolute" style="{direction}:{distance}px"
+<div
+  role="button"
+  aria-label="{facedown || card?.facedown ? '?' : alt}"
+  tabindex="0"
+  class:selected={$game?.selection?.filter(c => c?.id === card?.id).length}
+  class="card container {textColor} rounded-xl absolute"
+  style="{direction}:{distance}px"
+  on:keypress={(e)=>{
+    // @ts-ignore
+    if (e.key === 'Space' || e.key === "Enter") e.target?.click()
+  }}
   on:dragstart={(e) => {
     if (stack && cards?.length) {
       draggedCards.set({

@@ -15,7 +15,7 @@
     if (stack === '_') flex = 'flex-grow'
   }
   else if (stack && !stack.isDeck) {
-    if (stack.conf['horizontal']) extraWidth = stack.maxWidth * $edgeWidth
+    if (stack.conf?.horizontal) extraWidth = stack.maxWidth * $edgeWidth
     else extraHeight = stack.maxHeight * $edgeHeight
   }
 
@@ -59,7 +59,10 @@
 
 {#if $game && typeof stack !== 'string'}
   <div
-    class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf.showEmpty)}
+    role="cell"
+    tabindex="0"
+    aria-label="{stack?.isDeck ? 'Deck' : `Stack ${stack?.index}`}"
+    class:pointer-events-auto={stack && (stack.length || stack.isDeck || stack.conf?.showEmpty)}
     class:p-1={$maxCardWidth > 100}
     class="relative justify-center"
     style="height:{stackHeight}px; width:{stackWidth}px;"
