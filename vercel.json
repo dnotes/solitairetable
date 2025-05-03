@@ -1,6 +1,6 @@
 {
   "functions": {
-    "img/*/*.png": {
+    "/src/routes/img/**/*": {
       "includeFiles": ["fonts/**"]
     }
   }
