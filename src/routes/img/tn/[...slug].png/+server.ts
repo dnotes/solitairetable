@@ -1,5 +1,5 @@
 import { error, type RequestEvent, type RequestHandler } from "@sveltejs/kit"
-import sharp from 'sharp'
+import { Resvg } from '@resvg/resvg-js'
 
 import getSvg from "../../_getSvg"
 
@@ -9,7 +9,10 @@ export const GET:RequestHandler = async (e:RequestEvent) => {
 
   try {
     let svg = getSvg(e.params.slug!, 160, 128, false)
-    let png = await sharp(Buffer.from(svg)).png().toBuffer()
+
+    const resvg = new Resvg(svg)
+    const pngData = resvg.render()
+    const pngBuffer = pngData.asPng()
 
     // Set cache headers and return the response
     e.setHeaders({
@@ -17,7 +20,7 @@ export const GET:RequestHandler = async (e:RequestEvent) => {
       'Content-Type': 'image/png',
     })
 
-    return new Response(png)
+    return new Response(pngBuffer)
 
   }
   catch(err:any) {

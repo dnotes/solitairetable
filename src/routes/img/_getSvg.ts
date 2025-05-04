@@ -128,7 +128,7 @@ const getSvg = function(slug:string, width = 1200, height = 630, text = true) {
       }).join('\n')
 
     if (text) output += `\n<style>
-    .game{ font:bold ${Math.round(svgHeight / 14)}px serif; fill: #6C9B8B; text-anchor: middle; }
+    .game{ font-weight:bold; font-size:${Math.round(svgHeight / 15)}px; fill: #6C9B8B; text-anchor: middle; }
     </style>`
       + `\n<text x="50%" y="${svgHeight - 19}" width="100%" class="game">${game.title}</text>`
 
